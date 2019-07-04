@@ -1,2 +1,2 @@
-# wooCommerce
-The wrapper around WooCommerce Rest API
+# WooCommerce
+WooCommerce Rest API .NET wrapper
