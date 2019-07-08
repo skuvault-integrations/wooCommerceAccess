@@ -13,7 +13,8 @@ namespace WooCommerceTests
 	public class AuthTests : BaseTest
 	{
 		protected WooCommerceAuthenticationService AuthenticationService { get; private set; }
-		protected OAuthAppCredentials AppCredentials { get; private set; }
+		protected WooCommerceOAuthAppCredentials AppCredentials { get; private set; }
+		protected long tenantId = 12345;
 
 		[ SetUp ]
 		public void Init()
@@ -25,13 +26,13 @@ namespace WooCommerceTests
 		[ Test ]
 		public async Task GetAuthenticationHtmlForm()
 		{
-			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm();
+			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm( tenantId );
 
 			htmlForm.Should().NotBeNullOrWhiteSpace();
 			htmlForm.Should().Contain( String.Format( "{0} would like to connect to your store", this.AppCredentials.AppName ) );
 		}
 
-		protected OAuthAppCredentials LoadApplicationCredentials()
+		protected WooCommerceOAuthAppCredentials LoadApplicationCredentials()
 		{
 			string path = new Uri( Path.GetDirectoryName( Assembly.GetExecutingAssembly().CodeBase ) ).LocalPath;
 
@@ -39,11 +40,10 @@ namespace WooCommerceTests
 			{
 				string appName = reader.ReadLine();
 				string scope = reader.ReadLine();
-				string tenantId = reader.ReadLine();
 				string returnUrl = reader.ReadLine();
 				string callbackUrl = reader.ReadLine();
 
-				return new OAuthAppCredentials( appName, scope, tenantId, returnUrl, callbackUrl );
+				return new WooCommerceOAuthAppCredentials( appName, scope, returnUrl, callbackUrl );
 			}
 		}
 	}

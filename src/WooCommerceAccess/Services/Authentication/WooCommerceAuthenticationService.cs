@@ -1,33 +1,33 @@
 ﻿using CuttingEdge.Conditions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Shared;
-using WooCommerceAccess.Throttling;
+
+[ assembly: InternalsVisibleTo( "WooCommerceTests" ) ]
 
 namespace WooCommerceAccess.Services.Authentication
 {
-	public class OAuthAppCredentials
+	public class WooCommerceOAuthAppCredentials
 	{
 		public string AppName { get; private set; }
 		public string Scope { get; private set; }
-		public string TenantId { get; private set; }
 		public string ReturnUrl { get; private set; }
 		public string CallbackUrl { get; private set; }
 
-		public OAuthAppCredentials(string appName, string scope, string tenantId, string returnUrl, string callbackUrl)
+		public WooCommerceOAuthAppCredentials( string appName, string scope, string returnUrl, string callbackUrl )
 		{
 			Condition.Requires( appName, "appName" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( scope, "scope" ).IsNotNullOrWhiteSpace();
-			Condition.Requires( tenantId, "tenantId" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( returnUrl, "returnUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( callbackUrl, "callbackUrl" ).IsNotNullOrWhiteSpace();
 
 			this.AppName = appName;
 			this.Scope = scope;
-			this.TenantId = tenantId;
 			this.ReturnUrl = returnUrl;
 			this.CallbackUrl = callbackUrl;
 		}
@@ -35,63 +35,42 @@ namespace WooCommerceAccess.Services.Authentication
 
 	public class WooCommerceAuthenticationService
 	{
-		private readonly OAuthAppCredentials _appCredentials;
+		private readonly WooCommerceOAuthAppCredentials _appCredentials;
 		private readonly WooCommerceConfig _config;
-		private readonly HttpClient _httpClient;
-		private Func< string > _additionalLogInfo;
 
-		/// <summary>
-		///	Extra logging information
-		/// </summary>
-		public Func< string > AdditionalLogInfo
-		{
-			get { return this._additionalLogInfo ?? ( () => string.Empty ); }
-			set => _additionalLogInfo = value;
-		}
-
-		public WooCommerceAuthenticationService( OAuthAppCredentials appCredentials, WooCommerceConfig config )
+		public WooCommerceAuthenticationService( WooCommerceOAuthAppCredentials appCredentials, WooCommerceConfig config )
 		{
 			Condition.Requires( appCredentials, "appCredentials" ).IsNotNull();
 			Condition.Requires( config, "config" ).IsNotNull();
 
 			this._appCredentials = appCredentials;
 			this._config = config;
-			this._httpClient = new HttpClient()
-			{
-				BaseAddress = new Uri( this._config.ShopUrl )
-			};
 		}
 
-		public async Task< string > GetAuthenticationHtmlForm()
+		public string GetAuthenticationUrl( long tenantId )
 		{
-			var mark = Mark.CreateNew();
-
-			var htmlForm = await new ActionPolicy( this._config.RetryAttempts )
-						.ExecuteAsync(async () =>
-							{
-								var payload = new Dictionary<string, string>
+			var requestParameters = new Dictionary< string, string >
 								{
 									{ "app_name", this._appCredentials.AppName },
 									{ "scope", this._appCredentials.Scope },
-									{ "user_id", this._appCredentials.TenantId },
+									{ "user_id", tenantId.ToString() },
 									{ "return_url", this._appCredentials.ReturnUrl },
 									{ "callback_url", this._appCredentials.CallbackUrl }
 								};
+			string encodedParameters = string.Join( "&", requestParameters.Select( item => $"{ item.Key }={ Misc.EscapeUriData( item.Value ) }" ) );
 
-								var httpResponse = await this._httpClient.PostAsync( WooCommerceEndPoint.AuthenticationUrl, new FormUrlEncodedContent( payload ) ).ConfigureAwait( false );
-								string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+			return WooCommerceEndPoint.AuthenticationUrl + "?" + encodedParameters;
+		}
 
-								return content;
-							}, 
-							( timeSpan, retryCount ) =>
-							{
-								string retryDetails = Misc.CreateMethodCallInfo( WooCommerceEndPoint.AuthenticationUrl, mark, additionalInfo: this.AdditionalLogInfo() );
-								WooCommerceLogger.LogTraceRetryStarted( timeSpan.Seconds, retryCount, retryDetails );
-							},
-							() => Misc.CreateMethodCallInfo( WooCommerceEndPoint.AuthenticationUrl, mark, additionalInfo: this.AdditionalLogInfo() ),
-							WooCommerceLogger.LogTraceException);
-
-			return htmlForm;
+		internal async Task< string > GetAuthenticationHtmlForm( long tenantId )
+		{
+			var httpClient = new HttpClient()
+			{
+				BaseAddress = new Uri( this._config.ShopUrl )
+			};
+			var url = this.GetAuthenticationUrl( tenantId );
+			var httpResponse = await httpClient.GetAsync( url ).ConfigureAwait( false );
+			return await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 		}
 	}
 }

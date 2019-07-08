@@ -32,5 +32,26 @@ namespace WooCommerceAccess.Shared
 			);
 			return str;
 		}
+
+		/// <summary>
+		///	Custom implementation of URI components encoding for RFC 5849
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		public static string EscapeUriData( string data )
+		{
+			string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+			StringBuilder result = new StringBuilder();
+
+			foreach ( char symbol in data ) {
+				if ( unreservedChars.IndexOf(symbol) != -1 ) {
+					result.Append( symbol );
+				} else {
+					result.Append('%' + String.Format("{0:X2}", (int)symbol));
+				}
+			}
+
+			return result.ToString();
+		}
 	}
 }
