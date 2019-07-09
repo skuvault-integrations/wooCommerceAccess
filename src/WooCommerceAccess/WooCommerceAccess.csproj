@@ -15,6 +15,12 @@
     <PackageReference Include="CuttingEdge.Conditions" Version="1.2.0" />
     <PackageReference Include="Netco" Version="1.5.8" />
     <PackageReference Include="Polly-Signed" Version="5.9.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Services\Orders\" />
   </ItemGroup>
 
 </Project>
