@@ -9,6 +9,8 @@
     <PackageLicenseUrl>https://github.com/skuvault/wooCommerceAccess/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/skuvault/wooCommerceAccess</PackageProjectUrl>
     <RepositoryUrl>https://github.com/skuvault/wooCommerceAccess</RepositoryUrl>
+    <Version>0.0.1-rc1</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
