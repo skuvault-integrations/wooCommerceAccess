@@ -14,7 +14,7 @@ namespace WooCommerceTests
 	{
 		protected WooCommerceAuthenticationService AuthenticationService { get; private set; }
 		protected WooCommerceOAuthAppCredentials AppCredentials { get; private set; }
-		protected long tenantId = 12345;
+		private long tenantId = 12345;
 
 		[ SetUp ]
 		public void Init()
@@ -26,7 +26,8 @@ namespace WooCommerceTests
 		[ Test ]
 		public async Task GetAuthenticationHtmlForm()
 		{
-			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm( tenantId );
+			string requestId = string.Format("{0}:{1}", this.tenantId, Guid.NewGuid().ToString() );
+			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm( requestId );
 
 			htmlForm.Should().NotBeNullOrWhiteSpace();
 			htmlForm.Should().Contain( String.Format( "{0} would like to connect to your store", this.AppCredentials.AppName ) );
