@@ -9,12 +9,15 @@ using WooCommerceAccess.Services.Authentication;
 
 namespace WooCommerceTests
 {
-	[ TestFixture ]
+	[ TestFixture( "WP4_1_WC_2_4_credentials.csv" ) ]
+	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
 	public class AuthTests : BaseTest
 	{
 		protected WooCommerceAuthenticationService AuthenticationService { get; private set; }
 		protected WooCommerceOAuthAppCredentials AppCredentials { get; private set; }
 		private long tenantId = 12345;
+
+		public AuthTests( string credentialsFileName ) : base ( credentialsFileName ) { }
 
 		[ SetUp ]
 		public void Init()

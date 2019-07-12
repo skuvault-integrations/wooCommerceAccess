@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 
 namespace WooCommerceTests
 {
-	[ TestFixture ]
+	[ TestFixture( "WP4_1_WC_2_4_credentials.csv" ) ]
+	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
 	public class ProductTests : BaseTest
 	{
 		private const string testSku = "testsku";
 		private const string testSku2 = "testsku2";
+
+		public ProductTests( string shopCredentialsFileName ) : base( shopCredentialsFileName) { }
 
 		[ Test ]
 		public void GetProductBySku()
@@ -47,7 +50,7 @@ namespace WooCommerceTests
 		public async Task UpdateSkusQuantity()
 		{
 			var random = new Random();
-			var request = new Dictionary<string, int>
+			var request = new Dictionary< string, int >
 			{
 				{ testSku, random.Next( 1, 100 ) },
 				{ testSku2, random.Next( 1, 100 ) }

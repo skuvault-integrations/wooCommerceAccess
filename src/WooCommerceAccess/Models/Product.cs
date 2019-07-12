@@ -26,5 +26,19 @@
 				Quantity = productV3.stock_quantity
 			};
 		}
+
+		public static Product ToProduct( this WooCommerceNET.WooCommerce.Legacy.Product legacyProduct )
+		{
+			return new Product()
+			{
+				Id = legacyProduct.id,
+				Sku = legacyProduct.sku,
+				Name = legacyProduct.name,
+				Description = legacyProduct.description,
+				ShortDescription = legacyProduct.short_description,
+				Price = legacyProduct.price,
+				Quantity = legacyProduct.stock_quantity
+			};
+		}
 	}
 }

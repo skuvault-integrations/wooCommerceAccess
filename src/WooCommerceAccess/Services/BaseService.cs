@@ -1,14 +1,11 @@
 ﻿using CuttingEdge.Conditions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Exceptions;
 using WooCommerceAccess.Shared;
 using WooCommerceAccess.Throttling;
 using WooCommerceNET;
-using WooCommerceNET.WooCommerce.v3;
 
 namespace WooCommerceAccess.Services
 {
@@ -18,7 +15,7 @@ namespace WooCommerceAccess.Services
 		protected readonly string ConsumerSecret;
 		protected readonly WooCommerceConfig Config;
 		protected readonly Throttler Throttler;
-		protected readonly WCObject WCObject;
+		protected IWCObject WCObject { get; private set; }
 		protected Func< string > _additionalLogInfo;
 
 		/// <summary>
@@ -42,9 +39,23 @@ namespace WooCommerceAccess.Services
 			this.Config = config;
 			this.Throttler = throttler;
 
-			// TODO: detect working API version
-			var restApi = new RestAPI( config.ShopUrl + "wp-json/wc/v3/", consumerKey, consumerSecret );
-			this.WCObject = new WCObject( restApi );
+			this.InitWcObject();
+		}
+
+		private void InitWcObject()
+		{
+			var apiVersion = new WooCommerceApiVersionDetector( this.Config.ShopUrl, this.Config.RetryAttempts ).DetectApiVersion().Result;
+			
+			if ( apiVersion == WooCommerceApiVersion.Unknown )
+				throw new WooCommerceException("Unsupported WordPress and WooCommerce version!");
+
+			string apiUrl = apiVersion == WooCommerceApiVersion.V3 ? "wp-json/wc/v3/" : "wc-api/v3";
+			var restApi = new RestAPI( this.Config.ShopUrl + apiUrl, this.ConsumerKey, this.ConsumerSecret );
+			
+			if ( apiVersion == WooCommerceApiVersion.Legacy )
+				this.WCObject = new LegacyV3WCObject( restApi );
+			else
+				this.WCObject = new ApiV3WCObject( restApi );
 		}
 
 		protected Task< T > SendRequestAsync< T >( string url, Func< Task< T > > processor )
