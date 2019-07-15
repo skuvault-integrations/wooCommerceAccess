@@ -54,7 +54,10 @@ namespace WooCommerceAccess.Throttling
 						if ( exception is HttpRequestException )
 							wooCommerceException = new WooCommerceNetworkException( exceptionDetails, exception );
 						else
+						{
 							wooCommerceException = new WooCommerceException( exceptionDetails, exception );
+							onException?.Invoke(wooCommerceException);
+						}
 
 						throw wooCommerceException;
 					}

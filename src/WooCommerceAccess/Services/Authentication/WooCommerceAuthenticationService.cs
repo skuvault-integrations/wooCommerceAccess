@@ -47,13 +47,18 @@ namespace WooCommerceAccess.Services.Authentication
 			this._config = config;
 		}
 
-		public string GetAuthenticationUrl( long tenantId )
+		/// <summary>
+		///	Returns authentication Url
+		/// </summary>
+		/// <param name="requestId">This value will be returned in POST request from WooCommerce server. It is used to validate incoming request.</param>
+		/// <returns></returns>
+		public string GetAuthenticationUrl( string requestId )
 		{
 			var requestParameters = new Dictionary< string, string >
 								{
 									{ "app_name", this._appCredentials.AppName },
 									{ "scope", this._appCredentials.Scope },
-									{ "user_id", tenantId.ToString() },
+									{ "user_id", requestId },
 									{ "return_url", this._appCredentials.ReturnUrl },
 									{ "callback_url", this._appCredentials.CallbackUrl }
 								};
@@ -62,13 +67,13 @@ namespace WooCommerceAccess.Services.Authentication
 			return WooCommerceEndPoint.AuthenticationUrl + "?" + encodedParameters;
 		}
 
-		internal async Task< string > GetAuthenticationHtmlForm( long tenantId )
+		internal async Task< string > GetAuthenticationHtmlForm( string requestId )
 		{
 			var httpClient = new HttpClient()
 			{
 				BaseAddress = new Uri( this._config.ShopUrl )
 			};
-			var url = this.GetAuthenticationUrl( tenantId );
+			var url = this.GetAuthenticationUrl( requestId );
 			var httpResponse = await httpClient.GetAsync( url ).ConfigureAwait( false );
 			return await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 		}

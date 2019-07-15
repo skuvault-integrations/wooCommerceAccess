@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -31,6 +33,24 @@ namespace WooCommerceAccess.Shared
 				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
 			);
 			return str;
+		}
+
+		public static string ToJson( this object source )
+		{
+			try
+			{
+				if (source == null)
+					return "{}";
+				else
+				{
+					var serialized = JsonConvert.SerializeObject( source, new IsoDateTimeConverter() );
+					return serialized;
+				}
+			}
+			catch( Exception )
+			{
+				return "{}";
+			}
 		}
 
 		/// <summary>

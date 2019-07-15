@@ -9,12 +9,15 @@ using WooCommerceAccess.Services.Authentication;
 
 namespace WooCommerceTests
 {
-	[ TestFixture ]
+	[ TestFixture( "WP4_1_WC_2_4_credentials.csv" ) ]
+	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
 	public class AuthTests : BaseTest
 	{
 		protected WooCommerceAuthenticationService AuthenticationService { get; private set; }
 		protected WooCommerceOAuthAppCredentials AppCredentials { get; private set; }
-		protected long tenantId = 12345;
+		private long tenantId = 12345;
+
+		public AuthTests( string credentialsFileName ) : base ( credentialsFileName ) { }
 
 		[ SetUp ]
 		public void Init()
@@ -26,7 +29,8 @@ namespace WooCommerceTests
 		[ Test ]
 		public async Task GetAuthenticationHtmlForm()
 		{
-			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm( tenantId );
+			string requestId = string.Format("{0}:{1}", this.tenantId, Guid.NewGuid().ToString() );
+			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm( requestId );
 
 			htmlForm.Should().NotBeNullOrWhiteSpace();
 			htmlForm.Should().Contain( String.Format( "{0} would like to connect to your store", this.AppCredentials.AppName ) );
