@@ -13,7 +13,7 @@
 
 	public static class ProductExtensions
 	{
-		public static Product ToProduct( this WooCommerceNET.WooCommerce.v3.Product productV3 )
+		public static Product ToSvProduct( this WooCommerceNET.WooCommerce.v3.Product productV3 )
 		{
 			return new Product()
 			{
@@ -27,7 +27,7 @@
 			};
 		}
 
-		public static Product ToProduct( this WooCommerceNET.WooCommerce.Legacy.Product legacyProduct )
+		public static Product ToSvProduct( this WooCommerceNET.WooCommerce.Legacy.Product legacyProduct )
 		{
 			return new Product()
 			{

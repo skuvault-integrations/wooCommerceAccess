@@ -31,7 +31,7 @@ namespace WooCommerceAccess.Services
 			};
 
 			var products = await this._legacyApiWCObject.GetProducts( requestParameters ).ConfigureAwait( false );
-			return products.Select( legacyProduct => legacyProduct.ToProduct() )
+			return products.Select( legacyProduct => legacyProduct.ToSvProduct() )
 						// WooCommerce API returns any sku that contains requested sku
 						.FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
@@ -40,7 +40,7 @@ namespace WooCommerceAccess.Services
 		{
 			var updateProductRequest = new WLegacyApi.Product() { id = productId, stock_quantity = quantity };
 			await this._legacyApiWCObject.UpdateProduct( productId, updateProductRequest );
-			return updateProductRequest.ToProduct();
+			return updateProductRequest.ToSvProduct();
 		}
 
 		public async Task< Product[] > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )

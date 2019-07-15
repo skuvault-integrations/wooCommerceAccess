@@ -28,7 +28,7 @@ namespace WooCommerceAccess.Services
 			};
 
 			var products = await this._wcObjectApiV3.Product.GetAll( requestParameters ).ConfigureAwait( false );
-			return products.Select( prV3 => prV3.ToProduct() )
+			return products.Select( prV3 => prV3.ToSvProduct() )
 						// WooCommerce API returns any sku that contains requested sku
 						.FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
@@ -36,7 +36,7 @@ namespace WooCommerceAccess.Services
 		public async Task< Product > UpdateProductQuantityAsync(int productId, int quantity)
 		{
 			var updatedProduct = await this._wcObjectApiV3.Product.Update( productId, new WApiV3.Product() { stock_quantity = quantity });
-			return updatedProduct.ToProduct();
+			return updatedProduct.ToSvProduct();
 		}
 
 		public async Task< Product[] > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
@@ -54,7 +54,7 @@ namespace WooCommerceAccess.Services
 			}
 
 			var result = await this._wcObjectApiV3.Product.UpdateRange( productBatch );
-			return result.update.Select( prV3 => prV3.ToProduct() ).ToArray();
+			return result.update.Select( prV3 => prV3.ToSvProduct() ).ToArray();
 		}
 	}
 }
