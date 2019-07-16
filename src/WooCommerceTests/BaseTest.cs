@@ -31,7 +31,8 @@ namespace WooCommerceTests
 			
 			if ( !string.IsNullOrWhiteSpace( shopCredentials.ConsumerKey ) && !string.IsNullOrWhiteSpace( shopCredentials.ConsumerSecret ) )
 			{
-				var factory = new WooCommerceFactory( shopCredentials.ConsumerKey, shopCredentials.ConsumerSecret );
+				var factory = new WooCommerceFactory();
+				this.Config = new WooCommerceConfig( shopCredentials.ShopUrl, shopCredentials.ConsumerKey, shopCredentials.ConsumerSecret );
 				var throttler = new Throttler( 5, 1, 1 );
 				
 				this.ProductsService = factory.CreateProductsService( this.Config, throttler );

@@ -11,8 +11,8 @@ namespace WooCommerceAccess.Services.Orders
 	{
 		private readonly string _serviceUrl;
 
-		public WooCommerceOrdersService( string consumerKey, string consumerSecret, WooCommerceConfig config, Throttler throttler )
-			: base( consumerKey, consumerSecret, config, throttler )
+		public WooCommerceOrdersService( WooCommerceConfig config, Throttler throttler )
+			: base( config, throttler )
 		{
 			_serviceUrl = base.WCObject.OrdersApiUrl;
 		}
