@@ -1,4 +1,5 @@
 ﻿using CuttingEdge.Conditions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,9 +19,24 @@ namespace WooCommerceAccess.Services
 			this._wcObjectApiV3 = new WApiV3.WCObject( restApi );
 		}
 
-		public string ProductApiUrl => _wcObjectApiV3.Product.API.Url + _wcObjectApiV3.Product.APIEndpoint;
+		public string ProductApiUrl => this._wcObjectApiV3.Product.API.Url + this._wcObjectApiV3.Product.APIEndpoint;
 
-		public async Task< Product > GetProductBySkuAsync( string sku )
+		public string OrdersApiUrl => this._wcObjectApiV3.Order.API.Url + this._wcObjectApiV3.Order.APIEndpoint;
+
+		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
+		{
+			var requestParameters = new Dictionary< string, string >
+			{
+				{ "after", startDateUtc.ToString( "o" ) },
+				{ "before", endDateUtc.ToString( "o" ) }
+			};
+
+			var orders = await this._wcObjectApiV3.Order.GetAll( requestParameters ).ConfigureAwait( false );
+
+			return orders.Select( order => order.ToSvOrder() ).ToArray();
+		}
+
+		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku )
 		{
 			var requestParameters = new Dictionary< string, string >
 			{
@@ -33,13 +49,13 @@ namespace WooCommerceAccess.Services
 						.FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< Product > UpdateProductQuantityAsync(int productId, int quantity)
+		public async Task< WooCommerceProduct > UpdateProductQuantityAsync(int productId, int quantity)
 		{
 			var updatedProduct = await this._wcObjectApiV3.Product.Update( productId, new WApiV3.Product() { stock_quantity = quantity });
 			return updatedProduct.ToSvProduct();
 		}
 
-		public async Task< Product[] > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public async Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
 		{
 			var productBatch = new WApiV3.ProductBatch();
 			var productsUpdateRequest = new List< WApiV3.Product >();

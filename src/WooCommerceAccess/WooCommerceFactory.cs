@@ -1,5 +1,6 @@
 ﻿using CuttingEdge.Conditions;
 using WooCommerceAccess.Configuration;
+using WooCommerceAccess.Services.Orders;
 using WooCommerceAccess.Services.Products;
 using WooCommerceAccess.Throttling;
 
@@ -17,6 +18,11 @@ namespace WooCommerceAccess
 
 			this._consumerKey = consumerKey;
 			this._consumerSecret = consumerSecret;
+		}
+
+		public IWooCommerceOrdersService CreateOrdersService(WooCommerceConfig config, Throttler throttler)
+		{
+			return new WooCommerceOrdersService( this._consumerKey, this._consumerSecret, config, throttler );
 		}
 
 		public IWooCommerceProductsService CreateProductsService( WooCommerceConfig config, Throttler throttler )

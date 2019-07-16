@@ -67,6 +67,7 @@
     <Compile Include="AuthTests.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="ApiDetectorTests.cs" />
+    <Compile Include="OrderTests.cs" />
     <Compile Include="ProductTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -58,7 +58,7 @@ namespace WooCommerceTests
 
 			var updatedProducts = await base.ProductsService.UpdateSkusQuantityAsync( request, CancellationToken.None ).ConfigureAwait( false );
 
-			updatedProducts.Length.Should().Be( request.Count );
+			updatedProducts.Count().Should().Be( request.Count );
 			var updatedTestSku = updatedProducts.FirstOrDefault( pr => pr.Sku.Equals( testSku ) );
 			updatedTestSku.Quantity.Should().Be( request[ testSku ] );
 			var updatedTestSku2 = updatedProducts.FirstOrDefault( pr => pr.Sku.Equals( testSku2 ) );

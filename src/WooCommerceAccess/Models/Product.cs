@@ -1,6 +1,6 @@
 ﻿namespace WooCommerceAccess.Models
 {
-	public class Product
+	public class WooCommerceProduct
 	{
 		public int? Id { get; set; }
 		public string Sku { get; set; }
@@ -13,9 +13,9 @@
 
 	public static class ProductExtensions
 	{
-		public static Product ToSvProduct( this WooCommerceNET.WooCommerce.v3.Product productV3 )
+		public static WooCommerceProduct ToSvProduct( this WooCommerceNET.WooCommerce.v3.Product productV3 )
 		{
-			return new Product()
+			return new WooCommerceProduct()
 			{
 				Id = productV3.id,
 				Sku = productV3.sku,
@@ -27,9 +27,9 @@
 			};
 		}
 
-		public static Product ToSvProduct( this WooCommerceNET.WooCommerce.Legacy.Product legacyProduct )
+		public static WooCommerceProduct ToSvProduct( this WooCommerceNET.WooCommerce.Legacy.Product legacyProduct )
 		{
-			return new Product()
+			return new WooCommerceProduct()
 			{
 				Id = legacyProduct.id,
 				Sku = legacyProduct.sku,

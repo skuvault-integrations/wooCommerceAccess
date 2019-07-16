@@ -23,7 +23,22 @@ namespace WooCommerceAccess.Services
 
 		public string ProductApiUrl => this._apiUrl + "products";
 
-		public async Task< Product > GetProductBySkuAsync( string sku )
+		public string OrdersApiUrl => this._apiUrl + "orders";
+
+		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
+		{
+			var requestParameters = new Dictionary< string, string >
+			{
+				{ "status", "processing" }
+			};
+
+			var orders = await this._legacyApiWCObject.GetOrders( requestParameters ).ConfigureAwait( false );
+			return orders.Where( order => order.updated_at >= startDateUtc && order.updated_at <= endDateUtc )
+					 .Select( order => order.ToSvOrder() )
+					 .ToArray();
+		}
+
+		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku )
 		{
 			var requestParameters = new Dictionary< string, string >
 			{
@@ -36,16 +51,16 @@ namespace WooCommerceAccess.Services
 						.FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< Product > UpdateProductQuantityAsync( int productId, int quantity )
+		public async Task< WooCommerceProduct > UpdateProductQuantityAsync( int productId, int quantity )
 		{
 			var updateProductRequest = new WLegacyApi.Product() { id = productId, stock_quantity = quantity };
 			await this._legacyApiWCObject.UpdateProduct( productId, updateProductRequest );
 			return updateProductRequest.ToSvProduct();
 		}
 
-		public async Task< Product[] > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
 		{
-			var result = new List< Product >();
+			var result = new List< WooCommerceProduct >();
 
 			foreach( var skuQuantity in skusQuantities )
 			{

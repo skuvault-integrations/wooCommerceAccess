@@ -17,30 +17,30 @@ namespace WooCommerceAccess.Services.Products
 			_serviceUrl = base.WCObject.ProductApiUrl;
 		}
 
-		public Task< Product[] > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, CancellationToken token )
+		public Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, CancellationToken token )
 		{
-			return base.SendRequestAsync< Product[] >( this._serviceUrl, () =>
+			return base.SendRequestAsync< IEnumerable< WooCommerceProduct > >( this._serviceUrl, () =>
 			{
 				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities );
 			} );
 		}
 
-		public async Task< Product > UpdateSkuQuantityAsync( string sku, int quantity )
+		public async Task< WooCommerceProduct > UpdateSkuQuantityAsync( string sku, int quantity )
 		{
 			var product = await this.GetProductBySkuAsync( sku, CancellationToken.None );
 
 			if ( product == null )
 				return null;
 
-			return await base.SendRequestAsync< Product >( this._serviceUrl, () =>
+			return await base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, () =>
 			{
 				return base.WCObject.UpdateProductQuantityAsync( product.Id.Value, quantity );
-			} );
+			} ).ConfigureAwait( false );
 		}
 
-		public Task< Product > GetProductBySkuAsync( string sku, CancellationToken token )
+		public Task< WooCommerceProduct > GetProductBySkuAsync( string sku, CancellationToken token )
 		{
-			return base.SendRequestAsync< Product >( this._serviceUrl, () =>
+			return base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, () =>
 			{
 				return base.WCObject.GetProductBySkuAsync( sku );
 			});
