@@ -11,8 +11,6 @@ namespace WooCommerceAccess.Services
 {
 	public class BaseService
 	{
-		protected readonly string ConsumerKey;
-		protected readonly string ConsumerSecret;
 		protected readonly WooCommerceConfig Config;
 		protected readonly Throttler Throttler;
 		protected IWCObject WCObject { get; private set; }
@@ -27,15 +25,11 @@ namespace WooCommerceAccess.Services
 			set => _additionalLogInfo = value;
 		}
 
-		public BaseService( string consumerKey, string consumerSecret, WooCommerceConfig config, Throttler throttler )
+		public BaseService( WooCommerceConfig config, Throttler throttler )
 		{
-			Condition.Requires( consumerKey, "consumerKey" );
-			Condition.Requires( consumerSecret, "consumerSecret" );
 			Condition.Requires( config, "config" ).IsNotNull();
 			Condition.Requires( throttler, "throttler" ).IsNotNull();
 
-			this.ConsumerKey = consumerKey;
-			this.ConsumerSecret = consumerSecret;
 			this.Config = config;
 			this.Throttler = throttler;
 
@@ -50,7 +44,7 @@ namespace WooCommerceAccess.Services
 				throw new WooCommerceException("Unsupported WordPress and WooCommerce version!");
 
 			string apiUrl = apiVersion == WooCommerceApiVersion.V3 ? "wp-json/wc/v3/" : "wc-api/v3";
-			var restApi = new RestAPI( this.Config.ShopUrl + apiUrl, this.ConsumerKey, this.ConsumerSecret );
+			var restApi = new RestAPI( this.Config.ShopUrl + apiUrl, this.Config.ConsumerKey, this.Config.ConsumerSecret );
 			
 			if ( apiVersion == WooCommerceApiVersion.Legacy )
 				this.WCObject = new LegacyV3WCObject( restApi );

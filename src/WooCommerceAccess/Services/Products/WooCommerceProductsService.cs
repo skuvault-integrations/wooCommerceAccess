@@ -11,8 +11,8 @@ namespace WooCommerceAccess.Services.Products
 	{
 		private readonly string _serviceUrl;
 
-		public WooCommerceProductsService( string consumerKey, string consumerSecret, WooCommerceConfig config, Throttler throttler )
-			: base( consumerKey, consumerSecret, config, throttler )
+		public WooCommerceProductsService( WooCommerceConfig config, Throttler throttler )
+			: base( config, throttler )
 		{
 			_serviceUrl = base.WCObject.ProductApiUrl;
 		}
