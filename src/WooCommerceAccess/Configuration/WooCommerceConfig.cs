@@ -5,8 +5,6 @@ namespace WooCommerceAccess.Configuration
 	public class WooCommerceConfig
 	{
 		public string ShopUrl { get; private set; }
-		public string ConsumerKey { get; private set; }
-		public string ConsumerSecret { get; private set; }
 
 		/// <summary>
 		///	Request timeout
@@ -28,20 +26,10 @@ namespace WooCommerceAccess.Configuration
 		/// </summary>
 		public readonly int ThrottlingRestorePeriodInSeconds = 1;
 
-		public WooCommerceConfig( string shopUrl, string consumerKey, string consumerSecret )
-		{
-			Condition.Requires( shopUrl, "shopUrl" ).IsNotNullOrWhiteSpace();
-			Condition.Requires( consumerKey, "consumerKey" ).IsNotNullOrWhiteSpace();
-			Condition.Requires( consumerSecret, "consumerSecret" ).IsNotNullOrWhiteSpace();
-
-			this.ShopUrl = shopUrl;
-			this.ConsumerKey = consumerKey;
-			this.ConsumerSecret = consumerSecret;
-		}
-
 		public WooCommerceConfig( string shopUrl )
 		{
-			Condition.Requires( shopUrl, "shopUrl" ).IsNotNullOrWhiteSpace();
+			Condition.Requires( shopUrl, "shopUrl" );
+
 			this.ShopUrl = shopUrl;
 		}
 	}
