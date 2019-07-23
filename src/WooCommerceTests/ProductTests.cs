@@ -20,7 +20,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public void GetProductBySku()
 		{
-			var product = base.ProductsService.GetProductBySkuAsync( testSku, CancellationToken.None ).Result;
+			var product = base.ProductsService.GetProductBySkuAsync( testSku ).Result;
 
 			product.Should().NotBeNull();
 			product.Sku.Should().Be( testSku );
@@ -56,7 +56,7 @@ namespace WooCommerceTests
 				{ testSku2, random.Next( 1, 100 ) }
 			};
 
-			var updatedProducts = await base.ProductsService.UpdateSkusQuantityAsync( request, CancellationToken.None ).ConfigureAwait( false );
+			var updatedProducts = await base.ProductsService.UpdateSkusQuantityAsync( request ).ConfigureAwait( false );
 
 			updatedProducts.Count().Should().Be( request.Count );
 			var updatedTestSku = updatedProducts.FirstOrDefault( pr => pr.Sku.Equals( testSku ) );
