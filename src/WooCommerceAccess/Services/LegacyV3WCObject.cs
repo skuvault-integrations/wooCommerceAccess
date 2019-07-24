@@ -27,12 +27,7 @@ namespace WooCommerceAccess.Services
 
 		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			var requestParameters = new Dictionary< string, string >
-			{
-				{ "status", "processing" }
-			};
-
-			var orders = await this._legacyApiWCObject.GetOrders( requestParameters ).ConfigureAwait( false );
+			var orders = await this._legacyApiWCObject.GetOrders().ConfigureAwait( false );
 			return orders.Where( order => order.updated_at >= startDateUtc && order.updated_at <= endDateUtc )
 					 .Select( order => order.ToSvOrder() )
 					 .ToArray();
