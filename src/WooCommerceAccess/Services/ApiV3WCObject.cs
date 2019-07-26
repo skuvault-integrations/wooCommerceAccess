@@ -123,6 +123,7 @@ namespace WooCommerceAccess.Services
 			return updatedProduct.ToSvProduct();
 		}
 
+		//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
 		public async Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
 		{
 			var productBatch = new WApiV3.ProductBatch();
