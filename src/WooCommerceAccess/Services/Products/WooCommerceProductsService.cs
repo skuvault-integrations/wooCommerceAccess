@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
@@ -29,7 +29,7 @@ namespace WooCommerceAccess.Services.Products
 		{
 			var product = await this.GetProductBySkuAsync( sku );
 
-			if ( product == null )
+			if ( product?.Id == null )
 				return null;
 
 			return await base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, () =>
@@ -44,6 +44,11 @@ namespace WooCommerceAccess.Services.Products
 			{
 				return base.WCObject.GetProductBySkuAsync( sku );
 			});
+		}
+
+		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated )
+		{
+			return await SendRequestAsync( _serviceUrl, () => WCObject.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated ) );
 		}
 	}
 }

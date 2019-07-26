@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WooCommerceAccess.Models;
 
@@ -28,5 +28,13 @@ namespace WooCommerceAccess.Services.Products
 		/// <param name="sku"></param>
 		/// <returns></returns>
 		Task< WooCommerceProduct > GetProductBySkuAsync( string sku );
+
+		/// <summary>
+		/// Returns products created after a given date and products created before but updated after the given date
+		/// </summary>
+		/// <param name="productsStartUtc"></param>
+		/// <returns></returns>
+		Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated );
+
 	}
 }

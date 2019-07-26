@@ -3,16 +3,16 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace WooCommerceTests
 {
 	[ TestFixture( "WP4_1_WC_2_4_credentials.csv" ) ]
 	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
+	[ TestFixture( "WP4_7_WC_3_6_credentials.csv" ) ]
 	public class ProductTests : BaseTest
 	{
-		private const string testSku = "testsku";
+		private const string testSku = "testsku3";
 		private const string testSku2 = "testsku2";
 
 		public ProductTests( string shopCredentialsFileName ) : base( shopCredentialsFileName) { }
@@ -24,6 +24,22 @@ namespace WooCommerceTests
 
 			product.Should().NotBeNull();
 			product.Sku.Should().Be( testSku );
+		}
+
+		[ Test ]
+		public void GetProductsCreatedUpdatedAfterAsync_CreateOnly()
+		{
+			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, false ).Result;
+
+			products.Count().Should().NotBe( 0 );
+		}
+
+		[ Test ]
+		public void GetProductsCreatedUpdatedAfterAsync_CreateAndUpdate()
+		{
+			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true ).Result;
+
+			products.Count().Should().NotBe( 0 );
 		}
 
 		[ Test ]

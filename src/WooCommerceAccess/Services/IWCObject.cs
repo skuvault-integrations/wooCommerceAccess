@@ -14,5 +14,6 @@ namespace WooCommerceAccess.Services
 		Task< WooCommerceProduct > UpdateProductQuantityAsync( int productId, int quantity );
 		Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync ( Dictionary< string, int > skusQuantities );
 		Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc );
+		Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated );
 	}
 }
