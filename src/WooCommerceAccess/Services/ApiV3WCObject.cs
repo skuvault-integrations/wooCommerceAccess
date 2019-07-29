@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Netco.Extensions;
-using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceNET;
@@ -15,7 +13,6 @@ namespace WooCommerceAccess.Services
 	public sealed class ApiV3WCObject : IWCObject
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
-		private readonly int _pageSize = 10;
 
 		public ApiV3WCObject( RestAPI restApi )
 		{
@@ -48,7 +45,7 @@ namespace WooCommerceAccess.Services
 				{ "sku", sku }
 			};
 
-			var products = await CollectProductsFromAllPagesAsync( productFilters );
+			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
 			return products.
 				// WooCommerce API returns any sku that contains requested sku
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
@@ -62,7 +59,7 @@ namespace WooCommerceAccess.Services
 				{ updatedAfter, productsStartUtc.ToString( "o" ) }
 			};
 
-			var products = await CollectProductsFromAllPagesAsync( productFilters );
+			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
 
 			if ( !includeUpdated )
 			{
@@ -72,13 +69,13 @@ namespace WooCommerceAccess.Services
 			return products;
 		}
 		
-		private async Task< List< WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters )
+		private async Task< List< WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )
 		{
 			var products = new List< WooCommerceProduct >();
 
 			for( var page = 1; ; page++ )
 			{
-				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, _pageSize ) );
+				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
 				var combinedFilters = productFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value);
 				var productsWithinPage = ( await this._wcObjectApiV3.Product.GetAll( combinedFilters ).ConfigureAwait( false ) ).
 					Select( p => p.ToSvProduct() ).ToList();
@@ -89,7 +86,7 @@ namespace WooCommerceAccess.Services
 				{
 					if( productWithinPage.HasVariations && productWithinPage.Id.HasValue ) 
 					{ 
-						productWithinPage.Variations = await CollectProductVariationsFromAllPages( productWithinPage.Id.Value );
+						productWithinPage.Variations = await CollectProductVariationsFromAllPagesAsync( productWithinPage.Id.Value, pageSize );
 					}
 				}
 
@@ -99,13 +96,13 @@ namespace WooCommerceAccess.Services
 			return products;
 		}
 
-		private async Task< IEnumerable< WooCommerceVariation > > CollectProductVariationsFromAllPages( int productId )
+		public async Task< IEnumerable< WooCommerceVariation > > CollectProductVariationsFromAllPagesAsync( int productId, int pageSize )
 		{
 			var variations = new List< WooCommerceVariation >();
 
 			for( var page = 1; ; page++ )
 			{
-				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, _pageSize ) );
+				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
 				var variationsWithinPage = ( await this._wcObjectApiV3.Product.Variations.GetAll( productId, pageFilter ).ConfigureAwait( false ) ).
 					Select( v => v.ToSvVariation() ).ToList();
 
