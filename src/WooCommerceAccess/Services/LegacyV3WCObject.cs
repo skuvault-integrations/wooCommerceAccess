@@ -28,8 +28,6 @@ namespace WooCommerceAccess.Services
 
 		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			//TODO GUARD-120 Add paging. See products
-
 			//TODO GUARD-120 Wouldn't filter[updated_at_min] and filter[updated_at_max] accomplish the same, but filter on the wooCommerce api side
 			var orders = await this._legacyApiWCObject.GetOrders().ConfigureAwait( false );
 			return orders.Where( order => order.updated_at >= startDateUtc && order.updated_at <= endDateUtc )
@@ -99,7 +97,6 @@ namespace WooCommerceAccess.Services
 
 				if ( product != null )
 				{
-					//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
 					var updatedProduct = await this.UpdateProductQuantityAsync( product.Id.Value, skuQuantity.Value ).ConfigureAwait( false );
 					updatedProduct.Sku = skuQuantity.Key;
 					result.Add( updatedProduct );

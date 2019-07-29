@@ -32,7 +32,6 @@ namespace WooCommerceAccess.Services
 				{ "before", endDateUtc.ToString( "o" ) }
 			};
 
-			//TODO GUARD-120 Add paging. See products
 			var orders = await this._wcObjectApiV3.Order.GetAll( requestParameters ).ConfigureAwait( false );
 
 			return orders.Select( order => order.ToSvOrder() ).ToArray();
@@ -121,7 +120,6 @@ namespace WooCommerceAccess.Services
 			return updatedProduct.ToSvProduct();
 		}
 
-		//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
 		public async Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var productBatch = new WApiV3.ProductBatch();
@@ -136,6 +134,7 @@ namespace WooCommerceAccess.Services
 					productsUpdateRequest.Add( new WApiV3.Product() { id = product.Id, sku = skuQuantity.Key, stock_quantity = skuQuantity.Value } );
 			}
 
+			//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
 			var result = await this._wcObjectApiV3.Product.UpdateRange( productBatch );
 			return result.update.Select( prV3 => prV3.ToSvProduct() ).ToArray();
 		}
