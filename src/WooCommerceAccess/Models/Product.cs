@@ -45,8 +45,8 @@ namespace WooCommerceAccess.Models
 				Weight = productV3.weight,
 				SalePrice = productV3.sale_price,
 				RegularPrice = productV3.regular_price,
-				Attributes = productV3.attributes.ToAttributeDictionary(),
-				HasVariations = productV3.variations.Any(),
+				Attributes = productV3.attributes?.ToAttributeDictionary(),
+				HasVariations = productV3.variations != null && productV3.variations.Any(),
 				CreatedDateUtc = productV3.date_created_gmt,
 				UpdatedDateUtc = productV3.date_modified_gmt
 			};
@@ -65,10 +65,10 @@ namespace WooCommerceAccess.Models
 				Quantity = legacyProduct.stock_quantity,
 				Categories = legacyProduct.categories?.Select( c => c.ToString() ),
 				Images = legacyProduct.images?.Select( i => i.src ),
-				Weight = legacyProduct.weight.ToDecimal(),
+				Weight = legacyProduct.weight?.ToDecimal(),
 				SalePrice = legacyProduct.sale_price,
 				RegularPrice = legacyProduct.regular_price,
-				Attributes = legacyProduct.attributes.ToAttributeDictionary(),
+				Attributes = legacyProduct.attributes?.ToAttributeDictionary(),
 				Variations = legacyProduct.variations?.Select( v => v.ToSvVariation() ),
 				HasVariations = legacyProduct.variations != null && legacyProduct.variations.Any(),
 				CreatedDateUtc = legacyProduct.created_at,

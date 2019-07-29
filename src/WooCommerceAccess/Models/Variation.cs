@@ -26,11 +26,11 @@ namespace WooCommerceAccess.Models
 				Description = "",
 				Price = legacyVariation.price,
 				Quantity = legacyVariation.stock_quantity,
-				Images = legacyVariation.image.Select( i => i.src ),
-				Weight = legacyVariation.weight.ToDecimal(),
+				Images = legacyVariation.image?.Select( i => i.src ),
+				Weight = legacyVariation.weight?.ToDecimal(),
 				SalePrice = legacyVariation.sale_price,
 				RegularPrice = legacyVariation.regular_price,
-				Attributes = legacyVariation.attributes.ToAttributeDictionary()
+				Attributes = legacyVariation.attributes?.ToAttributeDictionary()
 			};
 		}
 
@@ -52,7 +52,7 @@ namespace WooCommerceAccess.Models
 				Weight = variationV3.weight,
 				SalePrice = variationV3.sale_price,
 				RegularPrice = variationV3.regular_price,
-				Attributes = variationV3.attributes.ToDictionary( a => a.name, a => a.option )
+				Attributes = variationV3.attributes?.ToDictionary( a => a.name, a => a.option )
 			};
 		}
 	}

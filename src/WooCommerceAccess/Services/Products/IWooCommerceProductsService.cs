@@ -35,6 +35,5 @@ namespace WooCommerceAccess.Services.Products
 		/// <param name="productsStartUtc"></param>
 		/// <returns></returns>
 		Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated );
-
 	}
 }
