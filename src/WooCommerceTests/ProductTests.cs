@@ -80,5 +80,16 @@ namespace WooCommerceTests
 			var updatedTestSku2 = updatedProducts.FirstOrDefault( pr => pr.Sku.Equals( testSku2 ) );
 			updatedTestSku2.Quantity.Should().Be( request[ testSku2 ] );
 		}
+
+		[ Test ]
+		public async Task GetProductsUsingByPagination()
+		{
+			base.Config.ProductsPageSize = 2;
+
+			var products = await this.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true );
+			products.Count().Should().BeGreaterOrEqualTo( 2 );
+
+			base.Config.ProductsPageSize = 10;
+		}
 	}
 }
