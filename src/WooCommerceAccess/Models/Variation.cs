@@ -18,6 +18,7 @@ namespace WooCommerceAccess.Models
 		public Dictionary< string, string > Attributes { get; set; }
 		public DateTime? UpdatedDateUtc { get; set; }
 		public DateTime? CreatedDateUtc { get; set; }
+		public bool? ManagingStock { get; set; }
 	}
 
 	public static class VariationExtensions
@@ -37,7 +38,8 @@ namespace WooCommerceAccess.Models
 				RegularPrice = legacyVariation.regular_price,
 				Attributes = legacyVariation.attributes?.ToAttributeDictionary(),
 				UpdatedDateUtc = legacyVariation.updated_at,
-				CreatedDateUtc = legacyVariation.created_at
+				CreatedDateUtc = legacyVariation.created_at,
+				ManagingStock = legacyVariation.managing_stock
 			};
 		}
 
@@ -62,7 +64,8 @@ namespace WooCommerceAccess.Models
 				RegularPrice = variationV3.regular_price,
 				Attributes = variationV3.attributes?.ToDictionary( a => a.name, a => a.option ),
 				UpdatedDateUtc = variationV3.date_modified_gmt,
-				CreatedDateUtc = variationV3.date_created_gmt
+				CreatedDateUtc = variationV3.date_created_gmt,
+				ManagingStock = (bool?) variationV3.manage_stock
 			};
 		}
 	}

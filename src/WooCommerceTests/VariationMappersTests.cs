@@ -52,7 +52,8 @@ namespace WooCommerceTests
 					}
 				},
 				updated_at = new DateTime( 2099, 3, 3 ),
-				created_at = new DateTime( 2099, 3, 4 )
+				created_at = new DateTime( 2099, 3, 4 ),
+				managing_stock = true
 			};
 
 			var svVariation = variation.ToSvVariation();
@@ -69,6 +70,7 @@ namespace WooCommerceTests
 			Assert.AreEqual( variation.attributes[0].options.First(), svVariation.Attributes.First().Value );
 			Assert.AreEqual( variation.updated_at, svVariation.UpdatedDateUtc );
 			Assert.AreEqual( variation.created_at, svVariation.CreatedDateUtc );
+			Assert.AreEqual( variation.managing_stock, svVariation.ManagingStock );
 		}
 
 		[ Test ]
@@ -96,7 +98,8 @@ namespace WooCommerceTests
 					}
 				},
 				date_modified_gmt = new DateTime( 2099, 3, 3 ),
-				date_created_gmt = new DateTime( 2099, 3, 4 )
+				date_created_gmt = new DateTime( 2099, 3, 4 ),
+				manage_stock = false
 			};
 
 			var svVariation = variation.ToSvVariation();
@@ -114,6 +117,7 @@ namespace WooCommerceTests
 			Assert.AreEqual( variation.attributes[0].option, svVariation.Attributes.First().Value );
 			Assert.AreEqual( variation.date_modified_gmt, svVariation.UpdatedDateUtc );
 			Assert.AreEqual( variation.date_created_gmt, svVariation.CreatedDateUtc );
+			Assert.AreEqual( variation.manage_stock, svVariation.ManagingStock );
 		}
 	}
 }

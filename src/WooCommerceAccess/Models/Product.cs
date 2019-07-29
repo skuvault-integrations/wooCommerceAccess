@@ -25,6 +25,7 @@ namespace WooCommerceAccess.Models
 		public bool HasVariations { get; set; }
 		public DateTime? CreatedDateUtc { get; set; }
 		public DateTime? UpdatedDateUtc { get; set; }
+		public bool? ManagingStock { get; set; }
 	}
 
 	public static class ProductExtensions
@@ -48,7 +49,8 @@ namespace WooCommerceAccess.Models
 				Attributes = productV3.attributes?.ToAttributeDictionary(),
 				HasVariations = productV3.variations != null && productV3.variations.Any(),
 				CreatedDateUtc = productV3.date_created_gmt,
-				UpdatedDateUtc = productV3.date_modified_gmt
+				UpdatedDateUtc = productV3.date_modified_gmt,
+				ManagingStock = productV3.manage_stock
 			};
 		}
 
@@ -72,7 +74,8 @@ namespace WooCommerceAccess.Models
 				Variations = legacyProduct.variations?.Select( v => v.ToSvVariation() ),
 				HasVariations = legacyProduct.variations != null && legacyProduct.variations.Any(),
 				CreatedDateUtc = legacyProduct.created_at,
-				UpdatedDateUtc = legacyProduct.updated_at
+				UpdatedDateUtc = legacyProduct.updated_at,
+				ManagingStock = legacyProduct.managing_stock
 			};
 		}
 
