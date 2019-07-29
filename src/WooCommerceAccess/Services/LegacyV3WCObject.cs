@@ -69,7 +69,7 @@ namespace WooCommerceAccess.Services
 
 			for( var page = 1; ; page++ )
 			{
-				var pageFilter = EndpointsBuilder.CreateGetPageFilter( new WooCommerceCommandConfig( page ) );
+				var pageFilter = EndpointsBuilder.CreateLegacyApiV3GetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
 				var combinedFilters = productFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value);
 				var productsWithinPage = ( await this._legacyApiWCObject.GetProducts( combinedFilters ).ConfigureAwait( false ) ).
 					Select( p => p.ToSvProduct() ).ToList();
