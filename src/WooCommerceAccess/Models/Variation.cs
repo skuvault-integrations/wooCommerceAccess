@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace WooCommerceAccess.Models
 {
 	public class WooCommerceVariation
 	{
+		public int? Id { get; set; }
 		public string Sku { get; set; }
 		public string Description { get; set; }
 		public decimal? Price { get; set; }
@@ -14,6 +16,8 @@ namespace WooCommerceAccess.Models
 		public decimal? SalePrice { get; set; }
 		public decimal? RegularPrice { get; set; }
 		public Dictionary< string, string > Attributes { get; set; }
+		public DateTime? UpdatedDateUtc { get; set; }
+		public DateTime? CreatedDateUtc { get; set; }
 	}
 
 	public static class VariationExtensions
@@ -22,6 +26,7 @@ namespace WooCommerceAccess.Models
 		{
 			return new WooCommerceVariation
 			{
+				Id = legacyVariation.id,
 				Sku = legacyVariation.sku,
 				Description = "",
 				Price = legacyVariation.price,
@@ -30,7 +35,9 @@ namespace WooCommerceAccess.Models
 				Weight = legacyVariation.weight?.ToDecimal(),
 				SalePrice = legacyVariation.sale_price,
 				RegularPrice = legacyVariation.regular_price,
-				Attributes = legacyVariation.attributes?.ToAttributeDictionary()
+				Attributes = legacyVariation.attributes?.ToAttributeDictionary(),
+				UpdatedDateUtc = legacyVariation.updated_at,
+				CreatedDateUtc = legacyVariation.created_at
 			};
 		}
 
@@ -44,6 +51,7 @@ namespace WooCommerceAccess.Models
 
 			return new WooCommerceVariation
 			{
+				Id = variationV3.id,
 				Sku = variationV3.sku,
 				Description = "",
 				Price = variationV3.price,
@@ -52,7 +60,9 @@ namespace WooCommerceAccess.Models
 				Weight = variationV3.weight,
 				SalePrice = variationV3.sale_price,
 				RegularPrice = variationV3.regular_price,
-				Attributes = variationV3.attributes?.ToDictionary( a => a.name, a => a.option )
+				Attributes = variationV3.attributes?.ToDictionary( a => a.name, a => a.option ),
+				UpdatedDateUtc = variationV3.date_modified_gmt,
+				CreatedDateUtc = variationV3.date_created_gmt
 			};
 		}
 	}
