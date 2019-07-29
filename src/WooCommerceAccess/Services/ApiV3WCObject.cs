@@ -50,7 +50,7 @@ namespace WooCommerceAccess.Services
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
 		{
 			const string updatedAfter = "after";
 			var productFilters = new Dictionary< string, string >
@@ -120,7 +120,7 @@ namespace WooCommerceAccess.Services
 			return updatedProduct.ToSvProduct();
 		}
 
-		public async Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
+		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var productBatch = new WApiV3.ProductBatch();
 			var productsUpdateRequest = new List< WApiV3.Product >();

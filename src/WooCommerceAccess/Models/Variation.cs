@@ -9,7 +9,7 @@ namespace WooCommerceAccess.Models
 		public string Description { get; set; }
 		public decimal? Price { get; set; }
 		public int? Quantity { get; set; }
-		public IEnumerable<string> Images { get; set; }
+		public IEnumerable< string > Images { get; set; }
 		public decimal? Weight { get; set; }
 		public decimal? SalePrice { get; set; }
 		public decimal? RegularPrice { get; set; }

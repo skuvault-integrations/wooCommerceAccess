@@ -49,7 +49,7 @@ namespace WooCommerceAccess.Services
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
 		{
 			var dateFilter = includeUpdated ? "filter[updated_at_min]" : "filter[created_at_min]";
 
@@ -61,7 +61,7 @@ namespace WooCommerceAccess.Services
 			return await CollectProductsFromAllPagesAsync( productFilters, pageSize );
 		}
 
-		private async Task< IEnumerable < WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )
+		private async Task< IEnumerable< WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )
 		{
 			var products = new List< WooCommerceProduct >();
 
