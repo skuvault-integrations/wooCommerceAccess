@@ -37,21 +37,21 @@ namespace WooCommerceAccess.Services
 					 .ToArray();
 		}
 
-		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku )
+		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize )
 		{
 			var productFilters = new Dictionary< string, string >
 			{
 				{ "filter[sku]", sku }
 			};
 
-			var products = await CollectProductsFromAllPagesAsync( productFilters );
+			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
 
 			return products.
 				// WooCommerce API returns any sku that contains requested sku
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated )
+		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
 		{
 			var dateFilter = includeUpdated ? "filter[updated_at_min]" : "filter[created_at_min]";
 
@@ -60,10 +60,10 @@ namespace WooCommerceAccess.Services
 				{ dateFilter, productsStartUtc.ToString( "o" ) },
 			};
 
-			return await CollectProductsFromAllPagesAsync( productFilters );
+			return await CollectProductsFromAllPagesAsync( productFilters, pageSize );
 		}
 
-		private async Task< IEnumerable < WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters )
+		private async Task< IEnumerable < WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )
 		{
 			var products = new List< WooCommerceProduct >();
 
@@ -89,17 +89,17 @@ namespace WooCommerceAccess.Services
 			return updateProductRequest.ToSvProduct();
 		}
 
-		//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
-		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var result = new List< WooCommerceProduct >();
 
 			foreach( var skuQuantity in skusQuantities )
 			{
-				var product = await this.GetProductBySkuAsync( skuQuantity.Key ).ConfigureAwait( false );
+				var product = await this.GetProductBySkuAsync( skuQuantity.Key, pageSize ).ConfigureAwait( false );
 
 				if ( product != null )
 				{
+					//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
 					var updatedProduct = await this.UpdateProductQuantityAsync( product.Id.Value, skuQuantity.Value ).ConfigureAwait( false );
 					updatedProduct.Sku = skuQuantity.Key;
 					result.Add( updatedProduct );

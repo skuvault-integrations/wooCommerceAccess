@@ -21,7 +21,7 @@ namespace WooCommerceAccess.Services.Products
 		{
 			return base.SendRequestAsync< IEnumerable< WooCommerceProduct > >( this._serviceUrl, () =>
 			{
-				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities );
+				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities, base.Config.ProductsPageSize );
 			} );
 		}
 
@@ -42,13 +42,13 @@ namespace WooCommerceAccess.Services.Products
 		{
 			return base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, () =>
 			{
-				return base.WCObject.GetProductBySkuAsync( sku );
+				return base.WCObject.GetProductBySkuAsync( sku, base.Config.ProductsPageSize );
 			});
 		}
 
 		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated )
 		{
-			return await SendRequestAsync( _serviceUrl, () => WCObject.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated ) );
+			return await SendRequestAsync( _serviceUrl, () => WCObject.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, base.Config.ProductsPageSize ) );
 		}
 	}
 }

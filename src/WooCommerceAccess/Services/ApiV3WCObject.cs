@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Netco.Extensions;
+using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceNET;
@@ -40,7 +41,7 @@ namespace WooCommerceAccess.Services
 			return orders.Select( order => order.ToSvOrder() ).ToArray();
 		}
 
-		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku )
+		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize )
 		{
 			var productFilters = new Dictionary< string, string >
 			{
@@ -53,7 +54,7 @@ namespace WooCommerceAccess.Services
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated )
+		public async Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
 		{
 			const string updatedAfter = "after";
 			var productFilters = new Dictionary< string, string >
@@ -124,7 +125,7 @@ namespace WooCommerceAccess.Services
 		}
 
 		//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
-		public async Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public async Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var productBatch = new WApiV3.ProductBatch();
 			var productsUpdateRequest = new List< WApiV3.Product >();
@@ -132,7 +133,7 @@ namespace WooCommerceAccess.Services
 
 			foreach( var skuQuantity in skusQuantities )
 			{
-				var product = await this.GetProductBySkuAsync( skuQuantity.Key ).ConfigureAwait( false );
+				var product = await this.GetProductBySkuAsync( skuQuantity.Key, pageSize ).ConfigureAwait( false );
 
 				if ( product != null )
 					productsUpdateRequest.Add( new WApiV3.Product() { id = product.Id, sku = skuQuantity.Key, stock_quantity = skuQuantity.Value } );

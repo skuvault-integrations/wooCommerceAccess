@@ -10,10 +10,10 @@ namespace WooCommerceAccess.Services
 		string ProductApiUrl { get; }
 		string OrdersApiUrl { get; }
 
-		Task< WooCommerceProduct > GetProductBySkuAsync( string sku );
+		Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize );
 		Task< WooCommerceProduct > UpdateProductQuantityAsync( int productId, int quantity );
-		Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync ( Dictionary< string, int > skusQuantities );
+		Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync ( Dictionary< string, int > skusQuantities, int pageSize );
 		Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc );
-		Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated );
+		Task< IEnumerable < WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize );
 	}
 }
