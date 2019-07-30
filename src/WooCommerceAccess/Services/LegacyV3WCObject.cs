@@ -26,22 +26,31 @@ namespace WooCommerceAccess.Services
 
 		public string OrdersApiUrl => this._apiUrl + "orders";
 
-		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
+		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
+		{
+			var ordersFilters = new Dictionary< string, string >
+			{
+				{ "filter[updated_at_min]", startDateUtc.ToString( "o" ) },
+				{ "filter[updated_at_max]", endDateUtc.ToString( "o" ) }
+			};
+			
+			return CollectOrdersFromAllPagesAsync( ordersFilters, pageSize );
+		}
+
+		private async Task< IEnumerable< WooCommerceOrder > > CollectOrdersFromAllPagesAsync( Dictionary< string, string > ordersFilters, int pageSize )
 		{
 			var orders = new List< WooCommerceOrder >();
 
 			for (var page = 1; ; page++ )
 			{
 				var pageFilter = EndpointsBuilder.CreateLegacyApiV3GetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
-				var ordersWithinPage = await this._legacyApiWCObject.GetOrders( pageFilter ).ConfigureAwait( false );
+				var combinedFilters = ordersFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value );
+				var ordersWithinPage = await this._legacyApiWCObject.GetOrders( combinedFilters ).ConfigureAwait( false );
 
 				if ( !ordersWithinPage.Any() )
 					break;
 
-				orders.AddRange( ordersWithinPage
-								.Where( order => order.updated_at >= startDateUtc && order.updated_at <= endDateUtc )
-								.Select( order => order.ToSvOrder() )
-								.ToList() );
+				orders.AddRange( ordersWithinPage.Select( order => order.ToSvOrder() ).ToList() );
 			}
 			
 			return orders;

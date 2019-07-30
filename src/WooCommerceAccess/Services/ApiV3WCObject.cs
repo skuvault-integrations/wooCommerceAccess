@@ -24,7 +24,7 @@ namespace WooCommerceAccess.Services
 
 		public string OrdersApiUrl => this._wcObjectApiV3.Order.API.Url + this._wcObjectApiV3.Order.APIEndpoint;
 
-		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
+		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
 		{
 			var ordersFilters = new Dictionary< string, string >
 			{
@@ -32,6 +32,11 @@ namespace WooCommerceAccess.Services
 				{ "before", endDateUtc.ToString( "o" ) }
 			};
 
+			return CollectOrdersFromAllPagesAsync( ordersFilters, pageSize );
+		}
+
+		private async Task< IEnumerable< WooCommerceOrder > > CollectOrdersFromAllPagesAsync( Dictionary< string, string > ordersFilters, int pageSize )
+		{
 			var orders = new List< WooCommerceOrder >();
 
 			for (var page = 1; ; page++ )
