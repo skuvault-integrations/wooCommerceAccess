@@ -1,4 +1,4 @@
-﻿using CuttingEdge.Conditions;
+using CuttingEdge.Conditions;
 
 namespace WooCommerceAccess.Models.Configuration
 {

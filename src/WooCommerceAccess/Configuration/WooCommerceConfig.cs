@@ -1,4 +1,4 @@
-﻿using CuttingEdge.Conditions;
+using CuttingEdge.Conditions;
 
 namespace WooCommerceAccess.Configuration
 {
@@ -32,6 +32,11 @@ namespace WooCommerceAccess.Configuration
 		///	Default page size for products
 		/// </summary>
 		public int ProductsPageSize = 10;
+
+    /// <summary>
+		///	Default page size for orders
+		/// </summary>
+		public int OrdersPageSize = 10;
 
 		public WooCommerceConfig( string shopUrl, string consumerKey, string consumerSecret )
 		{

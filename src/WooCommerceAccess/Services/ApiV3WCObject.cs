@@ -24,17 +24,35 @@ namespace WooCommerceAccess.Services
 
 		public string OrdersApiUrl => this._wcObjectApiV3.Order.API.Url + this._wcObjectApiV3.Order.APIEndpoint;
 
-		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
+		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
 		{
-			var requestParameters = new Dictionary< string, string >
+			var ordersFilters = new Dictionary< string, string >
 			{
 				{ "after", startDateUtc.ToString( "o" ) },
 				{ "before", endDateUtc.ToString( "o" ) }
 			};
 
-			var orders = await this._wcObjectApiV3.Order.GetAll( requestParameters ).ConfigureAwait( false );
+			return CollectOrdersFromAllPagesAsync( ordersFilters, pageSize );
+		}
 
-			return orders.Select( order => order.ToSvOrder() ).ToArray();
+		private async Task< IEnumerable< WooCommerceOrder > > CollectOrdersFromAllPagesAsync( Dictionary< string, string > ordersFilters, int pageSize )
+		{
+			var orders = new List< WooCommerceOrder >();
+
+			for (var page = 1; ; page++ )
+			{
+				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
+				var combinedFilters = ordersFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value );
+				var ordersWithinPage = ( await this._wcObjectApiV3.Order.GetAll( combinedFilters ).ConfigureAwait( false ) )
+									.Select ( o => o.ToSvOrder() ).ToList();
+
+				if ( !ordersWithinPage.Any() )
+					break;
+
+				orders.AddRange( ordersWithinPage );
+			}
+			
+			return orders;
 		}
 
 		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize )

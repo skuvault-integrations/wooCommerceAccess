@@ -1,4 +1,4 @@
-﻿namespace WooCommerceAccess.Configuration
+namespace WooCommerceAccess.Configuration
 {
 	public class WooCommerceCommandEndpointName
 	{

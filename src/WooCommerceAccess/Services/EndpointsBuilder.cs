@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models.Configuration;
 
