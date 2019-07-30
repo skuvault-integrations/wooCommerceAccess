@@ -21,7 +21,7 @@ namespace WooCommerceAccess.Services.Orders
 		{
 			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._serviceUrl, () =>
 			{
-				return base.WCObject.GetOrdersAsync( startDateUtc, endDateUtc );
+				return base.WCObject.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize );
 			} );
 		}
 	}

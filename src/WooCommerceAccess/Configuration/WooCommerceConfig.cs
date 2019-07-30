@@ -28,6 +28,10 @@ namespace WooCommerceAccess.Configuration
 		/// </summary>
 		public readonly int ThrottlingRestorePeriodInSeconds = 1;
 
+		/// <summary>
+		///	Default page size for orders
+		/// </summary>
+		public int OrdersPageSize = 10;
 		public WooCommerceConfig( string shopUrl, string consumerKey, string consumerSecret )
 		{
 			Condition.Requires( shopUrl, "shopUrl" ).IsNotNullOrWhiteSpace();

@@ -19,5 +19,17 @@ namespace WooCommerceTests
 			orders.Should().NotBeNullOrEmpty();
 			orders.Count().Should().BeGreaterOrEqualTo( 1 );
 		}
+
+		[ Test ]
+		public async Task GetOrderUsingByPagination()
+		{
+			base.Config.OrdersPageSize = 1;
+
+			var orders = await this.OrdersService.GetOrdersAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow );
+			orders.Should().NotBeNullOrEmpty();
+			orders.Count().Should().BeGreaterOrEqualTo( 3 );
+
+			base.Config.OrdersPageSize = 10;
+		}
 	}
 }
