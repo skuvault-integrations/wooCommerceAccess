@@ -1,4 +1,4 @@
-﻿using CuttingEdge.Conditions;
+using CuttingEdge.Conditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,17 +56,49 @@ namespace WooCommerceAccess.Services
 			return orders;
 		}
 
-		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku )
+		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize )
 		{
-			var requestParameters = new Dictionary< string, string >
+			var productFilters = new Dictionary< string, string >
 			{
-				{ "sku", sku }
+				{ "filter[sku]", sku }
 			};
 
-			var products = await this._legacyApiWCObject.GetProducts( requestParameters ).ConfigureAwait( false );
-			return products.Select( legacyProduct => legacyProduct.ToSvProduct() )
-						// WooCommerce API returns any sku that contains requested sku
-						.FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
+			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
+
+			return products.
+				// WooCommerce API returns any sku that contains requested sku
+				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
+		}
+
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
+		{
+			var dateFilter = includeUpdated ? "filter[updated_at_min]" : "filter[created_at_min]";
+
+			var productFilters = new Dictionary< string, string >
+			{
+				{ dateFilter, productsStartUtc.ToString( "o" ) },
+			};
+
+			return await CollectProductsFromAllPagesAsync( productFilters, pageSize );
+		}
+
+		private async Task< IEnumerable< WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )
+		{
+			var products = new List< WooCommerceProduct >();
+
+			for( var page = 1; ; page++ )
+			{
+				var pageFilter = EndpointsBuilder.CreateLegacyApiV3GetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
+				var combinedFilters = productFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value);
+				var productsWithinPage = ( await this._legacyApiWCObject.GetProducts( combinedFilters ).ConfigureAwait( false ) ).
+					Select( p => p.ToSvProduct() ).ToList();
+				if( !productsWithinPage.Any() )
+					break;
+
+				products.AddRange( productsWithinPage );
+			}
+
+			return products;
 		}
 
 		public async Task< WooCommerceProduct > UpdateProductQuantityAsync( int productId, int quantity )
@@ -76,13 +108,13 @@ namespace WooCommerceAccess.Services
 			return updateProductRequest.ToSvProduct();
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var result = new List< WooCommerceProduct >();
 
 			foreach( var skuQuantity in skusQuantities )
 			{
-				var product = await this.GetProductBySkuAsync( skuQuantity.Key ).ConfigureAwait( false );
+				var product = await this.GetProductBySkuAsync( skuQuantity.Key, pageSize ).ConfigureAwait( false );
 
 				if ( product != null )
 				{

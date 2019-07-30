@@ -55,17 +55,81 @@ namespace WooCommerceAccess.Services
 			return orders;
 		}
 
-		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku )
+		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize )
 		{
-			var requestParameters = new Dictionary< string, string >
+			var productFilters = new Dictionary< string, string >
 			{
 				{ "sku", sku }
 			};
 
-			var products = await this._wcObjectApiV3.Product.GetAll( requestParameters ).ConfigureAwait( false );
-			return products.Select( prV3 => prV3.ToSvProduct() )
-						// WooCommerce API returns any sku that contains requested sku
-						.FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
+			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
+			return products.
+				// WooCommerce API returns any sku that contains requested sku
+				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
+		}
+
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
+		{
+			const string updatedAfter = "after";
+			var productFilters = new Dictionary< string, string >
+			{
+				{ updatedAfter, productsStartUtc.ToString( "o" ) }
+			};
+
+			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
+
+			if ( !includeUpdated )
+			{
+				products = products.Where( p => p.CreatedDateUtc >= productsStartUtc ).ToList();
+			}
+
+			return products;
+		}
+		
+		private async Task< List< WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )
+		{
+			var products = new List< WooCommerceProduct >();
+
+			for( var page = 1; ; page++ )
+			{
+				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
+				var combinedFilters = productFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value);
+				var productsWithinPage = ( await this._wcObjectApiV3.Product.GetAll( combinedFilters ).ConfigureAwait( false ) ).
+					Select( p => p.ToSvProduct() ).ToList();
+				if( !productsWithinPage.Any() )
+					break;
+
+				foreach( var productWithinPage in productsWithinPage )
+				{
+					if( productWithinPage.HasVariations && productWithinPage.Id.HasValue ) 
+					{ 
+						productWithinPage.Variations = await CollectProductVariationsFromAllPagesAsync( productWithinPage.Id.Value, pageSize );
+					}
+				}
+
+				products.AddRange( productsWithinPage );
+			}
+
+			return products;
+		}
+
+		public async Task< IEnumerable< WooCommerceVariation > > CollectProductVariationsFromAllPagesAsync( int productId, int pageSize )
+		{
+			var variations = new List< WooCommerceVariation >();
+
+			for( var page = 1; ; page++ )
+			{
+				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
+				var variationsWithinPage = ( await this._wcObjectApiV3.Product.Variations.GetAll( productId, pageFilter ).ConfigureAwait( false ) ).
+					Select( v => v.ToSvVariation() ).ToList();
+
+				if( !variationsWithinPage.Any() )
+					break;
+
+				variations.AddRange( variationsWithinPage );
+			}
+
+			return variations;
 		}
 
 		public async Task< WooCommerceProduct > UpdateProductQuantityAsync(int productId, int quantity)
@@ -74,7 +138,7 @@ namespace WooCommerceAccess.Services
 			return updatedProduct.ToSvProduct();
 		}
 
-		public async Task< IEnumerable < WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var productBatch = new WApiV3.ProductBatch();
 			var productsUpdateRequest = new List< WApiV3.Product >();
@@ -82,12 +146,13 @@ namespace WooCommerceAccess.Services
 
 			foreach( var skuQuantity in skusQuantities )
 			{
-				var product = await this.GetProductBySkuAsync( skuQuantity.Key ).ConfigureAwait( false );
+				var product = await this.GetProductBySkuAsync( skuQuantity.Key, pageSize ).ConfigureAwait( false );
 
 				if ( product != null )
 					productsUpdateRequest.Add( new WApiV3.Product() { id = product.Id, sku = skuQuantity.Key, stock_quantity = skuQuantity.Value } );
 			}
 
+			//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
 			var result = await this._wcObjectApiV3.Product.UpdateRange( productBatch );
 			return result.update.Select( prV3 => prV3.ToSvProduct() ).ToArray();
 		}

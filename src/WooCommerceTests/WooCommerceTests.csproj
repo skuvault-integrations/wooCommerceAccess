@@ -62,13 +62,19 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WooCommerce.NET, Version=0.7.7.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WooCommerceNET.SV.0.7.7.6-rc1\lib\net461\WooCommerce.NET.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthTests.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="ApiDetectorTests.cs" />
     <Compile Include="OrderTests.cs" />
+    <Compile Include="ProductMapperTests.cs" />
     <Compile Include="ProductTests.cs" />
+    <Compile Include="VariationMappersTests.cs" />
+    <Compile Include="VariationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
