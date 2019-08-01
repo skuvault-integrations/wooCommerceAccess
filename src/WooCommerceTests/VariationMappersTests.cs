@@ -99,7 +99,8 @@ namespace WooCommerceTests
 				},
 				date_modified_gmt = new DateTime( 2099, 3, 3 ),
 				date_created_gmt = new DateTime( 2099, 3, 4 ),
-				manage_stock = false
+				manage_stock = false,
+				description = "old macdonald had a dragon"
 			};
 
 			var svVariation = variation.ToSvVariation();
@@ -118,6 +119,7 @@ namespace WooCommerceTests
 			Assert.AreEqual( variation.date_modified_gmt, svVariation.UpdatedDateUtc );
 			Assert.AreEqual( variation.date_created_gmt, svVariation.CreatedDateUtc );
 			Assert.AreEqual( variation.manage_stock, svVariation.ManagingStock );
+			Assert.AreEqual( variation.description, svVariation.Description );
 		}
 	}
 }

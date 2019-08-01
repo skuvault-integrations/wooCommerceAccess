@@ -55,7 +55,7 @@ namespace WooCommerceAccess.Models
 			{
 				Id = variationV3.id,
 				Sku = variationV3.sku,
-				Description = "",
+				Description = variationV3.description,
 				Price = variationV3.price,
 				Quantity = variationV3.stock_quantity,
 				Images = images,
