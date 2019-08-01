@@ -60,7 +60,7 @@ namespace WooCommerceAccess.Models
 			{
 				Id = legacyProduct.id,
 				Sku = legacyProduct.sku,
-				Name = legacyProduct.name,
+				Name = legacyProduct.title,
 				Description = legacyProduct.description,
 				ShortDescription = legacyProduct.short_description,
 				Price = legacyProduct.price,
