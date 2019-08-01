@@ -23,7 +23,7 @@ namespace WooCommerceTests
 			var product = base.ProductsService.GetProductBySkuAsync( testSku ).Result;
 
 			product.Should().NotBeNull();
-			product.Sku.Should().Be( testSku );
+			product.Sku.ToLower().Should().Be( testSku );
 		}
 
 		[ Test ]
