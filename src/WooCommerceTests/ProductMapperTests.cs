@@ -106,7 +106,7 @@ namespace WooCommerceTests
 			{
 				id = 1,
 				sku = "testsku",
-				name = "asdf",
+				title = "asdf",
 				description = "alsdfkj",
 				short_description = "flaskdfjsdlakfj",
 				price = 12.30M,
@@ -169,7 +169,7 @@ namespace WooCommerceTests
 
 			Assert.AreEqual( legacyProduct.id, svProduct.Id );
 			Assert.AreEqual( legacyProduct.sku, svProduct.Sku );
-			Assert.AreEqual( legacyProduct.name, svProduct.Name );
+			Assert.AreEqual( legacyProduct.title, svProduct.Name );
 			Assert.AreEqual( legacyProduct.description, svProduct.Description );
 			Assert.AreEqual( legacyProduct.short_description, svProduct.ShortDescription );
 			Assert.AreEqual( legacyProduct.price, svProduct.Price );

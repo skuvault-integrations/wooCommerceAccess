@@ -13,6 +13,7 @@ namespace WooCommerceAccess.Services
 	public sealed class ApiV3WCObject : IWCObject
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
+		private const int UpdatedProductsSearchWindowDays = 90;
 
 		public ApiV3WCObject( RestAPI restApi )
 		{
@@ -70,17 +71,18 @@ namespace WooCommerceAccess.Services
 
 		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
 		{
-			const string updatedAfter = "after";
+			var createdAfterDate = includeUpdated ? DateTime.UtcNow.AddDays( -UpdatedProductsSearchWindowDays ) : productsStartUtc;
+			const string createdAfter = "after";
 			var productFilters = new Dictionary< string, string >
 			{
-				{ updatedAfter, productsStartUtc.ToString( "o" ) }
+				{ createdAfter, createdAfterDate.ToString( "o" ) }
 			};
 
 			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
 
-			if ( !includeUpdated )
+			if ( includeUpdated )
 			{
-				products = products.Where( p => p.CreatedDateUtc >= productsStartUtc ).ToList();
+				products = products.Where( p => p.UpdatedDateUtc >= productsStartUtc ).ToList();
 			}
 
 			return products;
@@ -104,6 +106,10 @@ namespace WooCommerceAccess.Services
 					if( productWithinPage.HasVariations && productWithinPage.Id.HasValue ) 
 					{ 
 						productWithinPage.Variations = await CollectProductVariationsFromAllPagesAsync( productWithinPage.Id.Value, pageSize );
+					}
+					else
+					{
+						productWithinPage.Variations = new List<WooCommerceVariation>();
 					}
 				}
 
