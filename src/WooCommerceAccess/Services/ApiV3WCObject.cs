@@ -13,12 +13,14 @@ namespace WooCommerceAccess.Services
 	public sealed class ApiV3WCObject : IWCObject
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
+		private readonly IWCObject _fallbackAPI;
 		private const int UpdatedProductsSearchWindowDays = 90;
 
-		public ApiV3WCObject( RestAPI restApi )
+		public ApiV3WCObject( RestAPI restApi, IWCObject fallbackApi = null )
 		{
 			Condition.Requires( restApi, "restApi" ).IsNotNull();
 			this._wcObjectApiV3 = new WApiV3.WCObject( restApi );
+			this._fallbackAPI = fallbackApi;
 		}
 
 		public string ProductApiUrl => this._wcObjectApiV3.Product.API.Url + this._wcObjectApiV3.Product.APIEndpoint;
@@ -27,13 +29,20 @@ namespace WooCommerceAccess.Services
 
 		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
 		{
-			var ordersFilters = new Dictionary< string, string >
+			if ( this._fallbackAPI != null )
 			{
-				{ "after", startDateUtc.ToString( "o" ) },
-				{ "before", endDateUtc.ToString( "o" ) }
-			};
+				return this._fallbackAPI.GetOrdersAsync( startDateUtc, endDateUtc, pageSize );
+			}
+			else
+			{
+				var ordersFilters = new Dictionary< string, string >
+				{
+					{ "after", startDateUtc.ToString( "o" ) },
+					{ "before", endDateUtc.ToString( "o" ) }
+				};
 
-			return CollectOrdersFromAllPagesAsync( ordersFilters, pageSize );
+				return CollectOrdersFromAllPagesAsync( ordersFilters, pageSize );
+			}
 		}
 
 		private async Task< IEnumerable< WooCommerceOrder > > CollectOrdersFromAllPagesAsync( Dictionary< string, string > ordersFilters, int pageSize )
@@ -71,21 +80,28 @@ namespace WooCommerceAccess.Services
 
 		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize )
 		{
-			var createdAfterDate = includeUpdated ? DateTime.UtcNow.AddDays( -UpdatedProductsSearchWindowDays ) : productsStartUtc;
-			const string createdAfter = "after";
-			var productFilters = new Dictionary< string, string >
+			if ( _fallbackAPI != null )
 			{
-				{ createdAfter, createdAfterDate.ToString( "o" ) }
-			};
-
-			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
-
-			if ( includeUpdated )
-			{
-				products = products.Where( p => p.UpdatedDateUtc >= productsStartUtc ).ToList();
+				return await _fallbackAPI.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, pageSize ).ConfigureAwait( true );
 			}
+			else
+			{
+				var createdAfterDate = includeUpdated ? DateTime.UtcNow.AddDays( -UpdatedProductsSearchWindowDays ) : productsStartUtc;
+				const string createdAfter = "after";
+				var productFilters = new Dictionary< string, string >
+				{
+					{ createdAfter, createdAfterDate.ToString( "o" ) }
+				};
 
-			return products;
+				var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
+
+				if ( includeUpdated )
+				{
+					products = products.Where( p => p.UpdatedDateUtc >= productsStartUtc ).ToList();
+				}
+
+				return products;
+			}
 		}
 		
 		private async Task< List< WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )
