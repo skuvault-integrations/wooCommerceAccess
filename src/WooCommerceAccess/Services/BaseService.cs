@@ -41,13 +41,14 @@ namespace WooCommerceAccess.Services
 			var apiVersion = new WooCommerceApiVersionDetector( this.Config.ShopUrl, this.Config.RetryAttempts ).DetectApiVersion().Result;
 			
 			if ( apiVersion == WooCommerceApiVersion.Unknown )
-				throw new WooCommerceException("Unsupported WordPress and WooCommerce version!");
+				throw new WooCommerceException( "Unsupported WordPress and WooCommerce version!" );
 			
 			var legacyApiWcObject =  new LegacyV3WCObject( new RestAPI( this.Config.ShopUrl + "wc-api/v3", this.Config.ConsumerKey, this.Config.ConsumerSecret ) );
-			this.WCObject = legacyApiWcObject;
 				
 			if ( apiVersion == WooCommerceApiVersion.V3 )
 				this.WCObject = new ApiV3WCObject( new RestAPI( this.Config.ShopUrl + "wp-json/wc/v3/", this.Config.ConsumerKey, this.Config.ConsumerSecret ), legacyApiWcObject );
+			else
+				this.WCObject = legacyApiWcObject;
 		}
 
 		protected Task< T > SendRequestAsync< T >( string url, Func< Task< T > > processor )

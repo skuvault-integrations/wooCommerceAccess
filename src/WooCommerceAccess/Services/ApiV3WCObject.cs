@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WooCommerceAccess.Exceptions;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceNET;
@@ -33,16 +34,8 @@ namespace WooCommerceAccess.Services
 			{
 				return this._fallbackAPI.GetOrdersAsync( startDateUtc, endDateUtc, pageSize );
 			}
-			else
-			{
-				var ordersFilters = new Dictionary< string, string >
-				{
-					{ "after", startDateUtc.ToString( "o" ) },
-					{ "before", endDateUtc.ToString( "o" ) }
-				};
-
-				return CollectOrdersFromAllPagesAsync( ordersFilters, pageSize );
-			}
+			
+			throw new WooCommerceException( "ApiV3 orders endpoint can't filter records by update date! Use legacy api instead!" );
 		}
 
 		private async Task< IEnumerable< WooCommerceOrder > > CollectOrdersFromAllPagesAsync( Dictionary< string, string > ordersFilters, int pageSize )
@@ -84,24 +77,8 @@ namespace WooCommerceAccess.Services
 			{
 				return await _fallbackAPI.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, pageSize ).ConfigureAwait( true );
 			}
-			else
-			{
-				var createdAfterDate = includeUpdated ? DateTime.UtcNow.AddDays( -UpdatedProductsSearchWindowDays ) : productsStartUtc;
-				const string createdAfter = "after";
-				var productFilters = new Dictionary< string, string >
-				{
-					{ createdAfter, createdAfterDate.ToString( "o" ) }
-				};
-
-				var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize );
-
-				if ( includeUpdated )
-				{
-					products = products.Where( p => p.UpdatedDateUtc >= productsStartUtc ).ToList();
-				}
-
-				return products;
-			}
+			
+			throw new WooCommerceException( "ApiV3 products endpoint can't filter records by update date! Use legacy api instead!" );
 		}
 		
 		private async Task< List< WooCommerceProduct > > CollectProductsFromAllPagesAsync( Dictionary< string, string > productFilters, int pageSize )

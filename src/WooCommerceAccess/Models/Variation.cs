@@ -25,27 +25,17 @@ namespace WooCommerceAccess.Models
 	{
 		public static WooCommerceVariation ToSvVariation( this WooCommerceNET.WooCommerce.Legacy.Variation legacyVariation )
 		{
-			decimal? price = null;
-			decimal? regularPrice = null;
-
-			try
-			{
-				price = legacyVariation.price;
-				regularPrice = legacyVariation.regular_price;
-			}
-			catch { }
-
 			return new WooCommerceVariation
 			{
 				Id = legacyVariation.id,
 				Sku = legacyVariation.sku,
 				Description = "",
-				Price = price,
+				Price = legacyVariation.price,
 				Quantity = legacyVariation.stock_quantity,
 				Images = legacyVariation.image?.Select( i => i.src ),
 				Weight = legacyVariation.weight?.ToDecimal(),
 				SalePrice = legacyVariation.sale_price,
-				RegularPrice = regularPrice,
+				RegularPrice = legacyVariation.regular_price,
 				Attributes = legacyVariation.attributes?.ToAttributeDictionary(),
 				UpdatedDateUtc = legacyVariation.updated_at,
 				CreatedDateUtc = legacyVariation.created_at,
