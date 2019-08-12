@@ -116,12 +116,11 @@ namespace WooCommerceAccess.Services
 			{
 				var product = await this.GetProductBySkuAsync( skuQuantity.Key, pageSize ).ConfigureAwait( false );
 
-				if ( product != null )
-				{
-					var updatedProduct = await this.UpdateProductQuantityAsync( product.Id.Value, skuQuantity.Value ).ConfigureAwait( false );
-					updatedProduct.Sku = skuQuantity.Key;
-					result.Add( updatedProduct );
-				}
+				if ( product?.Id == null || product.ManagingStock == null || !product.ManagingStock.Value )
+					continue;
+				var updatedProduct = await this.UpdateProductQuantityAsync( product.Id.Value, skuQuantity.Value ).ConfigureAwait( false );
+				updatedProduct.Sku = skuQuantity.Key;
+				result.Add( updatedProduct );
 			}
 
 			return result.ToArray();

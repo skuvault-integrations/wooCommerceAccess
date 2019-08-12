@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WooCommerceAccess.Exceptions;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
+using WooCommerceAccess.Shared;
 using WooCommerceNET;
 using WApiV3 = WooCommerceNET.WooCommerce.v3;
 
@@ -15,7 +16,7 @@ namespace WooCommerceAccess.Services
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
 		private readonly IWCObject _fallbackAPI;
-		private const int UpdatedProductsSearchWindowDays = 90;
+		private const int BatchSize = 100;
 
 		public ApiV3WCObject( RestAPI restApi, IWCObject fallbackApi = null )
 		{
@@ -137,23 +138,35 @@ namespace WooCommerceAccess.Services
 			return updatedProduct.ToSvProduct();
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
+		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync(
+			Dictionary< string, int > skusQuantities, int pageSize )
 		{
-			var productBatch = new WApiV3.ProductBatch();
-			var productsUpdateRequest = new List< WApiV3.Product >();
-			productBatch.update = productsUpdateRequest;
+			var productsUpdateRequests = new List< WApiV3.Product >();
 
 			foreach( var skuQuantity in skusQuantities )
 			{
 				var product = await this.GetProductBySkuAsync( skuQuantity.Key, pageSize ).ConfigureAwait( false );
 
-				if ( product != null )
-					productsUpdateRequest.Add( new WApiV3.Product() { id = product.Id, sku = skuQuantity.Key, stock_quantity = skuQuantity.Value } );
+				if ( product != null && product.ManagingStock != null && product.ManagingStock.Value )
+					productsUpdateRequests.Add( new WApiV3.Product() { id = product.Id, sku = skuQuantity.Key, stock_quantity = skuQuantity.Value } );
 			}
 
-			//TODO GUARD-118 Explore if will need to add paging, it only does 10 by default. See products
-			var result = await this._wcObjectApiV3.Product.UpdateRange( productBatch );
-			return result.update.Select( prV3 => prV3.ToSvProduct() ).ToArray();
+			return await DoInSequentialBatchesAsync( productsUpdateRequests, BatchSize );
+		}
+
+		private async Task< IEnumerable< WooCommerceProduct > > DoInSequentialBatchesAsync( IEnumerable< WApiV3.Product > productsUpdateRequests, int batchSize )
+		{
+			var result = new List< WooCommerceProduct >();
+			var wooCommerceProductBatch = new WApiV3.ProductBatch();
+
+			foreach( var productsUpdateRequestBatch in new BatchList< WApiV3.Product >( productsUpdateRequests, batchSize ) )
+			{
+				wooCommerceProductBatch.update = productsUpdateRequestBatch.ToList();
+				var batchResult = await this._wcObjectApiV3.Product.UpdateRange( wooCommerceProductBatch );
+				result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvProduct() ) );
+			}
+
+			return result;
 		}
 	}
 }
