@@ -72,13 +72,13 @@ namespace WooCommerceTests
 				{ testSku2, random.Next( 1, 100 ) }
 			};
 
-			var updatedProducts = await base.ProductsService.UpdateSkusQuantityAsync( request ).ConfigureAwait( false );
+			var updatedProducts = ( await base.ProductsService.UpdateSkusQuantityAsync( request ).ConfigureAwait( false ) ).ToList();
 
 			updatedProducts.Count().Should().Be( request.Count );
 			var updatedTestSku = updatedProducts.FirstOrDefault( pr => pr.Sku.Equals( testSku ) );
-			updatedTestSku.Quantity.Should().Be( request[ testSku ] );
+			updatedTestSku?.Quantity.Should().Be( request[ testSku ] );
 			var updatedTestSku2 = updatedProducts.FirstOrDefault( pr => pr.Sku.Equals( testSku2 ) );
-			updatedTestSku2.Quantity.Should().Be( request[ testSku2 ] );
+			updatedTestSku2?.Quantity.Should().Be( request[ testSku2 ] );
 		}
 
 		[ Test ]
