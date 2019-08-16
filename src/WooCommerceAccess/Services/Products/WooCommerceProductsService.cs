@@ -17,9 +17,9 @@ namespace WooCommerceAccess.Services.Products
 			_serviceUrl = base.WCObject.ProductApiUrl;
 		}
 
-		public Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
 		{
-			return base.SendRequestAsync< IEnumerable< WooCommerceProduct > >( this._serviceUrl, () =>
+			return base.SendRequestAsync< Dictionary< string, int > >( this._serviceUrl, () =>
 			{
 				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities, base.Config.ProductsPageSize );
 			} );

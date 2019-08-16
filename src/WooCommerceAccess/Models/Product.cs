@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CuttingEdge.Conditions;
 using WooCommerceNET.WooCommerce.Legacy;
 using WooCommerceNET.WooCommerce.v3;
 
@@ -100,6 +101,17 @@ namespace WooCommerceAccess.Models
 			decimal result;
 			decimal.TryParse(str, out result);
 			return result;
+		}
+	}
+	
+	public struct ProductId
+	{
+		public int Id { get; }
+
+		public ProductId( int id )
+		{
+			Condition.Requires( id, "id" ).IsGreaterThan( 0 );
+			Id = id;
 		}
 	}
 }

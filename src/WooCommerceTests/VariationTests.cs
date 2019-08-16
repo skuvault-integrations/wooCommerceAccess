@@ -13,12 +13,12 @@ namespace WooCommerceTests
 		public VariationTests( string shopCredentialsFileName ) : base( shopCredentialsFileName ) { }
 
 		[ Test ]
-		public async Task GetLegacyProductVariationsByProductId()
+		public async Task GetProductVariationsByProductId()
 		{
-			const int productId = 31;
+			const int productId = 113;
 			var apiV3WCObject = new ApiV3WCObject( new RestAPI( base.Config.ShopUrl + "wp-json/wc/v3/", base.Config.ConsumerKey, base.Config.ConsumerSecret ) );
 
-			var productVariations = await apiV3WCObject.CollectProductVariationsFromAllPagesAsync( productId, base.Config.ProductsPageSize );
+			var productVariations = await apiV3WCObject.CollectVariationsByProductFromAllPagesAsync( productId, base.Config.ProductsPageSize );
 
 			Assert.IsTrue( productVariations.Any() );
 		}

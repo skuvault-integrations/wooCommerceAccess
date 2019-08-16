@@ -10,7 +10,7 @@ using WLegacyApi = WooCommerceNET.WooCommerce.Legacy;
 
 namespace WooCommerceAccess.Services
 {
-	public sealed class LegacyV3WCObject : IWCObject
+	public sealed class LegacyV3WCObject : WCObjectBase, IWCObject
 	{
 		private readonly WLegacyApi.WCObject _legacyApiWCObject;
 		private readonly string _apiUrl;
@@ -108,7 +108,8 @@ namespace WooCommerceAccess.Services
 			return updateProductRequest.ToSvProduct();
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
+		//TODO GUARD-164 Implement the same logic after ApiV3
+		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var result = new List< WooCommerceProduct >();
 
@@ -123,7 +124,7 @@ namespace WooCommerceAccess.Services
 				result.Add( updatedProduct );
 			}
 
-			return result.ToArray();
+			return result.ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
 		}
 	}
 }
