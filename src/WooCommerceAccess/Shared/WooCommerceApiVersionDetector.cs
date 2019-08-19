@@ -22,18 +22,18 @@ namespace WooCommerceAccess.Shared
 			Condition.Requires( shopUrl, "shopUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( retryAttempts, "retryAttempts" ).IsGreaterThan( 0 );
 
-			this._shopUrl = shopUrl;
+			this._shopUrl = shopUrl.TrimEnd( '/' );
 			this._retryAttempts = retryAttempts;
 			this._httpClient = new HttpClient();
 		}
 
 		public async Task< WooCommerceApiVersion > DetectApiVersion()
 		{
-			if ( await this.TryGetV3JsonApiDescription() )
+			if ( await this.TryGetV3JsonApiDescription().ConfigureAwait( false ) )
 				return WooCommerceApiVersion.V3;
 			else
 			{
-				if ( await this.TryGetEntitiesWithLegacyApiV3() )
+				if ( await this.TryGetEntitiesWithLegacyApiV3().ConfigureAwait( false ) )
 					return WooCommerceApiVersion.Legacy;
 			}
 			
@@ -49,7 +49,7 @@ namespace WooCommerceAccess.Shared
 			{
 				return await new ActionPolicy( this._retryAttempts ).ExecuteAsync< bool >( async () =>
 				{
-					var response = await this._httpClient.GetAsync( url );
+					var response = await this._httpClient.GetAsync( url ).ConfigureAwait( false );
 					return response.StatusCode == System.Net.HttpStatusCode.OK;
 				},
 				( timeSpan, retryCount ) => { 
@@ -57,7 +57,7 @@ namespace WooCommerceAccess.Shared
 					WooCommerceLogger.LogTraceRetryStarted( timeSpan.Seconds, retryCount, retryDetails );
 				},
 				() => Misc.CreateMethodCallInfo( url, mark ),
-				WooCommerceLogger.LogTraceException );
+				WooCommerceLogger.LogTraceException ).ConfigureAwait( false );
 			}
 			catch
 			{
@@ -74,8 +74,8 @@ namespace WooCommerceAccess.Shared
 			{
 				return await new ActionPolicy( this._retryAttempts ).ExecuteAsync< bool >( async () =>
 				{
-					var response = await this._httpClient.GetAsync( url );
-					var content = await response.Content.ReadAsStringAsync();
+					var response = await this._httpClient.GetAsync( url ).ConfigureAwait( false );
+					var content = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 					
 					return response.StatusCode == System.Net.HttpStatusCode.NotFound
 							&& !string.IsNullOrWhiteSpace( content ) 
@@ -86,7 +86,7 @@ namespace WooCommerceAccess.Shared
 					WooCommerceLogger.LogTraceRetryStarted( timeSpan.Seconds, retryCount, retryDetails );
 				},
 				() => Misc.CreateMethodCallInfo( url, mark ),
-				WooCommerceLogger.LogTraceException );
+				WooCommerceLogger.LogTraceException ).ConfigureAwait( false );
 			}
 			catch
 			{
