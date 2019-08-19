@@ -20,7 +20,6 @@ namespace WooCommerceAccess.Services.Products
 		/// <param name="sku"></param>
 		/// <param name="quantity"></param>
 		/// <returns></returns>
-		//TODO GUARD-164 Remove unused method, implementations
 		Task< WooCommerceProduct > UpdateSkuQuantityAsync( string sku, int quantity );
 
 		/// <summary>

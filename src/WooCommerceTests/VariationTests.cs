@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using WooCommerceAccess.Models;
 using WooCommerceAccess.Services;
 using WooCommerceNET;
 
@@ -21,6 +23,150 @@ namespace WooCommerceTests
 			var productVariations = await apiV3WCObject.CollectVariationsByProductFromAllPagesAsync( productId, base.Config.ProductsPageSize );
 
 			Assert.IsTrue( productVariations.Any() );
+		}
+	}
+
+	[ TestFixture ]
+	public class VariationStaticTests
+	{
+		private const string Testsku = "testsku";
+
+		[ Test ]
+		public async Task ApiV3WCObject_GetVariationsToUpdate()
+		{
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ Testsku, 21 },
+				{ "testsku2", 23 }
+			};
+			const int productIdNew = 2;
+			const int productIdExisting = 1;
+			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >
+			{
+				{ new ProductId( productIdExisting ), 
+					new List< QuantityUpdate >()
+				}
+			};
+			const string nonManagedSku = "testsku2";
+
+			ApiV3WCObject.GetVariationsToUpdate( skusQuantities, await CollectVariationsByProductFromAllPagesAsync( nonManagedSku, 11 ), productIdNew, variationsToUpdate );
+
+			Assert.AreEqual( productIdExisting, variationsToUpdate.First().Key.Id );
+			var secondProduct = variationsToUpdate.Skip( 1 ).First();
+			Assert.AreEqual( 1, secondProduct.Value.Count() );
+			var newVariation = secondProduct.Value.First();
+			Assert.AreEqual( skusQuantities.First().Key, newVariation.Sku );
+			Assert.AreEqual( skusQuantities.First().Value, newVariation.Quantity );
+		}
+
+		[ Test ]
+		public async Task LegacyV3WCObject_GetVariationsToUpdate()
+		{
+			const string nonManagedSku = "testsku2";
+			const int nonManagedQty = 8;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ Testsku, 21 },
+				{ nonManagedSku, 23 }
+			};
+			const int productIdNew = 2;
+			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >();
+			var variations = await CollectVariationsByProductFromAllPagesAsync( nonManagedSku, nonManagedQty );
+
+			LegacyV3WCObject.GetVariationsToUpdate( skusQuantities, variations, productIdNew, variationsToUpdate );
+
+			Assert.AreEqual( 1, variationsToUpdate.Values.Count );
+			Assert.AreEqual( skusQuantities[ Testsku ], variationsToUpdate.First().Value.First().Quantity );
+			Assert.AreEqual( 2, variations.Count() );
+			//Assert.AreEqual( skusQuantities[ Testsku ], variations.First().Quantity );
+			Assert.AreEqual( nonManagedQty, variations.Skip( 1 ).First().Quantity );
+		}
+		
+		private async Task< IEnumerable< WooCommerceVariation > > CollectVariationsByProductFromAllPagesAsync( string nonManagedSku, int nonManagedQty )
+		{
+			return new List< WooCommerceVariation >
+			{
+				new WooCommerceVariation
+				{
+					Id = 1,
+					Sku = Testsku,
+					Quantity = 1,
+					ManagingStock = true
+				},
+				new WooCommerceVariation
+				{
+					Id = 2,
+					Sku = nonManagedSku,
+					Quantity = nonManagedQty,
+					ManagingStock = false
+				}
+			};
+		}
+
+		[ Test ]
+		public void QuantityUpdate_NotManagingStock()
+		{
+			var testsku = Testsku;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ testsku, 3 } 
+			};
+			var variation = new WooCommerceVariation
+			{
+				Id = 1,
+				Sku = testsku,
+				Quantity = 1,
+				ManagingStock = false
+			};
+			
+			var result = new QuantityUpdate( variation, skusQuantities );
+
+			Assert.IsFalse( result.IsUpdateNeeded );
+		}
+
+		[ Test ]
+		public void QuantityUpdate_QuantityUnchanged()
+		{
+			var testsku = Testsku;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ testsku, 1 } 
+			};
+			var variation = new WooCommerceVariation
+			{
+				Id = 1,
+				Sku = testsku,
+				Quantity = 1,
+				ManagingStock = true
+			};
+			
+			var result = new QuantityUpdate( variation, skusQuantities );
+
+			Assert.IsFalse( result.IsUpdateNeeded );
+		}
+
+		[ Test ]
+		public void QuantityUpdate_QuantityChanged()
+		{
+			var testsku = Testsku;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ testsku, 3 } 
+			};
+			var variation = new WooCommerceVariation
+			{
+				Id = 1,
+				Sku = testsku,
+				Quantity = 1,
+				ManagingStock = true
+			};
+			
+			var result = new QuantityUpdate( variation, skusQuantities );
+
+			Assert.IsTrue( result.IsUpdateNeeded );
+			Assert.AreEqual( variation.Id, result.Id );
+			Assert.AreEqual( variation.Sku, result.Sku );
+			Assert.AreEqual( skusQuantities[ testsku ], result.Quantity );
 		}
 	}
 }

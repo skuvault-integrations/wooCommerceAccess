@@ -130,8 +130,7 @@ namespace WooCommerceAccess.Services
 			return updatedProducts.Concat( updatedVariations ).ToDictionary( p => p.Key, p => p.Value );
 		}
 
-		//TODO GUARD-164 Probably can't reuse in legacy because it'll already include the variations with the product. Don't need to get them
-		public static async Task GetProductsAndVariationsToUpdateAsync( Func< Dictionary< string, string >, Task< List< WooCommerceProduct > > > getNextProductPageAsync, Func< int, Task< IEnumerable< WooCommerceVariation > > > getVariationsAsync, Dictionary< string, int > skusQuantities, int pageSize, List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
+		public static async Task GetProductsAndVariationsToUpdateAsync( GetVariationsAsyncDelegate getNextProductPageAsync, Func< int, Task< IEnumerable< WooCommerceVariation > > > getVariationsAsync, Dictionary< string, int > skusQuantities, int pageSize, List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
 		{
 			for( var page = 1; ; page++ )
 			{
@@ -141,21 +140,24 @@ namespace WooCommerceAccess.Services
 					break;
 				foreach( var product in productsWithinPage.Where( p => p.Id != null ) ) 
 				{
-					if( product.ManagingStock != null && product.ManagingStock == true )
-					{
-						var quantityUpdate = skusQuantities.FirstOrDefault( s => s.Key == product.Sku );
-						if( !string.IsNullOrWhiteSpace( quantityUpdate.Key ) && quantityUpdate.Value != product.Quantity ) 
-						{ 
-							productsToUpdate.Add( new QuantityUpdate( product.Id.Value, product.Sku, quantityUpdate.Value ));
-						}
-					}
+					GetProductToUpdate( skusQuantities, product, productsToUpdate );
 
-					//TODO GUARD-164 In legacy just use product.variations, which will already be included
 					if( product.HasVariations )
 					{
-						await GetVariationsToUpdate( getVariationsAsync, skusQuantities, product.Id.Value, variationsToUpdate );
+						GetVariationsToUpdate( skusQuantities, await getVariationsAsync( product.Id.Value ), product.Id.Value, variationsToUpdate );
 					}
 				}
+			}
+		}
+
+		public static void GetVariationsToUpdate( Dictionary< string, int > skusQuantities, IEnumerable< WooCommerceVariation > variations, int productId, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
+		{
+			var productVariationsToUpdate = variations.Select( variation => new QuantityUpdate( variation, skusQuantities ) ).
+				Where( quantityUpdate => quantityUpdate.IsUpdateNeeded ).ToList();
+
+			if ( productVariationsToUpdate.Any() )
+			{
+				variationsToUpdate.Add( new ProductId( productId ), productVariationsToUpdate );
 			}
 		}
 
@@ -194,7 +196,6 @@ namespace WooCommerceAccess.Services
 			return result;
 		}
 
-		//TODO GUARD-164 Won't need in legacy because there are no batch updates
 		private async Task< IEnumerable< WooCommerceProduct > > UpdateProductsInSequentialBatchesAsync( IEnumerable< WApiV3.Product > productsUpdateRequests, int batchSize )
 		{
 			var result = new List< WooCommerceProduct >();
@@ -208,7 +209,8 @@ namespace WooCommerceAccess.Services
 				wooCommerceProductBatch.update = productsUpdateRequestBatch;
 				var batchResult = await this._wcObjectApiV3.Product.UpdateRange( wooCommerceProductBatch );
 				result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvProduct() ) );
-				//TODO GUARD-164 Should we Log().Trace or Log().Info( ) each product batch, with the first and last product's ids, skus?
+				//TODO GUARD-164 Potentially, do Log().Trace [only on the server] or Log().Info() [in Kibana] for each product batch,
+				//	with the first and last product's ids, skus
 			}
 
 			return result;
