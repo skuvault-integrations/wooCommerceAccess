@@ -27,6 +27,7 @@ namespace WooCommerceAccess.Shared
 
 		public static void LogTraceException( Exception exception )
 		{
+			//TODO GUARD-164 call Log().Error for errors
 			Log().Trace( exception, "{channel} An exception occured. [ver:{version}]", wooCommerceMark, _versionInfo );
 		}
 

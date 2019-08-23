@@ -12,7 +12,7 @@ using WApiV3 = WooCommerceNET.WooCommerce.v3;
 
 namespace WooCommerceAccess.Services
 {
-	public sealed class ApiV3WCObject : IWCObject
+	public sealed class ApiV3WCObject : WCObjectBase, IWCObject
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
 		private readonly IWCObject _fallbackAPI;
@@ -37,26 +37,6 @@ namespace WooCommerceAccess.Services
 			}
 			
 			throw new WooCommerceException( "ApiV3 orders endpoint can't filter records by update date! Use legacy api instead!" );
-		}
-
-		private async Task< IEnumerable< WooCommerceOrder > > CollectOrdersFromAllPagesAsync( Dictionary< string, string > ordersFilters, int pageSize )
-		{
-			var orders = new List< WooCommerceOrder >();
-
-			for (var page = 1; ; page++ )
-			{
-				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
-				var combinedFilters = ordersFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value );
-				var ordersWithinPage = ( await this._wcObjectApiV3.Order.GetAll( combinedFilters ).ConfigureAwait( false ) )
-									.Select ( o => o.ToSvOrder() ).ToList();
-
-				if ( !ordersWithinPage.Any() )
-					break;
-
-				orders.AddRange( ordersWithinPage );
-			}
-			
-			return orders;
 		}
 
 		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize )
@@ -90,8 +70,7 @@ namespace WooCommerceAccess.Services
 			{
 				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
 				var combinedFilters = productFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value);
-				var productsWithinPage = ( await this._wcObjectApiV3.Product.GetAll( combinedFilters ).ConfigureAwait( false ) ).
-					Select( p => p.ToSvProduct() ).ToList();
+				var productsWithinPage = await GetNextProductPageAsync( combinedFilters );
 				if( !productsWithinPage.Any() )
 					break;
 
@@ -99,11 +78,11 @@ namespace WooCommerceAccess.Services
 				{
 					if( productWithinPage.HasVariations && productWithinPage.Id.HasValue ) 
 					{ 
-						productWithinPage.Variations = await CollectProductVariationsFromAllPagesAsync( productWithinPage.Id.Value, pageSize );
+						productWithinPage.Variations = await CollectVariationsByProductFromAllPagesAsync( productWithinPage.Id.Value, pageSize );
 					}
 					else
 					{
-						productWithinPage.Variations = new List<WooCommerceVariation>();
+						productWithinPage.Variations = new List< WooCommerceVariation >();
 					}
 				}
 
@@ -113,15 +92,15 @@ namespace WooCommerceAccess.Services
 			return products;
 		}
 
-		public async Task< IEnumerable< WooCommerceVariation > > CollectProductVariationsFromAllPagesAsync( int productId, int pageSize )
+		public async Task< IEnumerable< WooCommerceVariation > > CollectVariationsByProductFromAllPagesAsync( int productId, int pageSize )
 		{
 			var variations = new List< WooCommerceVariation >();
 
 			for( var page = 1; ; page++ )
 			{
 				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
-				var variationsWithinPage = ( await this._wcObjectApiV3.Product.Variations.GetAll( productId, pageFilter ).ConfigureAwait( false ) ).
-					Select( v => v.ToSvVariation() ).ToList();
+				var wooCommerceVariations = ( await this._wcObjectApiV3.Product.Variations.GetAll( productId, pageFilter ).ConfigureAwait( false ) );
+				var variationsWithinPage = wooCommerceVariations.Select( v => v.ToSvVariation() ).ToList();
 
 				if( !variationsWithinPage.Any() )
 					break;
@@ -132,38 +111,106 @@ namespace WooCommerceAccess.Services
 			return variations;
 		}
 
-		public async Task< WooCommerceProduct > UpdateProductQuantityAsync(int productId, int quantity)
+		public async Task< WooCommerceProduct > UpdateProductQuantityAsync( int productId, int quantity )
 		{
-			var updatedProduct = await this._wcObjectApiV3.Product.Update( productId, new WApiV3.Product() { stock_quantity = quantity });
+			var updatedProduct = await this._wcObjectApiV3.Product.Update( productId, new WApiV3.Product { stock_quantity = quantity } );
 			return updatedProduct.ToSvProduct();
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync(
-			Dictionary< string, int > skusQuantities, int pageSize )
+		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
 		{
-			var productsUpdateRequests = new List< WApiV3.Product >();
+			var productsToUpdate = new List< QuantityUpdate >();
+			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >();
+			await GetProductsAndVariationsToUpdateAsync( async filter => await GetNextProductPageAsync( filter ), 
+				async productId => await CollectVariationsByProductFromAllPagesAsync( productId, pageSize ),
+				skusQuantities, pageSize, productsToUpdate, variationsToUpdate );
 
-			foreach( var skuQuantity in skusQuantities )
-			{
-				var product = await this.GetProductBySkuAsync( skuQuantity.Key, pageSize ).ConfigureAwait( false );
-
-				if ( product != null && product.ManagingStock != null && product.ManagingStock.Value )
-					productsUpdateRequests.Add( new WApiV3.Product() { id = product.Id, sku = skuQuantity.Key, stock_quantity = skuQuantity.Value } );
-			}
-
-			return await DoInSequentialBatchesAsync( productsUpdateRequests, BatchSize );
+			var updatedProducts = await UpdateProductsAsync( productsToUpdate );
+			var updatedVariations = ( await UpdateVariationsAsync( variationsToUpdate ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
+			return updatedProducts.Concat( updatedVariations ).ToDictionary( p => p.Key, p => p.Value );
 		}
 
-		private async Task< IEnumerable< WooCommerceProduct > > DoInSequentialBatchesAsync( IEnumerable< WApiV3.Product > productsUpdateRequests, int batchSize )
+		public static async Task GetProductsAndVariationsToUpdateAsync( GetVariationsAsyncDelegate getNextProductPageAsync, Func< int, Task< IEnumerable< WooCommerceVariation > > > getVariationsAsync, Dictionary< string, int > skusQuantities, int pageSize, List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
+		{
+			for( var page = 1; ; page++ )
+			{
+				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
+				var productsWithinPage = await getNextProductPageAsync( pageFilter );				
+				if( !productsWithinPage.Any() )
+					break;
+				foreach( var product in productsWithinPage.Where( p => p.Id != null ) ) 
+				{
+					GetProductToUpdate( skusQuantities, product, productsToUpdate );
+
+					if( product.HasVariations )
+					{
+						GetVariationsToUpdate( skusQuantities, await getVariationsAsync( product.Id.Value ), product.Id.Value, variationsToUpdate );
+					}
+				}
+			}
+		}
+
+		public static void GetVariationsToUpdate( Dictionary< string, int > skusQuantities, IEnumerable< WooCommerceVariation > variations, int productId, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
+		{
+			var productVariationsToUpdate = variations.Select( variation => new QuantityUpdate( variation, skusQuantities ) ).
+				Where( quantityUpdate => quantityUpdate.IsUpdateNeeded ).ToList();
+
+			if ( productVariationsToUpdate.Any() )
+			{
+				variationsToUpdate.Add( new ProductId( productId ), productVariationsToUpdate );
+			}
+		}
+
+		private async Task< List< WooCommerceProduct > > GetNextProductPageAsync( Dictionary< string, string> filter )
+		{
+			var productsWithinPage = ( await this._wcObjectApiV3.Product.GetAll( filter ).ConfigureAwait( false ) )
+				.Select( p => p.ToSvProduct() ).ToList();
+			return productsWithinPage;
+		}
+
+		private async Task< Dictionary< string, int > > UpdateProductsAsync( IEnumerable< QuantityUpdate > productsToUpdate )
+		{
+			var productsUpdateRequests = productsToUpdate.Select( productQuantity => new WApiV3.Product
+			{
+				id = productQuantity.Id, sku = productQuantity.Sku, stock_quantity = productQuantity.Quantity
+			} ).ToList();
+
+			return ( await UpdateProductsInSequentialBatchesAsync( productsUpdateRequests, BatchSize ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
+		}
+
+		private async Task< IEnumerable< WooCommerceVariation > > UpdateVariationsAsync( Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsUpdateRequests )
+		{
+			var result = new List< WooCommerceVariation >();
+			var wooCommerceVariationBatch = new WooCommerceNET.Base.BatchObject< WApiV3.Variation >();
+			foreach ( var variationsUpdateRequest in variationsUpdateRequests )
+			{
+				wooCommerceVariationBatch.update = variationsUpdateRequest.Value.Select( v => 
+					new WApiV3.Variation
+					{
+						id = v.Id, sku = v.Sku, stock_quantity = v.Quantity
+					} ).ToList();
+				var batchResult = await this._wcObjectApiV3.Product.Variations.UpdateRange( variationsUpdateRequest.Key.Id, wooCommerceVariationBatch );
+				result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvVariation() ) );
+			}
+
+			return result;
+		}
+
+		private async Task< IEnumerable< WooCommerceProduct > > UpdateProductsInSequentialBatchesAsync( IEnumerable< WApiV3.Product > productsUpdateRequests, int batchSize )
 		{
 			var result = new List< WooCommerceProduct >();
 			var wooCommerceProductBatch = new WApiV3.ProductBatch();
 
-			foreach( var productsUpdateRequestBatch in new BatchList< WApiV3.Product >( productsUpdateRequests, batchSize ) )
+			foreach( var batch in new BatchList< WApiV3.Product >( productsUpdateRequests, batchSize ) )
 			{
-				wooCommerceProductBatch.update = productsUpdateRequestBatch.ToList();
+				var productsUpdateRequestBatch = batch.ToList();
+				if( !productsUpdateRequestBatch.Any() )
+					continue;
+				wooCommerceProductBatch.update = productsUpdateRequestBatch;
 				var batchResult = await this._wcObjectApiV3.Product.UpdateRange( wooCommerceProductBatch );
 				result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvProduct() ) );
+				//TODO GUARD-164 Potentially, do Log().Trace [only on the server] or Log().Info() [in Kibana] for each product batch,
+				//	with the first and last product's ids, skus
 			}
 
 			return result;

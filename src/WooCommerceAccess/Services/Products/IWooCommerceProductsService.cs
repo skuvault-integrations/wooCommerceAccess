@@ -12,7 +12,7 @@ namespace WooCommerceAccess.Services.Products
 		/// </summary>
 		/// <param name="skusQuantities">new quantity for each sku</param>
 		/// <returns></returns>
-		Task< IEnumerable< WooCommerceProduct > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities );
+		Task< Dictionary< string, int >  > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities );
 		
 		/// <summary>
 		///	Updates sku quantity asynchronously
