@@ -58,29 +58,6 @@ namespace WooCommerceTests
 			Assert.AreEqual( skusQuantities.First().Key, newVariation.Sku );
 			Assert.AreEqual( skusQuantities.First().Value, newVariation.Quantity );
 		}
-
-		[ Test ]
-		public async Task LegacyV3WCObject_GetVariationsToUpdate()
-		{
-			const string nonManagedSku = "testsku2";
-			const int nonManagedQty = 8;
-			var skusQuantities = new Dictionary< string, int >
-			{
-				{ Testsku, 21 },
-				{ nonManagedSku, 23 }
-			};
-			const int productIdNew = 2;
-			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >();
-			var variations = await CollectVariationsByProductFromAllPagesAsync( nonManagedSku, nonManagedQty );
-
-			LegacyV3WCObject.GetVariationsToUpdate( skusQuantities, variations, productIdNew, variationsToUpdate );
-
-			Assert.AreEqual( 1, variationsToUpdate.Values.Count );
-			Assert.AreEqual( skusQuantities[ Testsku ], variationsToUpdate.First().Value.First().Quantity );
-			Assert.AreEqual( 2, variations.Count() );
-			//Assert.AreEqual( skusQuantities[ Testsku ], variations.First().Quantity );
-			Assert.AreEqual( nonManagedQty, variations.Skip( 1 ).First().Quantity );
-		}
 		
 		private async Task< IEnumerable< WooCommerceVariation > > CollectVariationsByProductFromAllPagesAsync( string nonManagedSku, int nonManagedQty )
 		{

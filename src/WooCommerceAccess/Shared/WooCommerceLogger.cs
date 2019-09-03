@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace WooCommerceAccess.Shared
 {
@@ -27,8 +26,7 @@ namespace WooCommerceAccess.Shared
 
 		public static void LogTraceException( Exception exception )
 		{
-			//TODO GUARD-164 call Log().Error for errors
-			Log().Trace( exception, "{channel} An exception occured. [ver:{version}]", wooCommerceMark, _versionInfo );
+			Log().Error( exception, "{channel} An exception occured. [ver:{version}]", wooCommerceMark, _versionInfo );
 		}
 
 		public static void LogTraceStarted( string info )

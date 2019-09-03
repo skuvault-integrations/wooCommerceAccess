@@ -209,8 +209,6 @@ namespace WooCommerceAccess.Services
 				wooCommerceProductBatch.update = productsUpdateRequestBatch;
 				var batchResult = await this._wcObjectApiV3.Product.UpdateRange( wooCommerceProductBatch );
 				result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvProduct() ) );
-				//TODO GUARD-164 Potentially, do Log().Trace [only on the server] or Log().Info() [in Kibana] for each product batch,
-				//	with the first and last product's ids, skus
 			}
 
 			return result;

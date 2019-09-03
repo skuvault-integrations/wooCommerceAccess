@@ -15,6 +15,7 @@ namespace WooCommerceAccess.Services
 		protected readonly Throttler Throttler;
 		protected IWCObject WCObject { get; private set; }
 		protected Func< string > _additionalLogInfo;
+		protected WooCommerceApiVersion apiVersion { get; private set; }
 
 		/// <summary>
 		///	Extra logging information
@@ -38,7 +39,7 @@ namespace WooCommerceAccess.Services
 
 		private void InitWcObject()
 		{
-			var apiVersion = new WooCommerceApiVersionDetector( this.Config.ShopUrl, this.Config.RetryAttempts ).DetectApiVersion().Result;
+			apiVersion = new WooCommerceApiVersionDetector( this.Config.ShopUrl, this.Config.RetryAttempts ).DetectApiVersion().Result;
 			
 			if ( apiVersion == WooCommerceApiVersion.Unknown )
 				throw new WooCommerceException( "Unsupported WordPress and WooCommerce version!" );

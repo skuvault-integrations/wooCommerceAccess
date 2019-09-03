@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
+using WooCommerceAccess.Shared;
 using WooCommerceAccess.Throttling;
 
 namespace WooCommerceAccess.Services.Products
@@ -21,6 +22,11 @@ namespace WooCommerceAccess.Services.Products
 		{
 			return base.SendRequestAsync< Dictionary< string, int > >( this._serviceUrl, () =>
 			{
+				if( base.apiVersion == WooCommerceApiVersion.Legacy )
+				{
+					WooCommerceLogger.LogTrace("Updating variation quantities in legacy is not supported");
+				}
+
 				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities, base.Config.ProductsPageSize );
 			} );
 		}

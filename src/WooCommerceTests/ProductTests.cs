@@ -88,6 +88,28 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
+		public async Task UpdateSkusQuantityForProductAndVariation()
+		{
+			var testSkuProduct = "testsku14";
+			var testSkuVariation = "testsku14-2";
+
+			var random = new Random();
+			var request = new Dictionary< string, int >
+			{
+				{ testSkuProduct, random.Next( 1, 100 ) },
+				{ testSkuVariation, random.Next( 1, 100 ) }
+			};
+
+			var updatedProducts = ( await base.ProductsService.UpdateSkusQuantityAsync( request ).ConfigureAwait( false ) ).ToList();
+
+			updatedProducts.Count.Should().Be( request.Count );
+			var updatedTestSku = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( testSkuProduct ) );
+			updatedTestSku.Value.Should().Be( request[ testSkuProduct ] );
+			var updatedTestSku2 = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( testSkuVariation ) );
+			updatedTestSku2.Value.Should().Be( request[ testSkuVariation ] );
+		}
+
+		[ Test ]
 		public async Task GetProductsUsingByPagination()
 		{
 			base.Config.ProductsPageSize = 2;
@@ -126,7 +148,7 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
-		public async Task LegacyV3WCObject_GetProductsAndVariationsToUpdateAsync()
+		public async Task LegacyV3WCObject_GetProductsToUpdateAsync()
 		{
 			var testsku2 = "testsku2";
 			var skusQuantities = new Dictionary< string, int >
@@ -135,10 +157,8 @@ namespace WooCommerceTests
 				{ testsku2, 23 }
 			};
 			const int pageSize = 10;
-			var productsToUpdate = new List< QuantityUpdate >();
 
-			await LegacyV3WCObject.GetProductsAndVariationsToUpdateAsync( async filter => await GetNextProductPageAsync( filter, testsku2 ), 
-				skusQuantities, pageSize, productsToUpdate, new Dictionary< ProductId, IEnumerable< QuantityUpdate > >() );
+			var productsToUpdate = await LegacyV3WCObject.GetProductsToUpdateAsync( async filter => await GetNextProductPageAsync( filter, testsku2 ), skusQuantities, pageSize );
 
 			Assert.AreEqual( 1, productsToUpdate.Count );
 			var secondProduct = productsToUpdate.First();
