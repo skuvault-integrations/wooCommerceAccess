@@ -9,7 +9,6 @@ namespace WooCommerceAccess.Models
 		public string Sku { get; }
 		public int Quantity { get; }
 		public bool IsUpdateNeeded { get; }
-		public IEnumerable< QuantityUpdate > Variations { get; set; }
 
 		public QuantityUpdate( WooCommerceVariation variation, Dictionary< string, int > skusQuantities ) 
 		{

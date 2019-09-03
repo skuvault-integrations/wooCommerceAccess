@@ -114,7 +114,7 @@ namespace WooCommerceAccess.Services
 			return updatedProducts.ToDictionary( p => p.Key, p => p.Value );
 		}
 
-		public static async Task< List< QuantityUpdate > > GetProductsToUpdateAsync( GetVariationsAsyncDelegate getNextProductPageAsync, Dictionary< string, int > skusQuantities, int pageSize )
+		public static async Task< List< QuantityUpdate > > GetProductsToUpdateAsync( GetProductsAsyncDelegate getNextProductPageAsync, Dictionary< string, int > skusQuantities, int pageSize )
 		{
 			var productsToUpdate = new List< QuantityUpdate >();
 			for( var page = 1; ; page++ )

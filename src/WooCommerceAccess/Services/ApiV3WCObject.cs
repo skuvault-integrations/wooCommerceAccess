@@ -130,7 +130,7 @@ namespace WooCommerceAccess.Services
 			return updatedProducts.Concat( updatedVariations ).ToDictionary( p => p.Key, p => p.Value );
 		}
 
-		public static async Task GetProductsAndVariationsToUpdateAsync( GetVariationsAsyncDelegate getNextProductPageAsync, Func< int, Task< IEnumerable< WooCommerceVariation > > > getVariationsAsync, Dictionary< string, int > skusQuantities, int pageSize, List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
+		public static async Task GetProductsAndVariationsToUpdateAsync( GetProductsAsyncDelegate getNextProductPageAsync, Func< int, Task< IEnumerable< WooCommerceVariation > > > getVariationsAsync, Dictionary< string, int > skusQuantities, int pageSize, List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
 		{
 			for( var page = 1; ; page++ )
 			{
