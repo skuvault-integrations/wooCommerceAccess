@@ -279,5 +279,29 @@ namespace WooCommerceTests
 			Assert.AreEqual( product.Sku, result.Sku );
 			Assert.AreEqual( skusQuantities[ testsku ], result.Quantity );
 		}
+
+		[ Test ]
+		public void QuantityUpdate_CaseInsensitiveSkuUpdatesInventory()
+		{
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ Testsku, 3 } 
+			};
+			var testSkuUpper = Testsku.ToUpper();
+			var product = new WooCommerceProduct
+			{
+				Id = 1,
+				Sku = testSkuUpper,
+				Quantity = 1,
+				ManagingStock = true
+			};
+			
+			var result = new QuantityUpdate( product, skusQuantities );
+
+			Assert.IsTrue( result.IsUpdateNeeded );
+			Assert.AreEqual( product.Id, result.Id );
+			Assert.AreEqual( product.Sku.ToLower(), result.Sku.ToLower() );
+			Assert.AreEqual( skusQuantities[ Testsku ], result.Quantity );
+		}
 	}
 }
