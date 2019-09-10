@@ -17,7 +17,9 @@ namespace WooCommerceAccess.Models
 			    variation.ManagingStock == null || variation.ManagingStock != true ) 
 				return;
 			var quantityUpdate = skusQuantities.FirstOrDefault( s => s.Key.ToLower() == variation.Sku.ToLower() );
-			if ( !string.IsNullOrWhiteSpace( quantityUpdate.Key ) && variation.Quantity.HasValue && quantityUpdate.Value != variation.Quantity )
+			var skuFound = !string.IsNullOrWhiteSpace( quantityUpdate.Key );
+			if ( skuFound && ( variation.Quantity.HasValue 
+				? quantityUpdate.Value != variation.Quantity : quantityUpdate.Value >= 0 ) )
 			{
 				IsUpdateNeeded = true;
 				Id = variation.Id.Value;
@@ -33,7 +35,9 @@ namespace WooCommerceAccess.Models
 			     product.ManagingStock == null || product.ManagingStock != true ) 
 				return;
 			var quantityUpdate = skusQuantities.FirstOrDefault( s => s.Key.ToLower() == product.Sku.ToLower() );
-			if ( !string.IsNullOrWhiteSpace( quantityUpdate.Key ) && product.Quantity.HasValue && quantityUpdate.Value != product.Quantity )
+			var skuFound = !string.IsNullOrWhiteSpace( quantityUpdate.Key );
+			if ( skuFound && ( product.Quantity.HasValue 
+				? quantityUpdate.Value != product.Quantity : quantityUpdate.Value >= 0 ) )
 			{
 				IsUpdateNeeded = true;
 				Id = product.Id.Value;

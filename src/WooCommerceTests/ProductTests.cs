@@ -143,8 +143,8 @@ namespace WooCommerceTests
 				skusQuantities, pageSize, productsToUpdate, new Dictionary< ProductId, IEnumerable< QuantityUpdate > >() );
 
 			Assert.AreEqual( 1, productsToUpdate.Count );
-			var secondProduct = productsToUpdate.First();
-			Assert.AreEqual( skusQuantities[ Testsku ], secondProduct.Quantity );
+			var product = productsToUpdate.First();
+			Assert.AreEqual( skusQuantities[ Testsku ], product.Quantity );
 		}
 
 		[ Test ]
@@ -161,8 +161,8 @@ namespace WooCommerceTests
 			var productsToUpdate = await LegacyV3WCObject.GetProductsToUpdateAsync( async filter => await GetNextProductPageAsync( filter, testsku2 ), skusQuantities, pageSize );
 
 			Assert.AreEqual( 1, productsToUpdate.Count );
-			var secondProduct = productsToUpdate.First();
-			Assert.AreEqual( skusQuantities[ Testsku ], secondProduct.Quantity );
+			var product = productsToUpdate.First();
+			Assert.AreEqual( skusQuantities[ Testsku ], product.Quantity );
 		}
 
 		private async Task< List< WooCommerceProduct > > GetNextProductPageAsync( Dictionary< string, string > filter, string sku )
@@ -278,6 +278,51 @@ namespace WooCommerceTests
 			Assert.AreEqual( product.Id, result.Id );
 			Assert.AreEqual( product.Sku, result.Sku );
 			Assert.AreEqual( skusQuantities[ testsku ], result.Quantity );
+		}
+
+		[ Test ]
+		public void QuantityUpdate_BlankQuantityInWooCommerce()
+		{
+			var testsku = Testsku;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ testsku, 3 } 
+			};
+			var product = new WooCommerceProduct
+			{
+				Id = 1,
+				Sku = testsku,
+				Quantity = null,
+				ManagingStock = true
+			};
+			
+			var result = new QuantityUpdate( product, skusQuantities );
+
+			Assert.IsTrue( result.IsUpdateNeeded );
+			Assert.AreEqual( product.Id, result.Id );
+			Assert.AreEqual( product.Sku, result.Sku );
+			Assert.AreEqual( skusQuantities[ testsku ], result.Quantity );
+		}
+
+		[ Test ]
+		public void QuantityUpdate_SkuNotFound()
+		{
+			var testsku = Testsku;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ testsku, 3 } 
+			};
+			var product = new WooCommerceProduct
+			{
+				Id = 1,
+				Sku = "another sku",
+				Quantity = 1,
+				ManagingStock = true
+			};
+			
+			var result = new QuantityUpdate( product, skusQuantities );
+
+			Assert.IsFalse( result.IsUpdateNeeded );
 		}
 
 		[ Test ]

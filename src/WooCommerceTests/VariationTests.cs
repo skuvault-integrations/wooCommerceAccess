@@ -147,6 +147,51 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
+		public void QuantityUpdate_BlankQuantityInWooCommerce()
+		{
+			var testsku = Testsku;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ testsku, 3 } 
+			};
+			var variation = new WooCommerceVariation
+			{
+				Id = 1,
+				Sku = testsku,
+				Quantity = null,
+				ManagingStock = true
+			};
+			
+			var result = new QuantityUpdate( variation, skusQuantities );
+
+			Assert.IsTrue( result.IsUpdateNeeded );
+			Assert.AreEqual( variation.Id, result.Id );
+			Assert.AreEqual( variation.Sku, result.Sku );
+			Assert.AreEqual( skusQuantities[ testsku ], result.Quantity );
+		}
+
+		[ Test ]
+		public void QuantityUpdate_SkuNotFound()
+		{
+			var testsku = Testsku;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ testsku, 3 } 
+			};
+			var variation = new WooCommerceVariation
+			{
+				Id = 1,
+				Sku = "another sku",
+				Quantity = 1,
+				ManagingStock = true
+			};
+			
+			var result = new QuantityUpdate( variation, skusQuantities );
+
+			Assert.IsFalse( result.IsUpdateNeeded );
+		}
+
+		[ Test ]
 		public void QuantityUpdate_CaseInsensitiveSkuUpdatesInventory()
 		{
 			var skusQuantities = new Dictionary< string, int >
