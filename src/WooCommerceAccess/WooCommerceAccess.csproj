@@ -9,10 +9,10 @@
     <PackageLicenseUrl>https://github.com/skuvault/wooCommerceAccess/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/skuvault/wooCommerceAccess</PackageProjectUrl>
     <RepositoryUrl>https://github.com/skuvault/wooCommerceAccess</RepositoryUrl>
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.4</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <FileVersion>1.0.0.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +21,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Polly-Signed" Version="5.9.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="WooCommerceNET.SV" Version="1.0.0" />
+    <PackageReference Include="WooCommerceNET.SV" Version="1.0.0.1" />
   </ItemGroup>
 
 </Project>
