@@ -19,7 +19,7 @@ namespace WooCommerceAccess.Services.Orders
 
 		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._serviceUrl, () =>
+			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._serviceUrl, ( url, mark ) =>
 			{
 				return base.WCObject.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize );
 			} );

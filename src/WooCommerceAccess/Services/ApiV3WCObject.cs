@@ -117,7 +117,7 @@ namespace WooCommerceAccess.Services
 			return updatedProduct.ToSvProduct();
 		}
 
-		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
+		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark )
 		{
 			var productsToUpdate = new List< QuantityUpdate >();
 			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >();
@@ -125,6 +125,7 @@ namespace WooCommerceAccess.Services
 				async productId => await CollectVariationsByProductFromAllPagesAsync( productId, pageSize ),
 				skusQuantities, pageSize, productsToUpdate, variationsToUpdate );
 
+			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "productsToUpdate: {0}. variationsToUpdate: {1}" , productsToUpdate.ToJson(), variationsToUpdate.ToJson()) ) );
 			var updatedProducts = await UpdateProductsAsync( productsToUpdate );
 			var updatedVariations = ( await UpdateVariationsAsync( variationsToUpdate ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
 			return updatedProducts.Concat( updatedVariations ).ToDictionary( p => p.Key, p => p.Value );

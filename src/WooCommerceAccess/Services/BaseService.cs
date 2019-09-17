@@ -52,7 +52,7 @@ namespace WooCommerceAccess.Services
 				this.WCObject = legacyApiWcObject;
 		}
 
-		protected Task< T > SendRequestAsync< T >( string url, Func< Task< T > > processor )
+		protected Task< T > SendRequestAsync< T >( string url, Func< string, Mark, Task< T > > processor )
 		{
 			var mark = Mark.CreateNew();
 
@@ -61,7 +61,7 @@ namespace WooCommerceAccess.Services
 				return new ActionPolicy( Config.RetryAttempts )
 						.ExecuteAsync( async () => {
 						      WooCommerceLogger.LogStarted( Misc.CreateMethodCallInfo( url, mark, additionalInfo: this.AdditionalLogInfo() ) );
-							var entity = await processor().ConfigureAwait( false );
+							var entity = await processor( url, mark ).ConfigureAwait( false );
 							WooCommerceLogger.LogEnd( Misc.CreateMethodCallInfo (url, mark, methodResult: entity.ToJson(), additionalInfo: this.AdditionalLogInfo() ) );
 
 							return entity;

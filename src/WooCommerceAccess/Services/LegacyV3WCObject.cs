@@ -107,7 +107,7 @@ namespace WooCommerceAccess.Services
 			return productsWithinPage;
 		}
 
-		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize )
+		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Shared.Mark mark )
 		{
 			var productsToUpdate = await GetProductsToUpdateAsync( async filter => await GetNextProductPageAsync( filter ), skusQuantities, pageSize );
 			var updatedProducts = await UpdateProductsAsync( productsToUpdate );

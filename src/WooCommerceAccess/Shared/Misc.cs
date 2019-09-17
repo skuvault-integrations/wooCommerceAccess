@@ -9,7 +9,7 @@ namespace WooCommerceAccess.Shared
 {
 	public static class Misc
 	{
-		public static string CreateMethodCallInfo( string url = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", [ CallerMemberName ] string memberName = "" )
+		public static string CreateMethodCallInfo( string url = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string payload = "", [ CallerMemberName ] string memberName = "" )
 		{
 			string serviceEndPoint = null;
 			string requestParameters = null;
@@ -23,14 +23,15 @@ namespace WooCommerceAccess.Shared
 			}
 
 			var str = string.Format(
-				"{{MethodName: {0}, Mark: '{1}', ServiceEndPoint: '{2}', {3} {4}{5}{6}}}",
+				"{{MethodName: {0}, Mark: '{1}', ServiceEndPoint: '{2}', {3} {4}{5}{6}{7}}}",
 				memberName,
 				mark ?? Mark.Blank(),
 				string.IsNullOrWhiteSpace( serviceEndPoint ) ? string.Empty : serviceEndPoint,
 				string.IsNullOrWhiteSpace( requestParameters ) ? string.Empty : ", RequestParameters: " + requestParameters,
 				string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
 				string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
-				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
+				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo,
+				string.IsNullOrWhiteSpace( payload ) ? string.Empty : ", " + payload
 			);
 			return str;
 		}
