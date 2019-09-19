@@ -74,6 +74,7 @@
     <Compile Include="OrderTests.cs" />
     <Compile Include="ProductMapperTests.cs" />
     <Compile Include="ProductTests.cs" />
+    <Compile Include="ThrottlingTests.cs" />
     <Compile Include="VariationMappersTests.cs" />
     <Compile Include="VariationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -77,7 +77,7 @@ namespace WooCommerceAccess.Throttling
 						throw;
 
 					this._remainingQuota = 0;
-					await Task.Delay( _quotaRestoreTimeInSeconds * 1000 ).ConfigureAwait( false );
+					await Task.Delay( ActionPolicy.GetDelayBeforeNextAttempt( retryCount ) * 1000 ).ConfigureAwait( false );
 					retryCount++;
 				}
 			}
