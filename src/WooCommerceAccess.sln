@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.705
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WooCommerceAccess", "WooCommerceAccess\WooCommerceAccess.csproj", "{4015A4C9-EA01-4472-AF40-7776724B8D51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WooCommerceTests", "WooCommerceTests\WooCommerceTests.csproj", "{A5773676-9F35-4890-AFF5-C714CB471C30}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A330F6F3-EB5A-414E-9A76-F65833135A88}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\nuget.exe = .nuget\nuget.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4015A4C9-EA01-4472-AF40-7776724B8D51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4015A4C9-EA01-4472-AF40-7776724B8D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4015A4C9-EA01-4472-AF40-7776724B8D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4015A4C9-EA01-4472-AF40-7776724B8D51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5773676-9F35-4890-AFF5-C714CB471C30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5773676-9F35-4890-AFF5-C714CB471C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5773676-9F35-4890-AFF5-C714CB471C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5773676-9F35-4890-AFF5-C714CB471C30}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D2247AA4-FCB2-4C8E-9D23-B2A0D4FDF283}
+	EndGlobalSection
+EndGlobal
