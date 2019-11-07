@@ -176,7 +176,7 @@ namespace WooCommerceAccess.Services
 				id = productQuantity.Id, sku = productQuantity.Sku, stock_quantity = productQuantity.Quantity
 			} ).ToList();
 
-			return ( await UpdateProductsInSequentialBatchesAsync( productsUpdateRequests, BatchSize ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
+			return ( await UpdateProductsInSequentialBatchesAsync( productsUpdateRequests, BatchSize ) ).Where( p => !string.IsNullOrWhiteSpace( p.Sku ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
 		}
 
 		private async Task< IEnumerable< WooCommerceVariation > > UpdateVariationsAsync( Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsUpdateRequests )
