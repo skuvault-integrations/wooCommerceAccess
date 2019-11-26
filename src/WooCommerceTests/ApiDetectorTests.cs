@@ -12,6 +12,7 @@ namespace WooCommerceTests
 	{
 		private string _shopUrlWithV3ApiVersion;
 		private string _shopUrlWithLegacyApiVersion;
+		private const string DefaultUserAgentHeader = "SkuVault Inc. WooCommerceAccess library";
 
 		[ SetUp ]
 		public void LoadShopList()
@@ -28,7 +29,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public void DetectWooCommerceApiVersion()
 		{
-			var apiDetector = new WooCommerceApiVersionDetector( _shopUrlWithV3ApiVersion, 3 );
+			var apiDetector = new WooCommerceApiVersionDetector( _shopUrlWithV3ApiVersion, 3, DefaultUserAgentHeader );
 
 			var apiVersion = apiDetector.DetectApiVersion().Result;
 			apiVersion.Should().Be( WooCommerceApiVersion.V3 );
@@ -37,7 +38,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public void DetectWooCommerceLegacyApiVersion()
 		{
-			var apiDetector = new WooCommerceApiVersionDetector( _shopUrlWithLegacyApiVersion, 3 );
+			var apiDetector = new WooCommerceApiVersionDetector( _shopUrlWithLegacyApiVersion, 3, DefaultUserAgentHeader );
 
 			var apiVersion = apiDetector.DetectApiVersion().Result;
 			apiVersion.Should().Be( WooCommerceApiVersion.Legacy );
