@@ -17,14 +17,16 @@ namespace WooCommerceAccess.Shared
 		private const string JsonApiV3DescriptionUrl = "/wp-json/wc/v3/";
 		private const string ProductsLegacyApiV3Url = "/wc-api/v3/products";
 
-		public WooCommerceApiVersionDetector( string shopUrl, int retryAttempts )
+		public WooCommerceApiVersionDetector( string shopUrl, int retryAttempts, string userAgentHeader )
 		{
 			Condition.Requires( shopUrl, "shopUrl" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( retryAttempts, "retryAttempts" ).IsGreaterThan( 0 );
+			Condition.Requires( userAgentHeader, "userAgentHeader" ).IsNotNullOrWhiteSpace();
 
 			this._shopUrl = shopUrl.TrimEnd( '/' );
 			this._retryAttempts = retryAttempts;
 			this._httpClient = new HttpClient();
+			this._httpClient.DefaultRequestHeaders.Add( "User-Agent", userAgentHeader );
 		}
 
 		public async Task< WooCommerceApiVersion > DetectApiVersion()

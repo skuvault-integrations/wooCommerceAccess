@@ -33,10 +33,15 @@ namespace WooCommerceAccess.Configuration
 		/// </summary>
 		public int ProductsPageSize = 10;
 
-    /// <summary>
+		/// <summary>
 		///	Default page size for orders
 		/// </summary>
 		public int OrdersPageSize = 10;
+
+		/// <summary>
+		///	Default HTTP User-Agent header
+		/// </summary>
+		public string DefaultUserAgentHeader = "SkuVault Inc. WooCommerceAccessLibrary";
 
 		public WooCommerceConfig( string shopUrl, string consumerKey, string consumerSecret )
 		{
