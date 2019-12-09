@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Services;
@@ -12,17 +14,36 @@ namespace WooCommerceTests
 	[ TestFixture( "WP4_7_WC_3_6_credentials.csv" ) ]
 	public class VariationTests : BaseTest
 	{
+		private ApiV3WCObject _apiV3WcObject;
 		public VariationTests( string shopCredentialsFileName ) : base( shopCredentialsFileName ) { }
+
+		[ SetUp ]
+		public void Initialize()
+		{
+			this._apiV3WcObject = new ApiV3WCObject( new RestAPI( base.Config.ShopUrl + "wp-json/wc/v3/", base.Config.ConsumerKey, base.Config.ConsumerSecret ) );
+		}
 
 		[ Test ]
 		public async Task GetProductVariationsByProductId()
 		{
 			const int productId = 113;
-			var apiV3WCObject = new ApiV3WCObject( new RestAPI( base.Config.ShopUrl + "wp-json/wc/v3/", base.Config.ConsumerKey, base.Config.ConsumerSecret ) );
 
-			var productVariations = await apiV3WCObject.CollectVariationsByProductFromAllPagesAsync( productId, base.Config.ProductsPageSize );
+			var productVariations = await _apiV3WcObject.CollectVariationsByProductFromAllPagesAsync( productId, base.Config.ProductsPageSize );
 
 			Assert.IsTrue( productVariations.Any() );
+		}
+
+		[ Test ]
+		public async Task UpdateSkusQuantityAsync_ProductWithOver100Variations()
+		{
+			const int productIdWith100PlusVariations = 1272;
+			var productVariations = await _apiV3WcObject.CollectVariationsByProductFromAllPagesAsync( productIdWith100PlusVariations, base.Config.ProductsPageSize );
+			var random = new Random();
+			var skusQuantitiesUpdate = productVariations.ToDictionary( v => v.Sku, v => (v.Quantity ?? default(int)) + random.Next(1, 10) );
+
+			var skuQuantities = await this.ProductsService.UpdateSkusQuantityAsync( skusQuantitiesUpdate );
+
+			skuQuantities.Should().Equal( skusQuantitiesUpdate );
 		}
 	}
 

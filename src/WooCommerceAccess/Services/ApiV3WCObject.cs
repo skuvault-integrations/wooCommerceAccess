@@ -186,13 +186,16 @@ namespace WooCommerceAccess.Services
 			var wooCommerceVariationBatch = new WooCommerceNET.Base.BatchObject< WApiV3.Variation >();
 			foreach ( var variationsUpdateRequest in variationsUpdateRequests )
 			{
-				wooCommerceVariationBatch.update = variationsUpdateRequest.Value.Select( v => 
-					new WApiV3.Variation
-					{
-						id = v.Id, sku = v.Sku, stock_quantity = v.Quantity
-					} ).ToList();
-				var batchResult = await this._wcObjectApiV3.Product.Variations.UpdateRange( variationsUpdateRequest.Key.Id, wooCommerceVariationBatch );
-				result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvVariation() ) );
+				foreach ( var batch in new BatchList< QuantityUpdate >( variationsUpdateRequest.Value, BatchSize ) )
+				{
+					wooCommerceVariationBatch.update = batch.Select( v => 
+						new WApiV3.Variation
+						{
+							id = v.Id, sku = v.Sku, stock_quantity = v.Quantity
+						} ).ToList();
+					var batchResult = await this._wcObjectApiV3.Product.Variations.UpdateRange( variationsUpdateRequest.Key.Id, wooCommerceVariationBatch );
+					result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvVariation() ) );
+				}
 			}
 
 			return result;
