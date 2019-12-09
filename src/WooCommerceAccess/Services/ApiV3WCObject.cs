@@ -125,7 +125,8 @@ namespace WooCommerceAccess.Services
 				async productId => await CollectVariationsByProductFromAllPagesAsync( productId, pageSize ),
 				skusQuantities, pageSize, productsToUpdate, variationsToUpdate );
 
-			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "productsToUpdate: {0}. variationsToUpdate: {1}" , productsToUpdate.ToJson(), variationsToUpdate.ToJson()) ) );
+			var variationsJson = variationsToUpdate.Select( x => new { ProductId = x.Key.Id, Variations = x.Value } ).ToJson();
+			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "productsToUpdate: {0}. variationsToUpdate: {1}" , productsToUpdate.ToJson(), variationsJson ) ) );
 			var updatedProducts = await UpdateProductsAsync( productsToUpdate );
 			var updatedVariations = ( await UpdateVariationsAsync( variationsToUpdate ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
 			return updatedProducts.Concat( updatedVariations ).ToDictionary( p => p.Key, p => p.Value );
