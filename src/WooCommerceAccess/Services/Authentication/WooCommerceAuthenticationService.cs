@@ -73,6 +73,8 @@ namespace WooCommerceAccess.Services.Authentication
 			{
 				BaseAddress = new Uri( this._config.ShopUrl )
 			};
+			httpClient.DefaultRequestHeaders.Add( "User-Agent", this._config.DefaultUserAgentHeader );
+
 			var url = this.GetAuthenticationUrl( requestId );
 			var httpResponse = await httpClient.GetAsync( url ).ConfigureAwait( false );
 			return await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );

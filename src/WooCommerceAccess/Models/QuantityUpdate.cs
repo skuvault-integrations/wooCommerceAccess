@@ -10,6 +10,10 @@ namespace WooCommerceAccess.Models
 		public int Quantity { get; }
 		public bool IsUpdateNeeded { get; }
 
+		public QuantityUpdate() 
+		{
+		}
+
 		public QuantityUpdate( WooCommerceVariation variation, Dictionary< string, int > skusQuantities ) 
 		{
 			this.IsUpdateNeeded = false;

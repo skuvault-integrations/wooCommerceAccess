@@ -39,7 +39,7 @@ namespace WooCommerceAccess.Services
 
 		private void InitWcObject()
 		{
-			apiVersion = new WooCommerceApiVersionDetector( this.Config.ShopUrl, this.Config.RetryAttempts ).DetectApiVersion().Result;
+			apiVersion = new WooCommerceApiVersionDetector( this.Config.ShopUrl, this.Config.RetryAttempts, this.Config.DefaultUserAgentHeader ).DetectApiVersion().Result;
 			
 			if ( apiVersion == WooCommerceApiVersion.Unknown )
 				throw new WooCommerceException( "Unsupported WordPress and WooCommerce version!" );
