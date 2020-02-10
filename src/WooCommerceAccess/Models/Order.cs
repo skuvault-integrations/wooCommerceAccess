@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using WooCommerceNET.WooCommerce.Legacy;
 
 namespace WooCommerceAccess.Models
 {
@@ -20,6 +21,9 @@ namespace WooCommerceAccess.Models
 		public WooCommerceShippingAddress ShippingAddress { get; set; }
 		public WooCommerceBuyerInfo BuyerInfo { get; set; }
 		public WooCommerceOrderItem[] Items { get; set; }
+		public decimal? TotalDiscount { get; set; }
+		public CouponLineList Coupons { get; set; }
+		public decimal? TotalTax { get; set; }
 	}
 
 	public class WooCommerceOrderItem
@@ -29,6 +33,7 @@ namespace WooCommerceAccess.Models
 		public decimal Price { get; set; }
 		public int Quantity { get; set; }
 		public string Sku { get; set; }
+		public decimal? TotalTax { get; set; }
 	}
 
 	public class WooCommerceShippingAddress
@@ -70,7 +75,10 @@ namespace WooCommerceAccess.Models
 				Status = legacyOrder.status,
 				Currency = legacyOrder.currency,
 				Total = legacyOrder.total.Value,
-				Note = legacyOrder.note
+				Note = legacyOrder.note,
+				TotalDiscount = legacyOrder.total_discount,
+				Coupons = legacyOrder.coupon_lines,
+				TotalTax = legacyOrder.total_tax
 			};
 
 			if ( legacyOrder.payment_details != null )
@@ -110,7 +118,8 @@ namespace WooCommerceAccess.Models
 					Id = lineItem.id.Value,
 					Sku = lineItem.sku,
 					Quantity = lineItem.quantity.Value,
-					Price = lineItem.price.Value
+					Price = lineItem.price.Value,
+					TotalTax = lineItem.total_tax
 				} );
 
 			order.Items = items.ToArray();
