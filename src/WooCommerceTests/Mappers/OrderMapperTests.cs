@@ -2,6 +2,7 @@
 using Legacy = WooCommerceNET.WooCommerce.Legacy;
 using WooCommerceAccess.Models;
 using FluentAssertions;
+using System.Linq;
 
 namespace WooCommerceTests.Mappers
 {
@@ -36,11 +37,12 @@ namespace WooCommerceTests.Mappers
 			var result = legacyOrder.ToSvOrder();
 
 			result.TotalDiscount.Should().Be( legacyOrder.total_discount );
-			result.Coupons.Count.Should().Be( legacyOrder.coupon_lines.Count );
-			result.Coupons[ 0 ].code.Should().Be( couponCode1 );
-			result.Coupons[ 0 ].amount.Should().Be( couponAmount1 );
-			result.Coupons[ 1 ].code.Should().Be( couponCode2 );
-			result.Coupons[ 1 ].amount.Should().Be( couponAmount2 );
+			var orderCoupons = result.Coupons.ToList();
+			orderCoupons.Count.Should().Be( legacyOrder.coupon_lines.Count );
+			orderCoupons[ 0 ].Code.Should().Be( couponCode1 );
+			orderCoupons[ 0 ].Amount.Should().Be( couponAmount1 );
+			orderCoupons[ 1 ].Code.Should().Be( couponCode2 );
+			orderCoupons[ 1 ].Amount.Should().Be( couponAmount2 );
 		}
 
 		[ Test ]

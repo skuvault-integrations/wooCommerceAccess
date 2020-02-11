@@ -22,8 +22,14 @@ namespace WooCommerceAccess.Models
 		public WooCommerceBuyerInfo BuyerInfo { get; set; }
 		public WooCommerceOrderItem[] Items { get; set; }
 		public decimal? TotalDiscount { get; set; }
-		public CouponLineList Coupons { get; set; }
+		public IEnumerable< WooCommerceCouponLine > Coupons { get; set; }
 		public decimal? TotalTax { get; set; }
+	}
+
+	public class WooCommerceCouponLine
+	{
+		public string Code { get; set; }
+		public decimal? Amount { get; set; }
 	}
 
 	public class WooCommerceOrderItem
@@ -77,7 +83,7 @@ namespace WooCommerceAccess.Models
 				Total = legacyOrder.total.Value,
 				Note = legacyOrder.note,
 				TotalDiscount = legacyOrder.total_discount,
-				Coupons = legacyOrder.coupon_lines,
+				Coupons = legacyOrder.coupon_lines?.Select( c => new WooCommerceCouponLine { Code = c.code, Amount = c.amount } ),
 				TotalTax = legacyOrder.total_tax
 			};
 
