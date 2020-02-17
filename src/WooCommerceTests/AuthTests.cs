@@ -4,12 +4,10 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using WooCommerceAccess;
 using WooCommerceAccess.Services.Authentication;
 
 namespace WooCommerceTests
 {
-	[ TestFixture( "WP4_1_WC_2_4_credentials.csv" ) ]
 	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
 	public class AuthTests : BaseTest
 	{

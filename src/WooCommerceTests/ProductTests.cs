@@ -11,7 +11,6 @@ using WooCommerceNET;
 
 namespace WooCommerceTests
 {
-	[ TestFixture( "WP4_1_WC_2_4_credentials.csv" ) ]
 	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
 	[ TestFixture( "WP4_7_WC_3_6_credentials.csv" ) ]
 	public class ProductTests : BaseTest

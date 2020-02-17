@@ -75,12 +75,13 @@
     <Compile Include="ApiDetectorTests.cs" />
     <Compile Include="BatchListTests.cs" />
     <Compile Include="JsonSerializerTests.cs" />
+    <Compile Include="Mappers\OrderMapperTests.cs" />
     <Compile Include="OrderTests.cs" />
-    <Compile Include="ProductMapperTests.cs" />
+    <Compile Include="Mappers\ProductMapperTests.cs" />
     <Compile Include="ProductTests.cs" />
     <Compile Include="SystemStatusServiceTests.cs" />
     <Compile Include="ThrottlingTests.cs" />
-    <Compile Include="VariationMappersTests.cs" />
+    <Compile Include="Mappers\VariationMappersTests.cs" />
     <Compile Include="VariationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

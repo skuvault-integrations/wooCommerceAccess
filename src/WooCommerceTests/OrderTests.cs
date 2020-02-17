@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace WooCommerceTests
 {
+	[ TestFixture( "WP4_7_WC_3_6_credentials.csv" ) ]
 	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
 	public class OrderTests : BaseTest
 	{
