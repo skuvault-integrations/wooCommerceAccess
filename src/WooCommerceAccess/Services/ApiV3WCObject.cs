@@ -29,6 +29,8 @@ namespace WooCommerceAccess.Services
 
 		public string OrdersApiUrl => this._wcObjectApiV3.Order.API.Url + this._wcObjectApiV3.Order.APIEndpoint;
 
+		public string SystemStatusApiUrl => this._wcObjectApiV3.SystemStatus.API.Url + this._wcObjectApiV3.SystemStatus.APIEndpoint;
+
 		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
 		{
 			if ( this._fallbackAPI != null )
@@ -217,6 +219,13 @@ namespace WooCommerceAccess.Services
 			}
 
 			return result;
+		}
+
+		public async Task< string > GetStoreVersion()
+		{
+			var storeInfo = await this._wcObjectApiV3.SystemStatus.Get().ConfigureAwait( false );
+
+			return storeInfo.environment?.version;
 		}
 	}
 }

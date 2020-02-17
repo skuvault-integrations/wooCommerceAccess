@@ -7,6 +7,7 @@ using WooCommerceAccess;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Services.Orders;
 using WooCommerceAccess.Services.Products;
+using WooCommerceAccess.Services.SystemStatus;
 using WooCommerceAccess.Throttling;
 
 namespace WooCommerceTests
@@ -23,6 +24,7 @@ namespace WooCommerceTests
 		protected WooCommerceConfig Config { get; private set; }
 		protected IWooCommerceProductsService ProductsService { get; private set; }
 		protected IWooCommerceOrdersService OrdersService { get; private set; }
+		protected IWooCommerceSystemStatusService SystemStatusService { get; private set; }
 
 		public BaseTest( string shopCredentialsFileName )
 		{
@@ -37,6 +39,7 @@ namespace WooCommerceTests
 				
 				this.ProductsService = factory.CreateProductsService( this.Config, throttler );
 				this.OrdersService = factory.CreateOrdersService( this.Config, throttler );
+				this.SystemStatusService = factory.CreateSystemStatusService( this.Config, throttler );
 			}
 		}
 

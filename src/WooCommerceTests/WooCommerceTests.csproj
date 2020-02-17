@@ -65,8 +65,8 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WooCommerce.NET, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WooCommerceNET.SV.1.0.0.1\lib\net461\WooCommerce.NET.dll</HintPath>
+    <Reference Include="WooCommerce.NET, Version=1.1.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WooCommerceNET.SV.1.1.0.3\lib\net461\WooCommerce.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +78,7 @@
     <Compile Include="OrderTests.cs" />
     <Compile Include="ProductMapperTests.cs" />
     <Compile Include="ProductTests.cs" />
+    <Compile Include="SystemStatusServiceTests.cs" />
     <Compile Include="ThrottlingTests.cs" />
     <Compile Include="VariationMappersTests.cs" />
     <Compile Include="VariationTests.cs" />

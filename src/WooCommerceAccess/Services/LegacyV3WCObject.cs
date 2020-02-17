@@ -26,6 +26,8 @@ namespace WooCommerceAccess.Services
 
 		public string OrdersApiUrl => this._apiUrl + "orders";
 
+		public string SystemStatusApiUrl => this._apiUrl + "system-status";
+
 		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize )
 		{
 			var ordersFilters = new Dictionary< string, string >
@@ -153,6 +155,12 @@ namespace WooCommerceAccess.Services
 				updatedProductIds.Add( new ProductId( productToUpdate.Id ));
 			}
 			return result;
+		}
+
+		public async Task< string > GetStoreVersion()
+		{
+			var storeInfo = await this._legacyApiWCObject.GetStoreInfo().ConfigureAwait( false );
+			return storeInfo.wc_version;
 		}
 	}
 }
