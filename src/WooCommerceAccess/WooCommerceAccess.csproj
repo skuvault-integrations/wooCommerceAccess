@@ -5,14 +5,14 @@
     <Authors>SkuVault</Authors>
     <Company>SkuVault</Company>
     <Description>WooCommerce webservices API wrapper</Description>
-    <Copyright>SkuVault © 2019</Copyright>
+    <Copyright>SkuVault © 2020</Copyright>
     <PackageLicenseUrl>https://github.com/skuvault/wooCommerceAccess/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/skuvault/wooCommerceAccess</PackageProjectUrl>
     <RepositoryUrl>https://github.com/skuvault/wooCommerceAccess</RepositoryUrl>
-    <Version>1.2.1.0</Version>
+    <Version>1.2.2.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.2.1.0</AssemblyVersion>
-    <FileVersion>1.2.1.0</FileVersion>
+    <AssemblyVersion>1.2.2.0</AssemblyVersion>
+    <FileVersion>1.2.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +21,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Polly-Signed" Version="5.9.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="WooCommerceNET.SV" Version="1.1.0.3" />
+    <PackageReference Include="WooCommerceNET.SV" Version="1.1.0.4" />
   </ItemGroup>
 
 </Project>
