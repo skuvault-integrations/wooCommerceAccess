@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace WooCommerceTests
 {
-	[ TestFixture( "WP4_7_WC_3_6_credentials.csv" ) ]
-	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
+	[ TestFixture( "credentials_VM_sandbox.csv" ) ]
+	[ TestFixture( "credentials_cloud_sandbox.csv" ) ]
 	public class OrderTests : BaseTest
 	{
 		public OrderTests( string shopCredentialsFileName ) : base( shopCredentialsFileName ) { }

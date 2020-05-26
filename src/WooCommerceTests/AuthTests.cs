@@ -8,7 +8,7 @@ using WooCommerceAccess.Services.Authentication;
 
 namespace WooCommerceTests
 {
-	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
+	[ TestFixture( "credentials_cloud_sandbox.csv" ) ]
 	public class AuthTests : BaseTest
 	{
 		protected WooCommerceAuthenticationService AuthenticationService { get; private set; }
