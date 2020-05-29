@@ -2,8 +2,8 @@
 
 namespace WooCommerceTests
 {
-	[ TestFixture( "WP4_7_WC_3_6_credentials.csv" ) ]
-	[ TestFixture( "WP5_2_WC_3_6_credentials.csv" ) ]
+	[ TestFixture( "credentials_VM_sandbox.csv" ) ]
+	[ TestFixture( "credentials_cloud_sandbox.csv" ) ]
 	public class SystemStatusServiceTests : BaseTest
 	{
 		public SystemStatusServiceTests( string shopCredentialsFileName ) : base( shopCredentialsFileName ) { }
