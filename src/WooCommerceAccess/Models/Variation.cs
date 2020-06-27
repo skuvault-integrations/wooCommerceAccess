@@ -62,7 +62,8 @@ namespace WooCommerceAccess.Models
 				Weight = variationV3.weight,
 				SalePrice = variationV3.sale_price,
 				RegularPrice = variationV3.regular_price,
-				Attributes = variationV3.attributes?.ToDictionary( a => a.name, a => a.option ),
+				Attributes = variationV3.attributes?.Where( a => !string.IsNullOrWhiteSpace( a.name ) )
+					.ToDictionary( a => a.name, a => a.option ),
 				UpdatedDateUtc = variationV3.date_modified_gmt,
 				CreatedDateUtc = variationV3.date_created_gmt,
 				ManagingStock = (bool?) variationV3.manage_stock
