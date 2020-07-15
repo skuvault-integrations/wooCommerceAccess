@@ -44,7 +44,7 @@ namespace WooCommerceAccess.Services
 			if ( apiVersion == WooCommerceApiVersion.Unknown )
 				throw new WooCommerceException( "Unsupported WordPress and WooCommerce version!" );
 			
-			var legacyApiWcObject =  new LegacyV3WCObject( new RestAPI( this.Config.ShopUrl + "wc-api/v3", this.Config.ConsumerKey, this.Config.ConsumerSecret ) );
+			var legacyApiWcObject = new LegacyV3WCObject( new RestAPI( this.Config.ShopUrl + "wc-api/v3", this.Config.ConsumerKey, this.Config.ConsumerSecret, false ) );
 				
 			if ( apiVersion == WooCommerceApiVersion.V3 )
 				this.WCObject = new ApiV3WCObject( new RestAPI( this.Config.ShopUrl + "wp-json/wc/v3/", this.Config.ConsumerKey, this.Config.ConsumerSecret ), legacyApiWcObject );
