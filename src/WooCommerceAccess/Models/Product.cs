@@ -92,8 +92,8 @@ namespace WooCommerceAccess.Models
 
 		public static Dictionary< string, string > ToAttributeDictionary( this List< ProductAttributeLine > attributeLines )
 		{
-			return attributeLines.Where( a => a.options != null && a.options.Count == 1 ).
-				ToDictionary( a => a.name, a => a.options.First() );
+			return attributeLines.Where( a => !string.IsNullOrWhiteSpace( a.name ) && a.options != null && a.options.Count == 1)
+				.ToDictionary( a => a.name, a => a.options.First() );
 		}
 
 		public static decimal ToDecimal( this string str )

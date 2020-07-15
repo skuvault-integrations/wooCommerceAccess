@@ -196,7 +196,7 @@ namespace WooCommerceAccess.Services
 							id = v.Id, sku = v.Sku, stock_quantity = v.Quantity
 						} ).ToList();
 					var batchResult = await this._wcObjectApiV3.Product.Variations.UpdateRange( variationsUpdateRequest.Key.Id, wooCommerceVariationBatch );
-					result.AddRange( batchResult.update.Select( prV3 => prV3.ToSvVariation() ) );
+					result.AddRange( batchResult.update.Where( x => !string.IsNullOrWhiteSpace( x.sku ) ).Select( prV3 => prV3.ToSvVariation() ) );
 				}
 			}
 
