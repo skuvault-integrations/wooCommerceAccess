@@ -52,7 +52,12 @@ namespace WooCommerceAccess.Shared
 				return await new ActionPolicy( this._retryAttempts ).ExecuteAsync< bool >( async () =>
 				{
 					var response = await this._httpClient.GetAsync( url ).ConfigureAwait( false );
-					return response.StatusCode == System.Net.HttpStatusCode.OK;
+
+					if( response.StatusCode == System.Net.HttpStatusCode.OK )											
+						return true;					
+					
+					WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "TryGetV3JsonApiDescription Response: {0}", response.ToJson() ) ) );
+					return false;
 				},
 				( timeSpan, retryCount ) => { 
 					string retryDetails = Misc.CreateMethodCallInfo( url, mark );
@@ -61,8 +66,9 @@ namespace WooCommerceAccess.Shared
 				() => Misc.CreateMethodCallInfo( url, mark ),
 				WooCommerceLogger.LogTraceException ).ConfigureAwait( false );
 			}
-			catch
+			catch( Exception err )
 			{
+				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "TryGetV3JsonApiDescription Exception: {0}", err.Message ) ) );
 				return false;
 			}
 		}
@@ -79,9 +85,15 @@ namespace WooCommerceAccess.Shared
 					var response = await this._httpClient.GetAsync( url ).ConfigureAwait( false );
 					var content = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 					
-					return response.StatusCode == System.Net.HttpStatusCode.NotFound
+					var isLegacyApi = response.StatusCode == System.Net.HttpStatusCode.NotFound
 							&& !string.IsNullOrWhiteSpace( content ) 
 							&& content.Contains( "api_authentication_error" );
+
+					if( isLegacyApi )
+						return true;
+					
+					WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "TryGetEntitiesWithLegacyApiV3 Response: {0}", response.ToJson() ) ) );
+					return false;					
 				},
 				( timeSpan, retryCount ) => { 
 					string retryDetails = Misc.CreateMethodCallInfo( url, mark );
@@ -90,8 +102,9 @@ namespace WooCommerceAccess.Shared
 				() => Misc.CreateMethodCallInfo( url, mark ),
 				WooCommerceLogger.LogTraceException ).ConfigureAwait( false );
 			}
-			catch
+			catch( Exception err )
 			{
+				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format("TryGetEntitiesWithLegacyApiV3 Exception: {0}", err.Message ) ) );
 				return false;
 			}
 		}
