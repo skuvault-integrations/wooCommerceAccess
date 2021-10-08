@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Services;
-using WooCommerceNET;
+using WooCommerceNET.WooCommerce.v3;
 
 namespace WooCommerceTests
 {
@@ -43,6 +43,105 @@ namespace WooCommerceTests
 			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true ).Result;
 
 			products.Count().Should().NotBe( 0 );
+		}
+
+		[ Test ]
+		public void GivenDuplicatedProductAttributesList_WhenToAttributeDictionaryCalled_ThenReceiveProductAttributesWithoutDuplicates()
+		{
+			// arrange
+			var productAttributeList = new List< ProductAttributeLine >
+			{
+				new ProductAttributeLine
+				{
+					name = "Color",
+					options = new List< string >
+					{
+						"Red"
+					}
+				},
+				new ProductAttributeLine
+				{
+					name = "Size",
+					options = new List< string >
+					{
+						"11"
+					}
+				},
+				new ProductAttributeLine
+				{
+					name = "Color",
+					options = new List< string >
+					{
+						"Red"
+					}
+				},
+				new ProductAttributeLine
+				{
+					name = "Size",
+					options = new List< string >
+					{
+						"11"
+					}
+				}
+			};
+
+			// act
+			var productAttributes = productAttributeList.ToAttributeDictionary();
+
+			// assert
+			productAttributes.Count.Should().Be( 2 );
+			productAttributes[ "Color" ].Should().Be( "Red" );
+			productAttributes[ "Size" ].Should().Be( "11" );
+		}
+
+		[ Test ]
+		public void GivenDuplicatedProductAttributesListWithDuplicatedNamesOnly_WhenToAttributeDictionaryCalled_ThenReceiveProductAttributesWithoutDuplicates()
+		{
+			// arrange
+			var productAttributeList = new List< ProductAttributeLine >
+			{
+				new ProductAttributeLine
+				{
+					name = "Color",
+					options = new List< string >
+					{
+						"Red"
+					}
+				},
+				new ProductAttributeLine
+				{
+					name = "Size",
+					options = new List< string >
+					{
+						"11"
+					}
+				},
+				new ProductAttributeLine
+				{
+					name = "Color",
+					options = new List< string >
+					{
+						"Orange"
+					}
+				},
+				new ProductAttributeLine
+				{
+					name = "Size",
+					options = new List< string >
+					{
+						"12"
+					}
+				}
+			};
+
+			// act
+			var productAttributes = productAttributeList.ToAttributeDictionary();
+
+			// assert
+			productAttributes.Count.Should().Be( 2 );
+			// it will distictBy attribute name taking first items
+			productAttributes[ "Color" ].Should().Be( "Red" );
+			productAttributes[ "Size" ].Should().Be( "11" );
 		}
 
 		[ Test ]

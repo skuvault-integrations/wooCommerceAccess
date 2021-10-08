@@ -56,7 +56,7 @@ namespace WooCommerceAccess.Shared
 					if( response.StatusCode == System.Net.HttpStatusCode.OK )											
 						return true;					
 					
-					WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "TryGetV3JsonApiDescription Response: {0}", response.ToJson() ) ) );
+					WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, methodResult: response.ToJson() ) );
 					return false;
 				},
 				( timeSpan, retryCount ) => { 
@@ -68,7 +68,7 @@ namespace WooCommerceAccess.Shared
 			}
 			catch( Exception err )
 			{
-				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "TryGetV3JsonApiDescription Exception: {0}", err.Message ) ) );
+				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, errors: err.Message ) );
 				return false;
 			}
 		}
@@ -92,7 +92,7 @@ namespace WooCommerceAccess.Shared
 					if( isLegacyApi )
 						return true;
 					
-					WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "TryGetEntitiesWithLegacyApiV3 Response: {0}", response.ToJson() ) ) );
+					WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, methodResult: response.ToJson() ) );
 					return false;					
 				},
 				( timeSpan, retryCount ) => { 
@@ -104,7 +104,7 @@ namespace WooCommerceAccess.Shared
 			}
 			catch( Exception err )
 			{
-				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format("TryGetEntitiesWithLegacyApiV3 Exception: {0}", err.Message ) ) );
+				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, errors: err.Message ) );
 				return false;
 			}
 		}
