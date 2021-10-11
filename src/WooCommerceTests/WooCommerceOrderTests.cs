@@ -10,12 +10,12 @@ namespace WooCommerceTests
 	[ TestFixture ]
 	public class WooCommerceOrderTests
 	{
-		[ TestCase( "TEST@-0103", ExpectedResult = true, TestName = "Create_OrderWithLettersSymbolsNumbers_ReturnsTrue" ) ]
-		[ TestCase( "TEST0103", ExpectedResult = true, TestName = "Create_OrderWithLetterNumbers_ReturnsTrue" ) ]
-		[ TestCase( "0102", ExpectedResult = false, TestName = "Create_OrderWithOnlyNumbers_ReturnsFalse" ) ]
-		public bool Create_OrderIdWithSymbolsAndLetters( string orderId )
+		[ TestCase( "TEST@-0103", TestName = "Create_OrderWithLettersSymbolsNumbers_ReturnsAlphaNumericOrderId" ) ]
+		[ TestCase( "TEST0103", TestName = "Create_OrderWithLetterNumbers_ReturnsAlphaNumericOrderId" ) ]
+		[ TestCase( "0102", TestName = "Create_OrderWithOnlyNumbers_ReturnsNumericOrderId" ) ]
+		public void Create_AlphaNumericOrderId( string orderId )
 		{
-			var orderWithLetters = new WooCommerceOrder
+			var orderIdAlphaNumeric = new WooCommerceOrder
 			{
 				Id = orderId,
 				Number = "0001",
@@ -30,9 +30,7 @@ namespace WooCommerceTests
 				TotalDiscount = 0
 			};
 
-			int thrownAway;
-
-			return !int.TryParse( orderWithLetters.Id, out thrownAway );
+			Assert.AreEqual( orderIdAlphaNumeric.Id, orderId );
 		}
 	}
 }

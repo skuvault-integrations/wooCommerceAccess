@@ -13,6 +13,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.4.5.0</AssemblyVersion>
     <FileVersion>1.4.5.0</FileVersion>
+    <PackageVersion>1.4.5.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,12 +22,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Polly-Signed" Version="5.9.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="WooCommerce.NET">
-      <HintPath>..\..\..\WooCommerce.NET\bin\Debug\net461\WooCommerce.NET.dll</HintPath>
-    </Reference>
+    <PackageReference Include="WooCommerceNET.SV" Version="1.2.6-alpha" />
   </ItemGroup>
 
 </Project>

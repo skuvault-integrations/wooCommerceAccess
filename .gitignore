@@ -35,3 +35,12 @@ build
 log
 *Credentials*.csv
 
+# Rider
+# Rider auto-generates .iml files, and contentModel.xml
+src/.idea/
+**/.idea/**/*.iml
+**/.idea/**/contentModel.xml
+**/.idea/**/modules.xml
+# Some Rider installs add lines to indexLayout.xml on build. Others installs remove them. It's not on the official .gitignore list but seems safe to ignore
+**/.idea/**/indexLayout.xml
+
