@@ -65,8 +65,9 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WooCommerce.NET, Version=1.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WooCommerceNET.SV.1.1.7\lib\net461\WooCommerce.NET.dll</HintPath>
+    <Reference Include="WooCommerce.NET, Version=1.2.6.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\WooCommerceNET.SV.1.2.6-alpha\lib\net461\WooCommerce.NET.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +85,7 @@
     <Compile Include="Mappers\VariationMappersTests.cs" />
     <Compile Include="VariationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WooCommerceOrderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
