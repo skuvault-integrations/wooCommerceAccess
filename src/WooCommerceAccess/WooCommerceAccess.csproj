@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
@@ -13,7 +13,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.4.6.0</AssemblyVersion>
     <FileVersion>1.4.6.0</FileVersion>
-    <PackageVersion>1.4.5.0</PackageVersion>
+    <PackageVersion>1.4.6.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

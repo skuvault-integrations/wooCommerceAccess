@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -18,7 +17,7 @@ namespace WooCommerceAccess.Shared
 			{
 				Uri uri = new Uri( url );
 
-				serviceEndPoint = uri.LocalPath;
+				serviceEndPoint = uri.AbsoluteUri;
 				requestParameters = uri.Query;
 			}
 

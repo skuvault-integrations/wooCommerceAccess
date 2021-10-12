@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
+using WooCommerceAccess.Shared;
 using WooCommerceNET.WooCommerce.Legacy;
 using WooCommerceNET.WooCommerce.v3;
 
@@ -92,7 +93,8 @@ namespace WooCommerceAccess.Models
 
 		public static Dictionary< string, string > ToAttributeDictionary( this List< ProductAttributeLine > attributeLines )
 		{
-			return attributeLines.Where( a => !string.IsNullOrWhiteSpace( a.name ) && a.options != null && a.options.Count == 1)
+			return attributeLines.Where( a => !string.IsNullOrWhiteSpace( a.name ) && a.options != null && a.options.Count > 0 )
+				.DistinctBy( a => a.name )
 				.ToDictionary( a => a.name, a => a.options.First() );
 		}
 
