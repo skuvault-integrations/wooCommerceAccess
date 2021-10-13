@@ -75,7 +75,7 @@ namespace WooCommerceAccess.Models
 			var order = new WooCommerceOrder()
 			{
 				Id = legacyOrder.id,
-				Number = legacyOrder.order_number.ToString(),
+				Number = legacyOrder.order_number,
 				CreateDateUtc = legacyOrder.created_at,
 				UpdateDateUtc = legacyOrder.updated_at,
 				Status = legacyOrder.status,

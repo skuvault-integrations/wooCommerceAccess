@@ -71,7 +71,7 @@ namespace WooCommerceTests.Mappers
 		public DefaultOrder()
 		{
 			base.id = "1";
-			base.order_number = 1;
+			base.order_number = "1";
 			base.total = 12.30m;
 			base.total_shipping = 3.21m;
 			base.line_items = new Legacy.LineItemList();
