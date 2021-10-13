@@ -10,10 +10,10 @@ namespace WooCommerceTests
 	[ TestFixture ]
 	public class WooCommerceOrderTests
 	{
-		[ TestCase( "TEST@-0103", TestName = "Create_OrderWithLettersSymbolsNumbers_ReturnsAlphaNumericOrderId" ) ]
-		[ TestCase( "TEST0103", TestName = "Create_OrderWithLetterNumbers_ReturnsAlphaNumericOrderId" ) ]
-		[ TestCase( "0102", TestName = "Create_OrderWithOnlyNumbers_ReturnsNumericOrderId" ) ]
-		public void Create_AlphaNumericOrderId( string wooCommerceOrderNumber )
+		[ TestCase( "TEST@-0103", TestName = "Create_OrderWithLettersSymbolsNumbers_ReturnsAlphaNumericOrderNumber" ) ]
+		[ TestCase( "TEST0103", TestName = "Create_OrderWithLetterNumbers_ReturnsAlphaNumericOrderNumber" ) ]
+		[ TestCase( "0102", TestName = "Create_OrderWithOnlyNumbers_ReturnsNumericOrderNumber" ) ]
+		public void Create_AlphaNumericOrderNumber( string wooCommerceOrderNumber )
 		{
 			var orderIdAlphaNumeric = new WooCommerceOrder
 			{
