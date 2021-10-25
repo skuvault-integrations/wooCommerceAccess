@@ -65,8 +65,8 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WooCommerce.NET, Version=1.2.10.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\WooCommerceNET.SV.1.2.12-alpha\lib\net48\WooCommerce.NET.dll</HintPath>
+    <Reference Include="WooCommerce.NET, Version=1.2.12.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\WooCommerceNET.SV.1.2.12\lib\net48\WooCommerce.NET.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
