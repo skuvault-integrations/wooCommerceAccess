@@ -7,7 +7,7 @@ namespace WooCommerceAccess.Models
 {
 	public class WooCommerceOrder
 	{
-		public int Id { get; set; }
+		public string Id { get; set; }
 		public string Number { get; set; }
 		public DateTime? CreateDateUtc { get; set; }
 		public DateTime? UpdateDateUtc { get; set; }
@@ -74,8 +74,8 @@ namespace WooCommerceAccess.Models
 		{
 			var order = new WooCommerceOrder()
 			{
-				Id = legacyOrder.id.Value,
-				Number = legacyOrder.order_number.ToString(),
+				Id = legacyOrder.id,
+				Number = legacyOrder.order_number,
 				CreateDateUtc = legacyOrder.created_at,
 				UpdateDateUtc = legacyOrder.updated_at,
 				Status = legacyOrder.status,
@@ -137,7 +137,7 @@ namespace WooCommerceAccess.Models
 		{
 			var order = new WooCommerceOrder()
 			{
-				Id = orderV3.id.Value,
+				Id = orderV3.id,
 				Number = orderV3.order_key,
 				CreateDateUtc = orderV3.date_created_gmt,
 				UpdateDateUtc = orderV3.date_modified_gmt,
