@@ -67,7 +67,7 @@ namespace WooCommerceAccess.Services.Authentication
 			return WooCommerceEndPoint.AuthenticationUrl + "?" + encodedParameters;
 		}
 
-		internal async Task< string > GetAuthenticationHtmlForm( string requestId )
+		internal async Task< string > GetAuthenticationHtmlForm( string requestId, Mark mark )
 		{
 			var httpClient = new HttpClient()
 			{

@@ -8,7 +8,7 @@ namespace WooCommerceAccess
 {
 	public class WooCommerceFactory : IWooCommerceFactory
 	{
-		public IWooCommerceOrdersService CreateOrdersService(WooCommerceConfig config, Throttler throttler)
+		public IWooCommerceOrdersService CreateOrdersService( WooCommerceConfig config, Throttler throttler )
 		{
 			return new WooCommerceOrdersService( config, throttler );
 		}

@@ -28,7 +28,7 @@ namespace WooCommerceTests
 		public async Task GetAuthenticationHtmlForm()
 		{
 			string requestId = string.Format("{0}:{1}", this.tenantId, Guid.NewGuid().ToString() );
-			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm( requestId );
+			var htmlForm = await this.AuthenticationService.GetAuthenticationHtmlForm( requestId, this.Mark );
 
 			htmlForm.Should().NotBeNullOrWhiteSpace();
 			htmlForm.Should().Contain( String.Format( "{0} would like to connect to your store", this.AppCredentials.AppName ) );

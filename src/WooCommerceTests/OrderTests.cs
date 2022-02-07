@@ -15,7 +15,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public async Task GetOrders()
 		{
-			var orders = await this.OrdersService.GetOrdersAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow );
+			var orders = await this.OrdersService.GetOrdersAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, this.Mark );
 			orders.Should().NotBeNullOrEmpty();
 			orders.Count().Should().BeGreaterOrEqualTo( 1 );
 		}
@@ -25,7 +25,7 @@ namespace WooCommerceTests
 		{
 			base.Config.OrdersPageSize = 1;
 
-			var orders = await this.OrdersService.GetOrdersAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow );
+			var orders = await this.OrdersService.GetOrdersAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, this.Mark );
 			orders.Should().NotBeNullOrEmpty();
 			orders.Count().Should().BeGreaterOrEqualTo( 3 );
 

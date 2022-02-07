@@ -132,11 +132,11 @@ namespace WooCommerceAccess.Throttling
 		#region IDisposable Support
 		private bool disposedValue = false;
 
-		void Dispose(bool disposing)
+		void Dispose( bool disposing )
 		{
-			if (!disposedValue)
+			if ( !disposedValue )
 			{
-				if (disposing)
+				if ( disposing )
 				{
 					_timer.Dispose();
 				}
@@ -147,7 +147,7 @@ namespace WooCommerceAccess.Throttling
 
 		public void Dispose()
 		{
-			Dispose(true);
+			Dispose( true );
 		}
 		#endregion
 	}

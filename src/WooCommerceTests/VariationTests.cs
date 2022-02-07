@@ -6,6 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Services;
+using WooCommerceAccess.Shared;
 using WooCommerceNET;
 
 namespace WooCommerceTests
@@ -17,10 +18,13 @@ namespace WooCommerceTests
 		private ApiV3WCObject _apiV3WcObject;
 		public VariationTests( string shopCredentialsFileName ) : base( shopCredentialsFileName ) { }
 
+		private string _serviceUrl;
+
 		[ SetUp ]
 		public void Initialize()
 		{
-			this._apiV3WcObject = new ApiV3WCObject( new RestAPI( base.Config.ShopUrl + "wp-json/wc/v3/", base.Config.ConsumerKey, base.Config.ConsumerSecret ) );
+			this._serviceUrl = base.Config.ShopUrl + "wp-json/wc/v3/";
+			this._apiV3WcObject = new ApiV3WCObject( new RestAPI( this._serviceUrl, base.Config.ConsumerKey, base.Config.ConsumerSecret ) );
 		}
 
 		[ Test ]
@@ -28,7 +32,7 @@ namespace WooCommerceTests
 		{
 			const int productId = 113;
 
-			var productVariations = await _apiV3WcObject.CollectVariationsByProductFromAllPagesAsync( productId, base.Config.ProductsPageSize );
+			var productVariations = await _apiV3WcObject.CollectVariationsByProductFromAllPagesAsync( productId, base.Config.ProductsPageSize, this._serviceUrl, this.Mark );
 
 			Assert.IsTrue( productVariations.Any() );
 		}
@@ -37,11 +41,12 @@ namespace WooCommerceTests
 		public async Task UpdateSkusQuantityAsync_ProductWithOver100Variations()
 		{
 			const int productIdWith100PlusVariations = 1272;
-			var productVariations = await _apiV3WcObject.CollectVariationsByProductFromAllPagesAsync( productIdWith100PlusVariations, base.Config.ProductsPageSize );
+			var mark = this.Mark;
+			var productVariations = await _apiV3WcObject.CollectVariationsByProductFromAllPagesAsync( productIdWith100PlusVariations, base.Config.ProductsPageSize, this._serviceUrl, mark );
 			var random = new Random();
 			var skusQuantitiesUpdate = productVariations.ToDictionary( v => v.Sku, v => (v.Quantity ?? default(int)) + random.Next(1, 10) );
 
-			var skuQuantities = await this.ProductsService.UpdateSkusQuantityAsync( skusQuantitiesUpdate );
+			var skuQuantities = await this.ProductsService.UpdateSkusQuantityAsync( skusQuantitiesUpdate, mark );
 
 			skuQuantities.Should().Equal( skusQuantitiesUpdate );
 		}
@@ -53,7 +58,7 @@ namespace WooCommerceTests
 		private const string Testsku = "testsku";
 
 		[ Test ]
-		public async Task ApiV3WCObject_GetVariationsToUpdate()
+		public void ApiV3WCObject_GetVariationsToUpdate()
 		{
 			var skusQuantities = new Dictionary< string, int >
 			{
@@ -70,7 +75,7 @@ namespace WooCommerceTests
 			};
 			const string nonManagedSku = "testsku2";
 
-			ApiV3WCObject.GetVariationsToUpdate( skusQuantities, await CollectVariationsByProductFromAllPagesAsync( nonManagedSku, 11 ), productIdNew, variationsToUpdate );
+			ApiV3WCObject.GetVariationsToUpdate( skusQuantities, CollectVariationsByProductFromAllPagesAsync( nonManagedSku, 11 ), productIdNew, variationsToUpdate );
 
 			Assert.AreEqual( productIdExisting, variationsToUpdate.First().Key.Id );
 			var secondProduct = variationsToUpdate.Skip( 1 ).First();
@@ -80,7 +85,7 @@ namespace WooCommerceTests
 			Assert.AreEqual( skusQuantities.First().Value, newVariation.Quantity );
 		}
 		
-		private async Task< IEnumerable< WooCommerceVariation > > CollectVariationsByProductFromAllPagesAsync( string nonManagedSku, int nonManagedQty )
+		private IEnumerable< WooCommerceVariation > CollectVariationsByProductFromAllPagesAsync( string nonManagedSku, int nonManagedQty )
 		{
 			return new List< WooCommerceVariation >
 			{

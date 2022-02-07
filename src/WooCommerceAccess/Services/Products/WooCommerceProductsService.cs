@@ -18,43 +18,43 @@ namespace WooCommerceAccess.Services.Products
 			_serviceUrl = base.WCObject.ProductApiUrl;
 		}
 
-		public Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities )
+		public Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, Mark mark )
 		{
-			return base.SendRequestAsync< Dictionary< string, int > >( this._serviceUrl, ( url, mark ) =>
+			return base.SendRequestAsync< Dictionary< string, int > >( this._serviceUrl, mark, ( url, marker ) =>
 			{
 				if( base.apiVersion == WooCommerceApiVersion.Legacy )
 				{
-					WooCommerceLogger.LogTrace("Updating variation quantities in legacy is not supported");
+					WooCommerceLogger.LogTrace( "Updating variation quantities in legacy is not supported" );
 				}
 
-				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities, base.Config.ProductsPageSize, url, mark );
+				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities, base.Config.ProductsPageSize, url, marker );
 			} );
 		}
 
-		public async Task< WooCommerceProduct > UpdateSkuQuantityAsync( string sku, int quantity )
+		public async Task< WooCommerceProduct > UpdateSkuQuantityAsync( string sku, int quantity, Mark mark )
 		{
-			var product = await this.GetProductBySkuAsync( sku );
+			var product = await this.GetProductBySkuAsync( sku, mark );
 
 			if ( product?.Id == null )
 				return null;
 
-			return await base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, ( url, mark ) =>
+			return await base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, mark, ( url, marker ) =>
 			{
-				return base.WCObject.UpdateProductQuantityAsync( product.Id.Value, quantity );
+				return base.WCObject.UpdateProductQuantityAsync( product.Id.Value, quantity, url, marker );
 			} ).ConfigureAwait( false );
 		}
 
-		public Task< WooCommerceProduct > GetProductBySkuAsync( string sku )
+		public Task< WooCommerceProduct > GetProductBySkuAsync( string sku, Mark mark )
 		{
-			return base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, ( url, mark ) =>
+			return base.SendRequestAsync< WooCommerceProduct >( this._serviceUrl, mark, ( url, marker ) =>
 			{
-				return base.WCObject.GetProductBySkuAsync( sku, base.Config.ProductsPageSize );
+				return base.WCObject.GetProductBySkuAsync( sku, base.Config.ProductsPageSize, url, marker );
 			});
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, Mark mark )
 		{
-			return await SendRequestAsync( _serviceUrl, ( url, mark ) => WCObject.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, base.Config.ProductsPageSize ) );
+			return await SendRequestAsync( _serviceUrl, mark, ( url, marker ) => WCObject.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, base.Config.ProductsPageSize, url, marker ) );
 		}
 	}
 }

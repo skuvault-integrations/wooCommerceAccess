@@ -1,5 +1,6 @@
 ﻿using CuttingEdge.Conditions;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Exceptions;
@@ -52,26 +53,25 @@ namespace WooCommerceAccess.Services
 				this.WCObject = legacyApiWcObject;
 		}
 
-		protected Task< T > SendRequestAsync< T >( string url, Func< string, Mark, Task< T > > processor )
+		protected Task< T > SendRequestAsync< T >( string url, Mark mark, Func< string, Mark, Task< T > > processor )
 		{
-			var mark = Mark.CreateNew();
-
 			return Throttler.ExecuteAsync( () =>
 			{
 				return new ActionPolicy( Config.RetryAttempts )
 						.ExecuteAsync( async () => {
-						      WooCommerceLogger.LogStarted( Misc.CreateMethodCallInfo( url, mark, additionalInfo: this.AdditionalLogInfo() ) );
+							WooCommerceLogger.LogStarted( Misc.CreateMethodCallInfo( url, mark, additionalInfo: this.AdditionalLogInfo() ) );
 							var entity = await processor( url, mark ).ConfigureAwait( false );
 							WooCommerceLogger.LogEnd( Misc.CreateMethodCallInfo (url, mark, methodResult: entity.ToJson(), additionalInfo: this.AdditionalLogInfo() ) );
 
 							return entity;
-					     },
+						},
 						( timeSpan, retryCount ) =>
 						{
 							string retryDetails = Misc.CreateMethodCallInfo( url, mark, additionalInfo: this.AdditionalLogInfo() );
 							WooCommerceLogger.LogTraceRetryStarted( timeSpan.Seconds, retryCount, retryDetails );
 						},
-						() => Misc.CreateMethodCallInfo( url, mark, additionalInfo: this.AdditionalLogInfo() ),
+						() => 
+						Misc.CreateMethodCallInfo( url, mark, additionalInfo: this.AdditionalLogInfo() ),
 						WooCommerceLogger.LogTraceException );
 			} );
 		}

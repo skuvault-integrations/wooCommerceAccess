@@ -5,14 +5,14 @@
     <Authors>SkuVault</Authors>
     <Company>SkuVault</Company>
     <Description>WooCommerce webservices API wrapper</Description>
-    <Copyright>SkuVault © 2021</Copyright>
+    <Copyright>SkuVault © 2021-2022</Copyright>
     <PackageLicenseUrl>https://github.com/skuvault/wooCommerceAccess/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/skuvault/wooCommerceAccess</PackageProjectUrl>
     <RepositoryUrl>https://github.com/skuvault/wooCommerceAccess</RepositoryUrl>
-    <Version>1.4.11.0</Version>
+    <Version>1.5.0.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.4.11.0</AssemblyVersion>
-    <FileVersion>1.4.11.0</FileVersion>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
+    <FileVersion>1.5.0.0</FileVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
