@@ -10,6 +10,11 @@ namespace WooCommerceAccess.Models
 {
 	public class WooCommerceProduct
 	{
+		public WooCommerceProduct()
+		{
+			this.Variations = new List< WooCommerceVariation >();
+		}
+
 		public int? Id { get; set; }
 		public string Sku { get; set; }
 		public string Name { get; set; }

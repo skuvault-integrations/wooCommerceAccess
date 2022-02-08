@@ -171,10 +171,6 @@ namespace WooCommerceAccess.Services
 					{ 
 						productWithinPage.Variations = await CollectVariationsByProductFromAllPagesAsync( productWithinPage.Id.Value, pageSize, url, mark );
 					}
-					else
-					{
-						productWithinPage.Variations = new List< WooCommerceVariation >();
-					}
 				}
 
 				products.AddRange( productsWithinPage );
