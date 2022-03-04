@@ -23,7 +23,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public void GetProductBySku()
 		{
-			var product = base.ProductsService.GetProductBySkuAsync( testSku ).Result;
+			var product = base.ProductsService.GetProductBySkuAsync( testSku, this.Mark ).Result;
 
 			product.Should().NotBeNull();
 			product.Sku.ToLower().Should().Be( testSku );
@@ -32,7 +32,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public void GetProductsCreatedUpdatedAfterAsync_CreateOnly()
 		{
-			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, false ).Result;
+			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, false, this.Mark ).Result;
 
 			products.Count().Should().NotBe( 0 );
 		}
@@ -40,7 +40,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public void GetProductsCreatedUpdatedAfterAsync_CreateAndUpdate()
 		{
-			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true ).Result;
+			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true, this.Mark ).Result;
 
 			products.Count().Should().NotBe( 0 );
 		}
@@ -147,8 +147,9 @@ namespace WooCommerceTests
 		[ Test ]
 		public async Task UpdateSkuQuantity()
 		{
+			var mark = this.Mark;
 			int newQuantity = new Random().Next( 1, 100 );
-			var updatedProduct = await base.ProductsService.UpdateSkuQuantityAsync( testSku, newQuantity );
+			var updatedProduct = await base.ProductsService.UpdateSkuQuantityAsync( testSku, newQuantity, mark );
 			updatedProduct.Should().NotBeNull();
 			updatedProduct.Quantity.Should().Be( newQuantity );
 		}
@@ -157,9 +158,9 @@ namespace WooCommerceTests
 		public async Task UpdateSkuQuantityToZero()
 		{
 			int newQuantity = new Random().Next( 1, 100 );
-			await base.ProductsService.UpdateSkuQuantityAsync( testSku, newQuantity );
+			await base.ProductsService.UpdateSkuQuantityAsync( testSku, newQuantity, this.Mark );
 
-			var updatedProduct = await base.ProductsService.UpdateSkuQuantityAsync( testSku, 0 );
+			var updatedProduct = await base.ProductsService.UpdateSkuQuantityAsync( testSku, 0, this.Mark );
 			updatedProduct.Should().NotBeNull();
 			updatedProduct.Quantity.Should().Be( 0 );
 		}
@@ -176,7 +177,7 @@ namespace WooCommerceTests
 				{ testSku2, random.Next( 1, 100 ) }
 			};
 
-			var updatedProducts = ( await base.ProductsService.UpdateSkusQuantityAsync( request ).ConfigureAwait( false ) ).ToList();
+			var updatedProducts = ( await base.ProductsService.UpdateSkusQuantityAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
 
 			updatedProducts.Count.Should().Be( request.Count );
 			var updatedTestSku = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( testSku ) );
@@ -198,7 +199,7 @@ namespace WooCommerceTests
 				{ testSkuVariation, random.Next( 1, 100 ) }
 			};
 
-			var updatedProducts = ( await base.ProductsService.UpdateSkusQuantityAsync( request ).ConfigureAwait( false ) ).ToList();
+			var updatedProducts = ( await base.ProductsService.UpdateSkusQuantityAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
 
 			updatedProducts.Count.Should().Be( request.Count );
 			var updatedTestSku = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( testSkuProduct ) );
@@ -212,7 +213,7 @@ namespace WooCommerceTests
 		{
 			base.Config.ProductsPageSize = 2;
 
-			var products = await this.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true );
+			var products = await this.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true, this.Mark );
 			products.Count().Should().BeGreaterOrEqualTo( 2 );
 
 			base.Config.ProductsPageSize = 10;

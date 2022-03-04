@@ -8,6 +8,7 @@ using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Services.Orders;
 using WooCommerceAccess.Services.Products;
 using WooCommerceAccess.Services.SystemStatus;
+using WooCommerceAccess.Shared;
 using WooCommerceAccess.Throttling;
 
 namespace WooCommerceTests
@@ -25,6 +26,14 @@ namespace WooCommerceTests
 		protected IWooCommerceProductsService ProductsService { get; private set; }
 		protected IWooCommerceOrdersService OrdersService { get; private set; }
 		protected IWooCommerceSystemStatusService SystemStatusService { get; private set; }
+
+		protected Mark Mark
+		{
+			get
+			{
+				return Mark.CreateNew();
+			}
+		}
 
 		public BaseTest( string shopCredentialsFileName )
 		{

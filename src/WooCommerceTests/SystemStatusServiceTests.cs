@@ -11,7 +11,7 @@ namespace WooCommerceTests
 		[ Test ]
 		public void GetStoreVersion()
 		{
-			var storeVersion = base.SystemStatusService.GetStoreVersion().Result;
+			var storeVersion = base.SystemStatusService.GetStoreVersionAsync( this.Mark ).Result;
 
 			Assert.IsFalse( string.IsNullOrEmpty( storeVersion ) );
 		}

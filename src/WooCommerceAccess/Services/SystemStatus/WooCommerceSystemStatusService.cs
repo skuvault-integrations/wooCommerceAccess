@@ -1,6 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
+using WooCommerceAccess.Shared;
 using WooCommerceAccess.Throttling;
 
 namespace WooCommerceAccess.Services.SystemStatus
@@ -15,11 +15,11 @@ namespace WooCommerceAccess.Services.SystemStatus
 			_serviceUrl = base.WCObject.SystemStatusApiUrl;
 		}
 
-		public async Task< string > GetStoreVersion()
+		public async Task< string > GetStoreVersionAsync( Mark mark )
 		{
-			return await base.SendRequestAsync< string >( this._serviceUrl, ( url, mark ) => 
+			return await base.SendRequestAsync< string >( this._serviceUrl, mark, ( url, marker ) => 
 			{ 
-				return base.WCObject.GetStoreVersion();
+				return base.WCObject.GetStoreVersionAsync( url, marker );
 			} ).ConfigureAwait( false );
 		}
 	}

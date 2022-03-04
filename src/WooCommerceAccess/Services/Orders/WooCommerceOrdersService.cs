@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
+using WooCommerceAccess.Shared;
 using WooCommerceAccess.Throttling;
 
 namespace WooCommerceAccess.Services.Orders
@@ -17,11 +18,11 @@ namespace WooCommerceAccess.Services.Orders
 			_serviceUrl = base.WCObject.OrdersApiUrl;
 		}
 
-		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
+		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, Mark mark )
 		{
-			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._serviceUrl, ( url, mark ) =>
+			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._serviceUrl, mark, ( url, marker ) =>
 			{
-				return base.WCObject.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize );
+				return base.WCObject.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize, url, marker );
 			} );
 		}
 	}
