@@ -12,6 +12,7 @@ namespace WooCommerceAccess.Services
 			{
 				{ WooCommerceCommandEndpointName.Page.Name, config.Page.ToString() },
 				{ WooCommerceCommandEndpointName.PerPage.Name, config.PerPage.ToString() },
+				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" }
 			};
 		}
 
@@ -21,6 +22,7 @@ namespace WooCommerceAccess.Services
 			{
 				{ WooCommerceCommandEndpointName.Page.Name, config.Page.ToString() },
 				{ WooCommerceCommandEndpointName.PerPageLegacyApiV3.Name, config.PerPage.ToString() },
+				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" }
 			};
 		}
 	}

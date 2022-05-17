@@ -240,5 +240,40 @@ namespace WooCommerceTests
 			Assert.AreEqual( variation.Sku.ToLower(), result.Sku.ToLower() );
 			Assert.AreEqual( skusQuantities[ Testsku ], result.Quantity );
 		}
+
+		[ Test ]
+		public void ApiV3WCObject_GetVariationsToUpdateWithDuplicatedProductId_ShouldPullMoreRecent()
+		{
+			var productId = 1;
+			int quantity1 = 10, quantity2 = 5;
+			var skusQuantities = new Dictionary< string, int >
+			{
+				{ Testsku, quantity2 }
+			};
+			var existingVariations = new List< WooCommerceVariation >
+			{
+				new WooCommerceVariation
+				{
+					Sku = Testsku,
+					Quantity = quantity1,
+					Id = 1,
+					ManagingStock = true
+				}
+			};
+			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >
+			{
+				{ 
+					new ProductId( productId ),
+					new List< QuantityUpdate >()
+				}
+			};
+			
+			ApiV3WCObject.GetVariationsToUpdate( skusQuantities, existingVariations, productId, variationsToUpdate );
+
+			var variationsToUpdateItem = variationsToUpdate.First();
+			Assert.AreEqual( productId, variationsToUpdateItem.Key.Id );
+			Assert.AreEqual( skusQuantities.First().Key, variationsToUpdateItem.Value.First().Sku );
+			Assert.AreEqual( quantity2, variationsToUpdateItem.Value.First().Quantity );
+		}
 	}
 }
