@@ -12,7 +12,7 @@ namespace WooCommerceAccess.Services
 			{
 				{ WooCommerceCommandEndpointName.Page.Name, config.Page.ToString() },
 				{ WooCommerceCommandEndpointName.PerPage.Name, config.PerPage.ToString() },
-				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" }
+				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" } // added sorting by id as a temporarily fix for know wooCommerce issue https://github.com/woocommerce/woocommerce/issues/32715
 			};
 		}
 
@@ -22,7 +22,7 @@ namespace WooCommerceAccess.Services
 			{
 				{ WooCommerceCommandEndpointName.Page.Name, config.Page.ToString() },
 				{ WooCommerceCommandEndpointName.PerPageLegacyApiV3.Name, config.PerPage.ToString() },
-				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" }
+				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" } // added sorting by id as a temporarily fix for know wooCommerce issue https://github.com/woocommerce/woocommerce/issues/32715
 			};
 		}
 	}
