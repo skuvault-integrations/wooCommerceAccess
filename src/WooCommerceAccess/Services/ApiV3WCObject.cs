@@ -149,7 +149,15 @@ namespace WooCommerceAccess.Services
 
 			if ( productVariationsToUpdate.Any() )
 			{
-				variationsToUpdate.Add( new ProductId( productId ), productVariationsToUpdate );
+				var productIdKey = new ProductId( productId );
+				if ( variationsToUpdate.ContainsKey( productIdKey ) )
+				{
+					variationsToUpdate[ productIdKey ] = productVariationsToUpdate;
+				}
+				else
+				{
+					variationsToUpdate.Add( productIdKey, productVariationsToUpdate );
+				}
 			}
 		}
 
