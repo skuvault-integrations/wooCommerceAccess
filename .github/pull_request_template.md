@@ -1,11 +1,11 @@
 # Description
 
-Tickets: [JIRA-1234] (Replace with appropriate tickets. Some automations depend on this section, don't remove)
+Tickets: [JIRA-1234] <!-- Replace with appropriate tickets. Some automations depend on this section, don't remove -->
 
-Summary of your changes, with screenshots if appropriate.
-Help us understand what you did. Describe how the code works and why it was done this way. You can also leave comments directly in the changed files to provide direct explanation, but check if it would be more appropriate to add those comments as inline comments in the code.
+<!-- Summary of your changes, with screenshots if appropriate.
+Help us understand what you did. Describe how the code works and why it was done this way. You can also leave comments directly in the changed files to provide direct explanation, but check if it would be more appropriate to add those comments as inline comments in the code. -->
 
-## Type of change (should only be one)
+## Type of change <!-- should only be one -->
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
@@ -20,14 +20,13 @@ Additional changes:
 
 # Additional Notes
 
-List things that we need to be aware of.
+<!-- List things that we need to be aware of.
 * If these changes depend on a set of other changes in another repository or a pull request.
-* If your code has any known issues that are not being resolved as part of these changes, list them here.
-Remove this section if no additional notes.
+* If your code has any known issues that are not being resolved as part of these changes, list them here. -->
 
 # PR Readiness Checklist
 
-Complete all the checklist steps to the best of your ability, marking steps as you complete them or adding comment on why you didn't do it.
+<!-- Complete all the checklist steps to the best of your ability, marking steps as you complete them or adding comment on why you didn't do it. -->
 
 - [ ] Followed [development conventions][1] to the best of my ability
 - [ ] Code is documented, particularly public interfaces and hard-to-understand areas
