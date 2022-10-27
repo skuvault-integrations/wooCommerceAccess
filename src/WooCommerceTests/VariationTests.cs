@@ -6,7 +6,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Services;
-using WooCommerceAccess.Shared;
 using WooCommerceNET;
 
 namespace WooCommerceTests
@@ -23,7 +22,7 @@ namespace WooCommerceTests
 		[ SetUp ]
 		public void Initialize()
 		{
-			this._serviceUrl = base.Config.ShopUrl + "wp-json/wc/v3/";
+			this._serviceUrl = base.Config.ShopUrl + ApiBasePath.V3;
 			this._apiV3WcObject = new ApiV3WCObject( new RestAPI( this._serviceUrl, base.Config.ConsumerKey, base.Config.ConsumerSecret ) );
 		}
 

@@ -14,8 +14,8 @@ namespace WooCommerceAccess.Shared
 		private readonly string _shopUrl;
 		private readonly int _retryAttempts;
 		private readonly HttpClient _httpClient;
-		private const string JsonApiV3DescriptionUrl = "/wp-json/wc/v3/";
-		private const string ProductsLegacyApiV3Url = "/wc-api/v3/products";
+		private const string JsonApiV3DescriptionUrl = "/" + ApiBasePath.V3;
+		private const string ProductsLegacyApiV3Url = "/" + ApiBasePath.LegacyV3 + "/products";
 
 		public WooCommerceApiVersionDetector( string shopUrl, int retryAttempts, string userAgentHeader )
 		{
