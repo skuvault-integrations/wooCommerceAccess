@@ -1,5 +1,6 @@
 ﻿using CuttingEdge.Conditions;
 using System;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using WooCommerceAccess.Configuration;
@@ -45,14 +46,30 @@ namespace WooCommerceAccess.Services
 			if ( apiVersion == WooCommerceApiVersion.Unknown )
 				throw new WooCommerceException( "Unsupported WordPress and WooCommerce version!" );
 			
-			var legacyApiWcObject = new LegacyV3WCObject( new RestAPI( this.Config.ShopUrl + ApiBasePath.LegacyV3, this.Config.ConsumerKey, this.Config.ConsumerSecret, authorizedHeader: false ) );
+			var legacyApiWcObject = new LegacyV3WCObject( new RestAPI( 
+				this.Config.ShopUrl + ApiBasePath.LegacyV3, 
+				this.Config.ConsumerKey,
+				this.Config.ConsumerSecret,
+				authorizedHeader: false,
+				requestFilter: RequestFilter ) );
 				
 			if ( apiVersion == WooCommerceApiVersion.V3 )
-				this.WCObject = new ApiV3WCObject( new RestAPI( this.Config.ShopUrl + ApiBasePath.V3, this.Config.ConsumerKey, this.Config.ConsumerSecret, authorizedHeader: false ), legacyApiWcObject );
+				this.WCObject = new ApiV3WCObject( new RestAPI( 
+					this.Config.ShopUrl + ApiBasePath.V3,
+					this.Config.ConsumerKey,
+					this.Config.ConsumerSecret,
+					authorizedHeader: false,
+					requestFilter: RequestFilter ),
+					legacyApiWcObject );
 			else
 				this.WCObject = legacyApiWcObject;
 		}
 
+		private void RequestFilter( HttpWebRequest request )
+		{
+			request.UserAgent = Config.DefaultUserAgentHeader;
+		}
+		
 		protected Task< T > SendRequestAsync< T >( string url, Mark mark, Func< string, Mark, Task< T > > processor )
 		{
 			return Throttler.ExecuteAsync( () =>
