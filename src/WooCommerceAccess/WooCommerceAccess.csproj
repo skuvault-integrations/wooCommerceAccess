@@ -9,10 +9,10 @@
     <PackageLicenseUrl>https://github.com/skuvault/wooCommerceAccess/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/skuvault/wooCommerceAccess</PackageProjectUrl>
     <RepositoryUrl>https://github.com/skuvault-integrations/wooCommerceAccess.git</RepositoryUrl>
-    <Version>1.7.2.1-alpha.1</Version>
+    <Version>1.7.2.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.7.2.1-alpha.1</AssemblyVersion>
-    <FileVersion>1.7.2.1-alpha.1</FileVersion>
+    <AssemblyVersion>1.7.2.1</AssemblyVersion>
+    <FileVersion>1.7.2.1</FileVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RepositoryType>git</RepositoryType>
     <PackageVersion>1.7.2.1-alpha.1</PackageVersion>
