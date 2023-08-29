@@ -121,5 +121,47 @@ namespace WooCommerceTests
 			Assert.AreEqual( variation.manage_stock, svVariation.ManagingStock );
 			Assert.AreEqual( variation.description, svVariation.Description );
 		}
+
+		[Test]
+		public void ToSvVariation_FirstAttributeIsUsed_WhenPassedAttributesWithTheSameNames()
+		{
+			// Arrange
+			var variation = new WooCommerceNET.WooCommerce.v3.Variation
+			{
+				id = 3,
+				sku = "somesku",
+				attributes = new List<VariationAttribute>
+				{
+					new VariationAttribute
+					{
+						name = "size",
+						option = "small"
+					},
+					new VariationAttribute
+					{
+						name = "size",
+						option = "big"
+					},
+					new VariationAttribute
+					{
+						name = "color",
+						option = "blue"
+					}
+				}
+			};
+
+			// Act
+			var svVariation = variation.ToSvVariation();
+
+			// Assert
+			var svVariationAttributes = svVariation.Attributes.ToArray();
+			Assert.AreEqual(variation.id, svVariation.Id);
+			Assert.AreEqual(variation.sku, svVariation.Sku);
+			Assert.AreEqual(2, svVariationAttributes.Length);
+			Assert.AreEqual(variation.attributes[0].name, svVariationAttributes[0].Key);
+			Assert.AreEqual(variation.attributes[0].option, svVariationAttributes[0].Value);
+			Assert.AreEqual(variation.attributes[2].name, svVariationAttributes[1].Key);
+			Assert.AreEqual(variation.attributes[2].option, svVariationAttributes[1].Value);
+		}
 	}
 }

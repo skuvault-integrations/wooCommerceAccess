@@ -51,6 +51,18 @@ namespace WooCommerceAccess.Models
 				images.Add( variationV3.image.src );
 			}
 
+			var attributes = new Dictionary<string, string>();
+			if (variationV3.attributes != null)
+			{
+				foreach (var attribute in variationV3.attributes)
+				{
+					if (!string.IsNullOrWhiteSpace(attribute.name) && !attributes.ContainsKey(attribute.name))
+					{
+						attributes.Add(attribute.name, attribute.option);
+					}
+				}
+			}
+
 			return new WooCommerceVariation
 			{
 				Id = variationV3.id,
@@ -62,8 +74,7 @@ namespace WooCommerceAccess.Models
 				Weight = variationV3.weight,
 				SalePrice = variationV3.sale_price,
 				RegularPrice = variationV3.regular_price,
-				Attributes = variationV3.attributes?.Where( a => !string.IsNullOrWhiteSpace( a.name ) )
-					.ToDictionary( a => a.name, a => a.option ),
+				Attributes = attributes,
 				UpdatedDateUtc = variationV3.date_modified_gmt,
 				CreatedDateUtc = variationV3.date_created_gmt,
 				ManagingStock = (bool?) variationV3.manage_stock
