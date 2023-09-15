@@ -1,41 +1,119 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace WooCommerceTests
 {
 	[ TestFixture( "credentials_cloud_sandbox.csv" ) ]
 	public class InventoryTests : BaseTest
 	{
-		private const string testSku = "testsku";
-		private string testSku2 = "testsku2";
+		
+		private const string TestProductSku = "testSku4";
+		private const string TestVariationProductSku = "testsku4-med";
+		private readonly Randomizer _randomizer = new Randomizer();
 
 		public InventoryTests( string shopCredentialsFileName ) : base( shopCredentialsFileName) { }
 		
 		[ Test ]
-		public async Task UpdateSkusQuantity()
+		public async Task UpdateInventoryAsync_ShouldReturnsProductsWithUpdatedQuantity_WhenProductIsSpecified()
 		{
-			//testSku2 = "testsku3-red";
-
-			var random = new Random();
 			var request = new Dictionary< string, int >
 			{
-				//{ "test31091", random.Next( 1, 100 ) },
-				{ "testSku4", random.Next( 1, 100 ) },
-				{ "testsku4-med", random.Next( 1, 100 ) },
-				{ "testsku4-sm", random.Next( 1, 100 ) }
+				{ TestProductSku, _randomizer.Next( 1, 100 ) }
 			};
 
-			var updatedProducts = ( await base.ProductsService.UpdateSkusQuantityAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
+			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
 
-			//updatedProducts.Count.Should().Be( request.Count );
-			//var updatedTestSku = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( testSku ) );
-			//updatedTestSku.Value.Should().Be( request[ testSku ] );
-			//var updatedTestSku2 = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( testSku2 ) );
-			//updatedTestSku2.Value.Should().Be( request[ testSku2 ] );
+			updatedProducts.Count.Should().Be( request.Count );
+			var updatedTestProduct = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( TestProductSku ) );
+			updatedTestProduct.Value.Should().Be( request[ TestProductSku ] );
+		}
+
+		[ Test ]
+		public async Task UpdateInventoryAsync_ShouldReturnsVariationProductWithUpdatedQuantity_WhenVariationProductIsSpecified()
+		{
+			var request = new Dictionary< string, int >
+			{
+				{ TestVariationProductSku, _randomizer.Next( 1, 100 ) }
+			};
+
+			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
+
+			updatedProducts.Count.Should().Be( request.Count );
+			var updatedVariationProduct = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( TestVariationProductSku ) );
+			updatedVariationProduct.Value.Should().Be( request[ TestVariationProductSku ] );
+		}
+
+		[ Test ]
+		public async Task UpdateInventoryAsync_ShouldReturnsEmpty_WhenProductHasIncorrectSku()
+		{
+			var request = new Dictionary< string, int >
+			{
+				{ _randomizer.GetString( 5 ), _randomizer.Next( 1, 100 ) }
+			};
+
+			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
+
+			updatedProducts.Count.Should().Be( 0 );
+		}
+
+		[ Test ]
+		public async Task UpdateInventoryAsync_ShouldReturnsProductWithNegativeQuantity_WhenProductHasNegativeQuantity()
+		{
+			var request = new Dictionary< string, int >
+			{
+				{ TestProductSku, _randomizer.Next( -100, -1 ) }
+			};
+
+			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
+
+			updatedProducts.Count.Should().Be( request.Count );
+			var updatedTestProduct = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( TestProductSku ) );
+			updatedTestProduct.Value.Should().Be( request[ TestProductSku ] );
+		}
+
+		[ Test ]
+		public async Task UpdateInventoryAsync_ShouldReturnsProductWithZeroQuantity_WhenProductHasZeroQuantity()
+		{
+			var request = new Dictionary< string, int >
+			{
+				{ TestProductSku, 0 }
+			};
+
+			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
+
+			updatedProducts.Count.Should().Be( request.Count );
+			var updatedTestProduct = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( TestProductSku ) );
+			updatedTestProduct.Value.Should().Be( request[ TestProductSku ] );
+		}
+
+		[ Test ]
+		public async Task UpdateInventoryAsync_ShouldReturnsAllProductsWithUpdatedQuantities_WhenProductAndVariationProductAreSpecified()
+		{
+			var request = new Dictionary< string, int >
+			{
+				{ TestProductSku, _randomizer.Next( 1, 100 ) },
+				{ TestVariationProductSku, _randomizer.Next( 1, 100 ) }
+			};
+
+			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( request, this.Mark ).ConfigureAwait( false ) ).ToList();
+
+			updatedProducts.Count.Should().Be( request.Count );
+			var updatedTestProduct = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( TestProductSku ) );
+			updatedTestProduct.Value.Should().Be( request[ TestProductSku ] );
+			var updatedVariationProduct = updatedProducts.FirstOrDefault( pr => pr.Key.Equals( TestVariationProductSku ) );
+			updatedVariationProduct.Value.Should().Be( request[ TestVariationProductSku ] );
+		}
+
+		[ Test ]
+		public async Task UpdateInventoryAsync_ShouldReturnsEmpty_WhenProductsListIsEmpty()
+		{
+			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( new Dictionary< string, int >(), this.Mark ).ConfigureAwait( false ) ).ToList();
+
+			updatedProducts.Count.Should().Be( 0 );
 		}
 	}
 }
