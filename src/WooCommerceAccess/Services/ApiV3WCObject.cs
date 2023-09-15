@@ -1,8 +1,8 @@
-﻿using CuttingEdge.Conditions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CuttingEdge.Conditions;
 using WooCommerceAccess.Exceptions;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
@@ -105,10 +105,19 @@ namespace WooCommerceAccess.Services
 			return updatedProduct.ToSvProduct();
 		}
 
+		/// <summary>
+		/// Full Inventory Sync by SKUs to WooCommerce
+		/// Note: This method can be used for rare Full Inventory Sync by requesting the entire catalog from WooCommerce
+		/// </summary>
+		/// <param name="skusQuantities"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="url"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
 		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark )
 		{
 			var productsToUpdate = new List< QuantityUpdate >();
-			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >();
+			var variationsToUpdate = new Dictionary< ProductId, List< QuantityUpdate > >();
 			await GetProductsAndVariationsToUpdateAsync( async filter => await GetNextProductPageAsync( filter, url, mark ), 
 				async productId => await CollectVariationsByProductFromAllPagesAsync( productId, pageSize, url, mark ),
 				skusQuantities, pageSize, productsToUpdate, variationsToUpdate );
@@ -122,7 +131,30 @@ namespace WooCommerceAccess.Services
 			return updatedProducts.Concat( updatedVariations ).ToDictionary( p => p.Key, p => p.Value );
 		}
 
-		public static async Task GetProductsAndVariationsToUpdateAsync( GetProductsAsyncDelegate getNextProductPageAsync, Func< int, Task< IEnumerable< WooCommerceVariation > > > getVariationsAsync, Dictionary< string, int > skusQuantities, int pageSize, List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
+		/// <summary>
+		/// Inventory Sync by SKUs to WooCommerce
+		/// Note: This method can be used for regular Inventory Sync without requesting the entire catalog from WooCommerce
+		/// </summary>
+		/// <param name="skusQuantities"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="url"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		public async Task< Dictionary< string, int > > UpdateInventoryAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark )
+		{
+			var products = await GetProductsAsync( GetProductBySkuAsync, skusQuantities, pageSize, url, mark ).ConfigureAwait( false );
+			var productsToUpdate = GetProductsInventory( products, skusQuantities );
+			var variationsToUpdate = GetProductVariationsInventory( products, skusQuantities );
+
+			LogInventoryToUpdate( productsToUpdate, variationsToUpdate, url, mark );
+
+			var updatedProducts = await UpdateProductsAsync( productsToUpdate, url, mark );
+			var updatedVariations = ( await UpdateVariationsAsync( variationsToUpdate, url, mark ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
+			return updatedProducts.Concat( updatedVariations ).ToDictionary( p => p.Key, p => p.Value );
+		}
+	
+		public static async Task GetProductsAndVariationsToUpdateAsync( GetProductsAsyncDelegate getNextProductPageAsync, Func< int, Task< IEnumerable< WooCommerceVariation > > > getVariationsAsync, 
+			Dictionary< string, int > skusQuantities, int pageSize, List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, List< QuantityUpdate > > variationsToUpdate )
 		{
 			for( var page = 1; ; page++ )
 			{
@@ -142,7 +174,8 @@ namespace WooCommerceAccess.Services
 			}
 		}
 
-		public static void GetVariationsToUpdate( Dictionary< string, int > skusQuantities, IEnumerable< WooCommerceVariation > variations, int productId, Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsToUpdate )
+		public static void GetVariationsToUpdate( Dictionary< string, int > skusQuantities, IEnumerable< WooCommerceVariation > variations, int productId, Dictionary< ProductId,
+			List< QuantityUpdate > > variationsToUpdate )
 		{
 			var productVariationsToUpdate = variations.Select( variation => new QuantityUpdate( variation, skusQuantities ) ).
 				Where( quantityUpdate => quantityUpdate.IsUpdateNeeded ).ToList();
@@ -208,7 +241,7 @@ namespace WooCommerceAccess.Services
 			return ( await UpdateProductsInSequentialBatchesAsync( productsUpdateRequests, BatchSize, url, mark ) ).Where( p => !string.IsNullOrWhiteSpace( p.Sku ) ).ToDictionary( p => p.Sku, p => p.Quantity ?? 0 );
 		}
 
-		private async Task< IEnumerable< WooCommerceVariation > > UpdateVariationsAsync( Dictionary< ProductId, IEnumerable< QuantityUpdate > > variationsUpdateRequests, string url, Mark mark )
+		private async Task< IEnumerable< WooCommerceVariation > > UpdateVariationsAsync( Dictionary< ProductId, List< QuantityUpdate > > variationsUpdateRequests, string url, Mark mark )
 		{
 			var result = new List< WooCommerceVariation >();
 			var wooCommerceVariationBatch = new WooCommerceNET.Base.BatchObject< WApiV3.Variation >();
@@ -252,6 +285,12 @@ namespace WooCommerceAccess.Services
 			}
 
 			return result;
+		}
+
+		private static void LogInventoryToUpdate( List< QuantityUpdate > productsToUpdate, Dictionary< ProductId, List< QuantityUpdate > > variationsToUpdate, string url, Mark mark )
+		{ 
+			var variationsJson = variationsToUpdate.Select( x => new { ProductId = x.Key.Id, Variations = x.Value } ).ToJson();
+			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "productsToUpdate: {0}. variationsToUpdate: {1}" , productsToUpdate.ToJson(), variationsJson ) ) );
 		}
 	}
 }

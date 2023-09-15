@@ -71,9 +71,7 @@ namespace WooCommerceTests
 				{
 					1,
 					2
-				},
-				date_created_gmt = new DateTime( 2099, 1, 1 ),
-				date_modified_gmt = new DateTime( 2099, 11, 11 )
+				}
 			};
 
 			var svProduct = product.ToSvProduct();

@@ -31,6 +31,14 @@ namespace WooCommerceAccess.Services.Products
 			} );
 		}
 
+		public Task< Dictionary< string, int > > UpdateInventoryAsync( Dictionary< string, int > skusQuantities, Mark mark )
+		{
+			return base.SendRequestAsync< Dictionary< string, int > >( this._serviceUrl, mark, ( url, marker ) =>
+			{
+				return base.WCObject.UpdateInventoryAsync( skusQuantities, base.Config.ProductsPageSize, url, marker );
+			} );
+		}
+
 		public async Task< WooCommerceProduct > UpdateSkuQuantityAsync( string sku, int quantity, Mark mark )
 		{
 			var product = await this.GetProductBySkuAsync( sku, mark );

@@ -16,6 +16,7 @@ namespace WooCommerceAccess.Models
 		}
 
 		public int? Id { get; set; }
+		public int ParentId { get; set; }
 		public string Sku { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
@@ -42,6 +43,7 @@ namespace WooCommerceAccess.Models
 			return new WooCommerceProduct()
 			{
 				Id = productV3.id,
+				ParentId = productV3.parent_id ?? 0,
 				Sku = productV3.sku,
 				Name = productV3.name,
 				Description = productV3.description,
@@ -66,6 +68,7 @@ namespace WooCommerceAccess.Models
 			return new WooCommerceProduct()
 			{
 				Id = legacyProduct.id,
+				ParentId = legacyProduct.parent_id ?? 0,
 				Sku = legacyProduct.sku,
 				Name = legacyProduct.title,
 				Description = legacyProduct.description,

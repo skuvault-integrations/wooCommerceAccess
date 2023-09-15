@@ -75,10 +75,36 @@ namespace WooCommerceAccess.Services
 			return await CollectProductsFromAllPagesAsync( productFilters, pageSize, url, mark );
 		}
 
+		/// <summary>
+		/// Full Inventory Sync by SKUs to WooCommerce
+		/// Note: This method can be used for rare Full Inventory Sync by requesting the entire catalog from WooCommerce
+		/// </summary>
+		/// <param name="skusQuantities"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="url"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
 		public async Task< Dictionary< string, int > > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark )
 		{
 			var productsToUpdate = await GetProductsToUpdateAsync( async filter => await GetNextProductPageAsync( filter, url, mark ), skusQuantities, pageSize );
 			var updatedProducts = await UpdateProductsAsync( productsToUpdate, url, mark );
+			return updatedProducts.ToDictionary( p => p.Key, p => p.Value );
+		}
+
+		/// <summary>
+		/// Inventory Sync by SKUs to WooCommerce
+		/// Note: This method can be used for regular Inventory Sync without requesting the entire catalog from WooCommerce
+		/// </summary>
+		/// <param name="skusQuantities"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="url"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		public async Task< Dictionary< string, int > > UpdateInventoryAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark )
+		{
+			var products = await GetProductsAsync( GetProductBySkuAsync, skusQuantities, pageSize, url, mark ).ConfigureAwait( false );
+			var productsAndVariationsToUpdate = GetProductsInventory( products, skusQuantities, productsOnly: false );
+			var updatedProducts = await UpdateProductsAsync( productsAndVariationsToUpdate, url, mark );
 			return updatedProducts.ToDictionary( p => p.Key, p => p.Value );
 		}
 

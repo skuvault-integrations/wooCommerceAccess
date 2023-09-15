@@ -239,7 +239,7 @@ namespace WooCommerceTests
 
 			await ApiV3WCObject.GetProductsAndVariationsToUpdateAsync( async filter => await GetNextProductPageAsync( filter, testsku2 ), 
 				async productId => await Task.FromResult( new List< WooCommerceVariation >() ),
-				skusQuantities, pageSize, productsToUpdate, new Dictionary< ProductId, IEnumerable< QuantityUpdate > >() );
+				skusQuantities, pageSize, productsToUpdate, new Dictionary< ProductId, List< QuantityUpdate > >() );
 
 			Assert.AreEqual( 1, productsToUpdate.Count );
 			var product = productsToUpdate.First();
