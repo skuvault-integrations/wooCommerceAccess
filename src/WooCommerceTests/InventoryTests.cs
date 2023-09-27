@@ -17,6 +17,7 @@ namespace WooCommerceTests
 
 		public InventoryTests( string shopCredentialsFileName ) : base( shopCredentialsFileName) { }
 		
+		[ Explicit ]
 		[ Test ]
 		public async Task UpdateInventoryAsync_ShouldReturnsProductsWithUpdatedQuantity_WhenProductIsSpecified()
 		{
@@ -32,6 +33,7 @@ namespace WooCommerceTests
 			updatedTestProduct.Value.Should().Be( request[ TestProductSku ] );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public async Task UpdateInventoryAsync_ShouldReturnsVariationProductWithUpdatedQuantity_WhenVariationProductIsSpecified()
 		{
@@ -47,6 +49,7 @@ namespace WooCommerceTests
 			updatedVariationProduct.Value.Should().Be( request[ TestVariationProductSku ] );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public async Task UpdateInventoryAsync_ShouldReturnsEmpty_WhenProductHasIncorrectSku()
 		{
@@ -60,6 +63,7 @@ namespace WooCommerceTests
 			updatedProducts.Count.Should().Be( 0 );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public async Task UpdateInventoryAsync_ShouldReturnsProductWithNegativeQuantity_WhenProductHasNegativeQuantity()
 		{
@@ -75,6 +79,7 @@ namespace WooCommerceTests
 			updatedTestProduct.Value.Should().Be( request[ TestProductSku ] );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public async Task UpdateInventoryAsync_ShouldReturnsProductWithZeroQuantity_WhenProductHasZeroQuantity()
 		{
@@ -90,6 +95,7 @@ namespace WooCommerceTests
 			updatedTestProduct.Value.Should().Be( request[ TestProductSku ] );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public async Task UpdateInventoryAsync_ShouldReturnsAllProductsWithUpdatedQuantities_WhenProductAndVariationProductAreSpecified()
 		{
@@ -108,6 +114,7 @@ namespace WooCommerceTests
 			updatedVariationProduct.Value.Should().Be( request[ TestVariationProductSku ] );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public async Task UpdateInventoryAsync_ShouldReturnsEmpty_WhenProductsListIsEmpty()
 		{

@@ -142,9 +142,10 @@ namespace WooCommerceAccess.Services
 		/// <returns></returns>
 		public async Task< Dictionary< string, int > > UpdateInventoryAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark )
 		{
-			var products = await GetProductsAsync( GetProductBySkuAsync, skusQuantities, pageSize, url, mark ).ConfigureAwait( false );
-			var productsToUpdate = GetProductsInventory( products, skusQuantities );
-			var variationsToUpdate = GetProductVariationsInventory( products, skusQuantities );
+			var products = await GetProductsAsync( GetProductBySkuAsync, skusQuantities.Keys, pageSize, url, mark ).ConfigureAwait( false );
+			// get inventory update requests separately for products and variations
+			var productsToUpdate = CreateProductsVariationsInventoryUpdateRequests( products, skusQuantities, productsOnly: true );
+			var variationsToUpdate = CreateVariationsInventoryUpdateRequests( products, skusQuantities );
 
 			LogInventoryToUpdate( productsToUpdate, variationsToUpdate, url, mark );
 

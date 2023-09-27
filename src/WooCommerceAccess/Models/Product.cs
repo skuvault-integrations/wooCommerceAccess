@@ -15,7 +15,13 @@ namespace WooCommerceAccess.Models
 			this.Variations = new List< WooCommerceVariation >();
 		}
 
+		/// <summary>
+		/// It can be either product_id or variation_id, depending on which matches the filter in the query
+		/// </summary>
 		public int? Id { get; set; }
+		/// <summary>
+		/// It can be a parent product id (if the entity is a variation of the product) or 0 (if this is product itself)
+		/// </summary>
 		public int ParentId { get; set; }
 		public string Sku { get; set; }
 		public string Name { get; set; }

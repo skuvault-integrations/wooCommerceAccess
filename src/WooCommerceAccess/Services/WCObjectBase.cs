@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Shared;
+using static System.Collections.Generic.Dictionary< string, int >;
 
 namespace WooCommerceAccess.Services
 {
@@ -21,41 +21,44 @@ namespace WooCommerceAccess.Services
 			}
 		}
 
-		internal static List< QuantityUpdate > GetProductsInventory( Dictionary< string, WooCommerceProduct > products, Dictionary< string, int > skusQuantities, bool productsOnly = true )
+		internal static List< QuantityUpdate > CreateProductsVariationsInventoryUpdateRequests( Dictionary< string, WooCommerceProduct > productsOrVariations,
+			Dictionary< string, int > skusQuantities, bool productsOnly = true )
 		{
 			var inventory = new List< QuantityUpdate >();
-			foreach( var sku in products.Keys )
+			foreach( var sku in productsOrVariations.Keys )
 			{
-				var product = products[ sku ];
-				if( product.ParentId == 0 || !productsOnly )
+				var productOrVariation = productsOrVariations[ sku ];
+				if( productOrVariation.ParentId == 0 || !productsOnly )
 				{
-					inventory.Add( new QuantityUpdate( product, skusQuantities ) );
+					inventory.Add( new QuantityUpdate( productOrVariation, skusQuantities ) );
 				}
 			}
 
 			return inventory;
 		}
 
-		internal static Dictionary< ProductId, List< QuantityUpdate > > GetProductVariationsInventory( Dictionary< string, WooCommerceProduct > products, Dictionary< string, int > skusQuantities )
+		internal static Dictionary< ProductId, List< QuantityUpdate > > CreateVariationsInventoryUpdateRequests( Dictionary< string, WooCommerceProduct > variations,
+			Dictionary< string, int > skusQuantities )
 		{
 			var inventory = new Dictionary< ProductId, List< QuantityUpdate > >();
-			foreach( var sku in products.Keys )
+			foreach( var sku in variations.Keys )
 			{
-				var product = products[ sku ];
-				if (product.ParentId == 0)
+				var variation = variations[ sku ];
+				// skip products
+				if ( variation.ParentId == 0 )
 					continue;
 
-				var productId = new ProductId( product.ParentId );
+				var productId = new ProductId( variation.ParentId );
 
 				if( inventory.ContainsKey( productId ) )
 				{ 
-					inventory[ productId ].Add( new QuantityUpdate( product, skusQuantities ) );
+					inventory[ productId ].Add( new QuantityUpdate( variation, skusQuantities ) );
 				}
 				else 
 				{ 
 					inventory.Add( productId, new List< QuantityUpdate > 
 					{ 
-						new QuantityUpdate( product, skusQuantities ) 
+						new QuantityUpdate( variation, skusQuantities ) 
 					} );
 				}
 			}
@@ -64,10 +67,10 @@ namespace WooCommerceAccess.Services
 		}
 
 		internal static async Task< Dictionary< string, WooCommerceProduct > > GetProductsAsync( Func< string, int, string, Mark, Task< WooCommerceProduct > > getProductBySkuFunc,
-			Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark )
+			KeyCollection skus, int pageSize, string url, Mark mark )
 		{
 			var products = new Dictionary< string, WooCommerceProduct >();
-			foreach( var sku in skusQuantities.Keys )
+			foreach( var sku in skus )
 			{
 				var product = await getProductBySkuFunc( sku, pageSize, url, mark ).ConfigureAwait( false );
 				if( product == null )
