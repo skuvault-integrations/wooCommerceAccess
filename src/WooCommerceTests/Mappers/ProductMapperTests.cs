@@ -71,7 +71,9 @@ namespace WooCommerceTests
 				{
 					1,
 					2
-				}
+				},
+				date_created_gmt_value = "2099/01/01",
+				date_modified_gmt_value = "2099/11/11"
 			};
 
 			var svProduct = product.ToSvProduct();
@@ -89,7 +91,7 @@ namespace WooCommerceTests
 			Assert.AreEqual( product.weight, svProduct.Weight );
 			Assert.AreEqual( product.sale_price, svProduct.SalePrice );
 			Assert.AreEqual( product.regular_price, svProduct.RegularPrice );
-			Assert.AreEqual( 1, svProduct.Attributes.Count );
+			Assert.AreEqual( 2, svProduct.Attributes.Count );
 			Assert.AreEqual( product.attributes[0].name, svProduct.Attributes.First().Key );
 			Assert.AreEqual( product.attributes[0].options.First(), svProduct.Attributes.First().Value );
 			Assert.AreEqual( product.variations.Any(), svProduct.HasVariations );
@@ -178,7 +180,7 @@ namespace WooCommerceTests
 			Assert.AreEqual( decimal.Parse( legacyProduct.weight ) , svProduct.Weight );
 			Assert.AreEqual( legacyProduct.sale_price , svProduct.SalePrice );
 			Assert.AreEqual( legacyProduct.regular_price , svProduct.RegularPrice );
-			Assert.AreEqual( 1 , svProduct.Attributes.Count );
+			Assert.AreEqual( 2 , svProduct.Attributes.Count );
 			Assert.AreEqual( legacyProduct.attributes[0].name , svProduct.Attributes.First().Key );
 			Assert.AreEqual( legacyProduct.attributes[0].options.First() , svProduct.Attributes.First().Value );
 			Assert.AreEqual( legacyProduct.variations.Any() , svProduct.Variations.Any() );
