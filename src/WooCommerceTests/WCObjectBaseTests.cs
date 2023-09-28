@@ -13,7 +13,7 @@ namespace WooCommerceTests
 		private static readonly Randomizer _randomizer = new Randomizer();
 		
 		[ Test ]
-		public void CreateProductsVariationsInventoryUpdateRequests_ShouldReturnsAllRequests_WhenGivenProductsOnly()
+		public void CreateProductsVariationsInventoryUpdateRequests_ReturnsAllRequests_WhenGivenProductsOnly()
 		{
 			var wooCommerceProducts = GenerateWooCommerceProductsVariations( productsOnly: true );
 			var skusQuantities = GenerateSkusQuantities( wooCommerceProducts );
@@ -24,7 +24,7 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
-		public void CreateProductsVariationsInventoryUpdateRequests_ShouldReturnsAllRequests_WhenGivenProductsAndVariations_andProductsOnlyIsFalse()
+		public void CreateProductsVariationsInventoryUpdateRequests_ReturnsAllRequests_WhenGivenProductsAndVariations_andProductsOnlyIsFalse()
 		{
 			var wooCommerceProductsAndVariations = GenerateWooCommerceProductsVariations( productsOnly: false );
 			var skusQuantities = GenerateSkusQuantities( wooCommerceProductsAndVariations );
@@ -35,7 +35,7 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
-		public void CreateProductsVariationsInventoryUpdateRequests_ShouldReturnsProductsRequestsOnly_WhenGivenProductsAndVariations_andProductsOnlyIsTrue()
+		public void CreateProductsVariationsInventoryUpdateRequests_ReturnsProductsRequestsOnly_WhenGivenProductsAndVariations_andProductsOnlyIsTrue()
 		{
 			var wooCommerceProductsAndVariations = GenerateWooCommerceProductsVariations( productsOnly: false );
 			var skusQuantities = GenerateSkusQuantities( wooCommerceProductsAndVariations );
@@ -47,7 +47,7 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
-		public void CreateVariationsInventoryUpdateRequests_ShouldReturnsEmpty_WhenGivenProductsOnly()
+		public void CreateVariationsInventoryUpdateRequests_ReturnsEmpty_WhenGivenProductsOnly()
 		{
 			var wooCommerceProducts = GenerateWooCommerceProductsVariations( productsOnly: true );
 			var skusQuantities = GenerateSkusQuantities( wooCommerceProducts );
@@ -58,7 +58,7 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
-		public void CreateVariationsInventoryUpdateRequests_ShouldReturnsAllRequests_WhenGivenVariationsOnly_andDifferentParentProductId()
+		public void CreateVariationsInventoryUpdateRequests_ReturnsAllRequests_WhenGivenVariationsOnly_andDifferentParentProductId()
 		{
 			var wooCommerceVariations = GenerateWooCommerceProductsVariations( variationsOnly: true );
 			var skusQuantities = GenerateSkusQuantities( wooCommerceVariations );
@@ -70,7 +70,7 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
-		public void CreateVariationsInventoryUpdateRequests_ShouldReturnsOneRequestWithMultiInventoryQuantities_WhenGivenVariationsOnly_withCommonParentProductId()
+		public void CreateVariationsInventoryUpdateRequests_ReturnsOneRequestWithMultiInventoryQuantities_WhenGivenVariationsOnly_withCommonParentProductId()
 		{
 			var wooCommerceVariations = GenerateWooCommerceProductsVariations( variationsOnly: true, parentProductId: _randomizer.Next() );
 			var skusQuantities = GenerateSkusQuantities( wooCommerceVariations );

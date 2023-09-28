@@ -19,7 +19,7 @@ namespace WooCommerceTests
 		
 		[ Explicit ]
 		[ Test ]
-		public async Task UpdateInventoryAsync_ShouldReturnsProductsWithUpdatedQuantity_WhenProductIsSpecified()
+		public async Task UpdateInventoryAsync_ReturnsProductsWithUpdatedQuantity_WhenProductIsSpecified()
 		{
 			var request = new Dictionary< string, int >
 			{
@@ -35,7 +35,7 @@ namespace WooCommerceTests
 
 		[ Explicit ]
 		[ Test ]
-		public async Task UpdateInventoryAsync_ShouldReturnsVariationProductWithUpdatedQuantity_WhenVariationProductIsSpecified()
+		public async Task UpdateInventoryAsync_ReturnsVariationProductWithUpdatedQuantity_WhenVariationProductIsSpecified()
 		{
 			var request = new Dictionary< string, int >
 			{
@@ -51,7 +51,7 @@ namespace WooCommerceTests
 
 		[ Explicit ]
 		[ Test ]
-		public async Task UpdateInventoryAsync_ShouldReturnsEmpty_WhenProductHasIncorrectSku()
+		public async Task UpdateInventoryAsync_ReturnsEmpty_WhenProductHasIncorrectSku()
 		{
 			var request = new Dictionary< string, int >
 			{
@@ -65,7 +65,7 @@ namespace WooCommerceTests
 
 		[ Explicit ]
 		[ Test ]
-		public async Task UpdateInventoryAsync_ShouldReturnsProductWithNegativeQuantity_WhenProductHasNegativeQuantity()
+		public async Task UpdateInventoryAsync_ReturnsProductWithNegativeQuantity_WhenProductHasNegativeQuantity()
 		{
 			var request = new Dictionary< string, int >
 			{
@@ -81,7 +81,7 @@ namespace WooCommerceTests
 
 		[ Explicit ]
 		[ Test ]
-		public async Task UpdateInventoryAsync_ShouldReturnsProductWithZeroQuantity_WhenProductHasZeroQuantity()
+		public async Task UpdateInventoryAsync_ReturnsProductWithZeroQuantity_WhenProductHasZeroQuantity()
 		{
 			var request = new Dictionary< string, int >
 			{
@@ -97,7 +97,7 @@ namespace WooCommerceTests
 
 		[ Explicit ]
 		[ Test ]
-		public async Task UpdateInventoryAsync_ShouldReturnsAllProductsWithUpdatedQuantities_WhenProductAndVariationProductAreSpecified()
+		public async Task UpdateInventoryAsync_ReturnsAllProductsWithUpdatedQuantities_WhenProductAndVariationProductAreSpecified()
 		{
 			var request = new Dictionary< string, int >
 			{
@@ -116,7 +116,7 @@ namespace WooCommerceTests
 
 		[ Explicit ]
 		[ Test ]
-		public async Task UpdateInventoryAsync_ShouldReturnsEmpty_WhenProductsListIsEmpty()
+		public async Task UpdateInventoryAsync_ReturnsEmpty_WhenProductsListIsEmpty()
 		{
 			var updatedProducts = ( await base.ProductsService.UpdateInventoryAsync( new Dictionary< string, int >(), this.Mark ).ConfigureAwait( false ) ).ToList();
 
