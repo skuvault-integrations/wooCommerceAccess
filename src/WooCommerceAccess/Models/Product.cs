@@ -22,7 +22,7 @@ namespace WooCommerceAccess.Models
 		/// <summary>
 		/// It can be a parent product id (if the entity is a variation of the product) or 0 (if this is product itself)
 		/// </summary>
-		public int ParentId { get; set; }
+		public int ParentProductId { get; set; }
 		public string Sku { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
@@ -49,7 +49,7 @@ namespace WooCommerceAccess.Models
 			return new WooCommerceProduct()
 			{
 				Id = productV3.id,
-				ParentId = productV3.parent_id ?? 0,
+				ParentProductId = productV3.parent_id ?? 0,
 				Sku = productV3.sku,
 				Name = productV3.name,
 				Description = productV3.description,
@@ -74,7 +74,7 @@ namespace WooCommerceAccess.Models
 			return new WooCommerceProduct()
 			{
 				Id = legacyProduct.id,
-				ParentId = legacyProduct.parent_id ?? 0,
+				ParentProductId = legacyProduct.parent_id ?? 0,
 				Sku = legacyProduct.sku,
 				Name = legacyProduct.title,
 				Description = legacyProduct.description,

@@ -42,7 +42,7 @@ namespace WooCommerceTests
 
 			var productRequests = WCObjectBase.CreateProductsVariationsInventoryUpdateRequests( wooCommerceProductsAndVariations, skusQuantities, productsOnly: true );
 
-			var wooCommerceProductsOnly = wooCommerceProductsAndVariations.Values.Where( a => a.ParentId == 0 ).ToDictionary( x => x.Sku, x => x );
+			var wooCommerceProductsOnly = wooCommerceProductsAndVariations.Values.Where( a => a.ParentProductId == 0 ).ToDictionary( x => x.Sku, x => x );
 			AssertProductsVariationsInventoryUpdateRequests( wooCommerceProductsOnly, skusQuantities, productRequests );
 		}
 
@@ -98,7 +98,7 @@ namespace WooCommerceTests
 				{
 					Id = _randomizer.Next(),
 					Sku = _randomizer.GetString(), 
-					ParentId = parentId,
+					ParentProductId = parentId,
 					Quantity = _randomizer.Next(),
 					ManagingStock = true
 				};

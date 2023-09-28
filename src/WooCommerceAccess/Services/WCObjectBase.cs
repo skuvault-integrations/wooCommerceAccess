@@ -28,7 +28,7 @@ namespace WooCommerceAccess.Services
 			foreach( var sku in productsOrVariations.Keys )
 			{
 				var productOrVariation = productsOrVariations[ sku ];
-				if( productOrVariation.ParentId == 0 || !productsOnly )
+				if( productOrVariation.ParentProductId == 0 || !productsOnly )
 				{
 					inventory.Add( new QuantityUpdate( productOrVariation, skusQuantities ) );
 				}
@@ -45,10 +45,10 @@ namespace WooCommerceAccess.Services
 			{
 				var variation = variations[ sku ];
 				// skip products
-				if ( variation.ParentId == 0 )
+				if ( variation.ParentProductId == 0 )
 					continue;
 
-				var productId = new ProductId( variation.ParentId );
+				var productId = new ProductId( variation.ParentProductId );
 
 				if( inventory.ContainsKey( productId ) )
 				{ 
