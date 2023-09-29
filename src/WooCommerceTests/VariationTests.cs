@@ -66,7 +66,7 @@ namespace WooCommerceTests
 			};
 			const int productIdNew = 2;
 			const int productIdExisting = 1;
-			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >
+			var variationsToUpdate = new Dictionary< ProductId, List< QuantityUpdate > >
 			{
 				{ new ProductId( productIdExisting ), 
 					new List< QuantityUpdate >()
@@ -259,7 +259,7 @@ namespace WooCommerceTests
 					ManagingStock = true
 				}
 			};
-			var variationsToUpdate = new Dictionary< ProductId, IEnumerable< QuantityUpdate > >
+			var variationsToUpdate = new Dictionary< ProductId, List< QuantityUpdate > >
 			{
 				{ 
 					new ProductId( productId ),

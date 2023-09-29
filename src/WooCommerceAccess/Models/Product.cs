@@ -15,7 +15,14 @@ namespace WooCommerceAccess.Models
 			this.Variations = new List< WooCommerceVariation >();
 		}
 
+		/// <summary>
+		/// It can be either product_id or variation_id, depending on which matches the filter in the query
+		/// </summary>
 		public int? Id { get; set; }
+		/// <summary>
+		/// It can be a parent product id (if the entity is a variation of the product) or 0 (if this is product itself)
+		/// </summary>
+		public int ParentProductId { get; set; }
 		public string Sku { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
@@ -42,6 +49,7 @@ namespace WooCommerceAccess.Models
 			return new WooCommerceProduct()
 			{
 				Id = productV3.id,
+				ParentProductId = productV3.parent_id ?? 0,
 				Sku = productV3.sku,
 				Name = productV3.name,
 				Description = productV3.description,
@@ -66,6 +74,7 @@ namespace WooCommerceAccess.Models
 			return new WooCommerceProduct()
 			{
 				Id = legacyProduct.id,
+				ParentProductId = legacyProduct.parent_id ?? 0,
 				Sku = legacyProduct.sku,
 				Name = legacyProduct.title,
 				Description = legacyProduct.description,

@@ -14,6 +14,15 @@ namespace WooCommerceAccess.Services.Products
 		/// <param name="skusQuantities">new quantity for each sku</param>
 		/// <returns></returns>
 		Task< Dictionary< string, int >  > UpdateSkusQuantityAsync( Dictionary< string, int > skusQuantities, Mark mark );
+
+		/// <summary>
+		/// Update Inventory by SKUs
+		/// Note: This method can be used for regular Inventory Sync without requesting the entire catalog from WooCommerce
+		/// </summary>
+		/// <param name="skusQuantities"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		Task< Dictionary< string, int > > UpdateInventoryAsync( Dictionary< string, int > skusQuantities, Mark mark );
 		
 		/// <summary>
 		///	Updates sku quantity asynchronously
