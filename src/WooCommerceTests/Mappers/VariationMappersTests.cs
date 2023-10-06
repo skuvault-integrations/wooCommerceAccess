@@ -65,7 +65,7 @@ namespace WooCommerceTests
 			Assert.AreEqual( variation.image.Count, svVariation.Images.Count() );
 			Assert.AreEqual( variation.image[0].src, svVariation.Images.First() );
 			Assert.AreEqual( decimal.Parse( variation.weight ), svVariation.Weight );
-			Assert.AreEqual( 1, svVariation.Attributes.Count );
+			Assert.AreEqual( 2, svVariation.Attributes.Count );
 			Assert.AreEqual( variation.attributes[0].name, svVariation.Attributes.First().Key );
 			Assert.AreEqual( variation.attributes[0].options.First(), svVariation.Attributes.First().Value );
 			Assert.AreEqual( variation.updated_at, svVariation.UpdatedDateUtc );

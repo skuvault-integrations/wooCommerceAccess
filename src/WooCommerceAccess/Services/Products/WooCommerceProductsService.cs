@@ -60,9 +60,9 @@ namespace WooCommerceAccess.Services.Products
 			});
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, Mark mark )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, Mark mark )
 		{
-			return await SendRequestAsync( _serviceUrl, mark, ( url, marker ) => WCObject.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, base.Config.ProductsPageSize, url, marker ) );
+			return await SendRequestAsync( _serviceUrl, mark, ( url, marker ) => WCObject.GetProductsAsync( startDateUtc, base.Config.ProductsPageSize, url, marker ) );
 		}
 	}
 }

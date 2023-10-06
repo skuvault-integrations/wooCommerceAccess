@@ -26,6 +26,7 @@ namespace WooCommerceTests
 		protected IWooCommerceProductsService ProductsService { get; private set; }
 		protected IWooCommerceOrdersService OrdersService { get; private set; }
 		protected IWooCommerceSystemStatusService SystemStatusService { get; private set; }
+		protected IWooCommerceSettingsService SettingsService { get; private set; }
 
 		protected Mark Mark
 		{
@@ -49,6 +50,7 @@ namespace WooCommerceTests
 				this.ProductsService = factory.CreateProductsService( this.Config, throttler );
 				this.OrdersService = factory.CreateOrdersService( this.Config, throttler );
 				this.SystemStatusService = factory.CreateSystemStatusService( this.Config, throttler );
+				this.SettingsService = factory.CreateSettingsService(this.Config, throttler);
 			}
 		}
 

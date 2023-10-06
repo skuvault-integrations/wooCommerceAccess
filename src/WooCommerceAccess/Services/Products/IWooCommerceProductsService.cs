@@ -40,10 +40,10 @@ namespace WooCommerceAccess.Services.Products
 		Task< WooCommerceProduct > GetProductBySkuAsync( string sku, Mark mark );
 
 		/// <summary>
-		/// Returns products created after a given date and products created before but updated after the given date
+		/// Retrieving a list of products from WcooCommerce (created or updated after a specified date)
 		/// </summary>
-		/// <param name="productsStartUtc"></param>
+		/// <param name="startDateUtc"></param>
 		/// <returns></returns>
-		Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, Mark mark );
+		Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, Mark mark );
 	}
 }
