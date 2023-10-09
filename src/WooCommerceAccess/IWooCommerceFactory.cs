@@ -11,5 +11,6 @@ namespace WooCommerceAccess
 		IWooCommerceProductsService CreateProductsService( WooCommerceConfig config, Throttler throttler );
 		IWooCommerceOrdersService CreateOrdersService( WooCommerceConfig config, Throttler throttler );
 		IWooCommerceSystemStatusService CreateSystemStatusService( WooCommerceConfig config, Throttler throttler );
+		IWooCommerceSettingsService CreateSettingsService( WooCommerceConfig config, Throttler throttler );
 	}
 }
