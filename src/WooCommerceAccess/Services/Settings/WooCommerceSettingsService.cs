@@ -6,6 +6,7 @@ using WooCommerceAccess.Throttling;
 
 namespace WooCommerceAccess.Services.SystemStatus
 {
+	/// <inheritdoc />
 	public class WooCommerceSettingsService : BaseService, IWooCommerceSettingsService
 	{
 		private readonly string _serviceUrl;

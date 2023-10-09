@@ -13,6 +13,7 @@ using WApiV3 = WooCommerceNET.WooCommerce.v3;
 
 namespace WooCommerceAccess.Services
 {
+	/// <inheritdoc />
 	public sealed class ApiV3WCObject : WCObjectBase, IWCObject
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;

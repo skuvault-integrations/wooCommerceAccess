@@ -1,7 +1,7 @@
-using WooCommerceAccess.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using WooCommerceAccess.Models;
 using WooCommerceAccess.Shared;
 
 namespace WooCommerceAccess.Services
@@ -18,6 +18,11 @@ namespace WooCommerceAccess.Services
 		Task< Dictionary< string, int > > UpdateSkusQuantityAsync ( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark );
 		Task< Dictionary< string, int > > UpdateInventoryAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark );
 		Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark );
+		/// <summary>
+		/// Retrieving a list of products from WcooCommerce (created or updated after a specified date)
+		/// </summary>
+		/// <param name="startDateUtc"></param>
+		/// <returns></returns>
 		Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc,  int pageSize, string url, Mark mark );
 		Task< string > GetStoreVersionAsync( string url, Mark mark );
 		Task< WooCommerceSettings > GetSettingsAsync( string url, Mark mark );

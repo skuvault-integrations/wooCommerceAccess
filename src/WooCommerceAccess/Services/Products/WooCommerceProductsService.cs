@@ -8,6 +8,7 @@ using WooCommerceAccess.Throttling;
 
 namespace WooCommerceAccess.Services.Products
 {
+	/// <inheritdoc />
 	public class WooCommerceProductsService : BaseService, IWooCommerceProductsService
 	{
 		private readonly string _serviceUrl;

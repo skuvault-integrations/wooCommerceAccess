@@ -2,7 +2,7 @@
 
 namespace WooCommerceTests
 {
-	//[ TestFixture( "credentials_VM_sandbox.csv" ) ]
+	[ TestFixture( "credentials_VM_sandbox.csv" ) ]
 	[ TestFixture( "credentials_cloud_sandbox.csv" ) ]
 	public class SystemStatusServiceTests : BaseTest
 	{

@@ -1,8 +1,8 @@
-using CuttingEdge.Conditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CuttingEdge.Conditions;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Shared;
@@ -11,6 +11,7 @@ using WLegacyApi = WooCommerceNET.WooCommerce.Legacy;
 
 namespace WooCommerceAccess.Services
 {
+	/// <inheritdoc />
 	public sealed class LegacyV3WCObject : WCObjectBase, IWCObject
 	{
 		private readonly WLegacyApi.WCObject _legacyApiWCObject;
