@@ -82,12 +82,12 @@ namespace WooCommerceAccess.Services
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, int pageSize, string url, Mark mark )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, int pageSize, string url, Mark mark )
 		{
-			const string updatedAfter = "modified_after";
+			var dateFilter = includeUpdated ? "modified_after" : "after";
 			var productFilters = new Dictionary< string, string >
 			{
-				{ updatedAfter, startDateUtc.ToString( "o" ) }
+				{ dateFilter, startDateUtc.ToString( "o" ) }
 			};
 
 			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize, url, mark );

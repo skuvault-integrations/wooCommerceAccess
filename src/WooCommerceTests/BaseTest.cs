@@ -50,7 +50,7 @@ namespace WooCommerceTests
 				this.ProductsService = factory.CreateProductsService( this.Config, throttler );
 				this.OrdersService = factory.CreateOrdersService( this.Config, throttler );
 				this.SystemStatusService = factory.CreateSystemStatusService( this.Config, throttler );
-				this.SettingsService = factory.CreateSettingsService(this.Config, throttler);
+				this.SettingsService = factory.CreateSettingsService( this.Config, throttler );
 			}
 		}
 

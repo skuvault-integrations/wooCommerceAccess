@@ -42,8 +42,10 @@ namespace WooCommerceAccess.Services.Products
 		/// <summary>
 		/// Retrieving a list of products from WcooCommerce (created or updated after a specified date)
 		/// </summary>
-		/// <param name="startDateUtc"></param>
+		/// <param name="startDateUtc">Date since products were created or updated</param>
+		/// <param name="includeUpdated">Indicates the need to also request updated products (otherwise only created ones) from the specified date</param>
+		/// <param name="mark">Session marker</param>
 		/// <returns></returns>
-		Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, Mark mark );
+		Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, Mark mark );
 	}
 }

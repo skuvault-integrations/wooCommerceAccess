@@ -83,11 +83,12 @@ namespace WooCommerceAccess.Services
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, int pageSize, string url, Mark mark )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, int pageSize, string url, Mark mark )
 		{
+			var dateFilter = includeUpdated ? "filter[updated_at_min]" : "filter[created_at_min]";
 			var productFilters = new Dictionary< string, string >
 			{
-				{ "filter[updated_at_min]", startDateUtc.ToString( "o" ) },
+				{ dateFilter, startDateUtc.ToString( "o" ) },
 			};
 
 			return await CollectProductsFromAllPagesAsync( productFilters, pageSize, url, mark );
