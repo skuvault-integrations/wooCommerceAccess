@@ -19,7 +19,7 @@ namespace WooCommerceAccess.Services
 		Task< Dictionary< string, int > > UpdateInventoryAsync( Dictionary< string, int > skusQuantities, int pageSize, string url, Mark mark );
 		Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark );
 		/// <summary>
-		/// Retrieving a list of products from WcooCommerce (created or updated after a specified date)
+		/// Retrieving a list of products from WooCommerce (created or updated after a specified date)
 		/// </summary>
 		/// <param name="startDateUtc">Date since products were created or updated</param>
 		/// <param name="includeUpdated">Indicates the need to also request updated products (otherwise only created ones) from the specified date</param>

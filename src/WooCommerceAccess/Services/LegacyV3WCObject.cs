@@ -46,9 +46,7 @@ namespace WooCommerceAccess.Services
 
 		public async Task< WooCommerceSettings > GetSettingsAsync( string url, Mark mark )
 		{
-			// get weight_unit from the store settings
 			var storeInfo = await this._legacyApiWCObject.GetStoreInfo().ConfigureAwait( false );
-
 			var settings = new WooCommerceSettings
 			{
 				Currency = storeInfo?.meta?.currency,

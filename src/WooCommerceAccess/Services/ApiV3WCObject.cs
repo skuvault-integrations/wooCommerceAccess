@@ -46,9 +46,8 @@ namespace WooCommerceAccess.Services
 
 		public async Task< WooCommerceSettings > GetSettingsAsync( string url, Mark mark )
 		{
-			var storeInfo = await this._wcObjectApiV3.SystemStatus.Get().ConfigureAwait(false);
-
-			// get weight_unit from the settings api
+			// get the Weight_unit setting from the SettingsApi but the Currency from the SystemStatusApi
+			var storeInfo = await this._wcObjectApiV3.SystemStatus.Get().ConfigureAwait( false );
 			var weightUnitSetting = await this._wcObjectApiV3.Setting.GetSettingOption( "products", "woocommerce_weight_unit" ).ConfigureAwait( false );
 			var settings = new WooCommerceSettings
 			{
