@@ -8,6 +8,7 @@ using WooCommerceAccess.Throttling;
 
 namespace WooCommerceAccess.Services.Products
 {
+	/// <inheritdoc />
 	public class WooCommerceProductsService : BaseService, IWooCommerceProductsService
 	{
 		private readonly string _serviceUrl;
@@ -60,9 +61,9 @@ namespace WooCommerceAccess.Services.Products
 			});
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, Mark mark )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, Mark mark )
 		{
-			return await SendRequestAsync( _serviceUrl, mark, ( url, marker ) => WCObject.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, base.Config.ProductsPageSize, url, marker ) );
+			return await SendRequestAsync( _serviceUrl, mark, ( url, marker ) => WCObject.GetProductsAsync( startDateUtc, includeUpdated, base.Config.ProductsPageSize, url, marker ) );
 		}
 	}
 }

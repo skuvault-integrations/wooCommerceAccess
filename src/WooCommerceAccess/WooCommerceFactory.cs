@@ -22,5 +22,10 @@ namespace WooCommerceAccess
 		{
 			return new WooCommerceSystemStatusService( config, throttler );
 		}
+
+		public IWooCommerceSettingsService CreateSettingsService( WooCommerceConfig config, Throttler throttler )
+		{
+			return new WooCommerceSettingsService( config, throttler );
+		}
 	}
 }

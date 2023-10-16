@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using NUnit.Framework;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Services;
@@ -17,6 +17,7 @@ namespace WooCommerceTests
 	{
 		private const string testSku = "testsku";
 		private string testSku2 = "testsku2";
+		private string testProductWithVariationsSku = "testSku4";
 
 		public ProductTests( string shopCredentialsFileName ) : base( shopCredentialsFileName) { }
 
@@ -30,19 +31,42 @@ namespace WooCommerceTests
 		}
 
 		[ Test ]
-		public void GetProductsCreatedUpdatedAfterAsync_CreateOnly()
+		public async Task GetProductsAsync_ReturnsNotEmptyList_WhenStartUpdatedDateIsMininalValue()
 		{
-			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, false, this.Mark ).Result;
-
-			products.Count().Should().NotBe( 0 );
+			var products = await base.ProductsService.GetProductsAsync( DateTime.MinValue, includeUpdated: true, this.Mark );
+			
+			products.Should().NotBeEmpty();
 		}
 
 		[ Test ]
-		public void GetProductsCreatedUpdatedAfterAsync_CreateAndUpdate()
+		public async Task GetProductsAsync_ReturnsEmpty_WhenUpdatedStartUpdatedDateIsNow()
 		{
-			var products = base.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true, this.Mark ).Result;
+			var products = await base.ProductsService.GetProductsAsync( DateTime.UtcNow, includeUpdated: true, this.Mark );
 
-			products.Count().Should().NotBe( 0 );
+			products.Should().BeEmpty();
+		}
+
+		[ Test ]
+		public async Task GetProductsAsync_ResultIncludesTheTestProductWithVariations_WhenTestProductWithVariationsUpdatedDateIsCorrect_andIncludeUpdatedIsTrue()
+		{
+			var updatedOnDateUtc = new DateTime( 2023, 9, 28 ); 
+
+			var products = await base.ProductsService.GetProductsAsync( updatedOnDateUtc, includeUpdated: true, this.Mark );
+			
+			var testProductWithVariations = products.FirstOrDefault( f => f.Sku == testProductWithVariationsSku );
+			testProductWithVariations.Should().NotBeNull();
+			testProductWithVariations.Variations.Should().NotBeEmpty();
+		}
+
+		[ Test ]
+		public async Task GetProductsAsync_ResultDoesNotIncludeTheTestProduct_WhenTestProductWithVariationsUpdatedDateIsCorrect_andIncludeUpdatedIsFalse()
+		{
+			var createdOnDateUtc = new DateTime( 2023, 9, 28 ); 
+
+			var products = await base.ProductsService.GetProductsAsync( createdOnDateUtc, includeUpdated: false, this.Mark );
+			
+			var testProductWithVariations = products.FirstOrDefault( f => f.Sku == testProductWithVariationsSku );
+			testProductWithVariations.Should().BeNull();
 		}
 
 		[ Test ]
@@ -213,7 +237,7 @@ namespace WooCommerceTests
 		{
 			base.Config.ProductsPageSize = 2;
 
-			var products = await this.ProductsService.GetProductsCreatedUpdatedAfterAsync( DateTime.MinValue, true, this.Mark );
+			var products = await this.ProductsService.GetProductsAsync( DateTime.MinValue, true, this.Mark );
 			products.Count().Should().BeGreaterOrEqualTo( 2 );
 
 			base.Config.ProductsPageSize = 10;

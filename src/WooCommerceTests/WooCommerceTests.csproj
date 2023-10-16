@@ -74,6 +74,7 @@
     <Compile Include="BaseTest.cs" />
     <Compile Include="ApiDetectorTests.cs" />
     <Compile Include="BatchListTests.cs" />
+    <Compile Include="SettingsServiceTests.cs" />
     <Compile Include="WCObjectBaseTests.cs" />
     <Compile Include="JsonSerializerTests.cs" />
     <Compile Include="Mappers\OrderMapperTests.cs" />

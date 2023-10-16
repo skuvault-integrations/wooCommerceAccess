@@ -1,8 +1,8 @@
-using CuttingEdge.Conditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CuttingEdge.Conditions;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Shared;
@@ -11,6 +11,7 @@ using WLegacyApi = WooCommerceNET.WooCommerce.Legacy;
 
 namespace WooCommerceAccess.Services
 {
+	/// <inheritdoc />
 	public sealed class LegacyV3WCObject : WCObjectBase, IWCObject
 	{
 		private readonly WLegacyApi.WCObject _legacyApiWCObject;
@@ -29,6 +30,11 @@ namespace WooCommerceAccess.Services
 
 		public string SystemStatusApiUrl => this._apiUrl + "system-status";
 
+		/// <summary>
+		/// We do not use Settings Legacy API but the field should be in the class to implements the IWCObject interface
+		/// </summary>
+		public string SettingsApiUrl => "";
+
 		public async Task< string > GetStoreVersionAsync( string url, Mark mark )
 		{
 			var storeInfo = await this._legacyApiWCObject.GetStoreInfo().ConfigureAwait( false );
@@ -36,6 +42,18 @@ namespace WooCommerceAccess.Services
 			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Legacy Store Info: {0}" , storeInfo.ToJson() ) ) );
 
 			return storeInfo.wc_version;
+		}
+
+		public async Task< WooCommerceSettings > GetSettingsAsync( string url, Mark mark )
+		{
+			var storeInfo = await this._legacyApiWCObject.GetStoreInfo().ConfigureAwait( false );
+			var settings = new WooCommerceSettings
+			{
+				Currency = storeInfo?.meta?.currency,
+				WeightUnit = storeInfo?.meta?.weight_unit
+			};
+
+			return settings;
 		}
 
 		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
@@ -63,13 +81,12 @@ namespace WooCommerceAccess.Services
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize, string url, Mark mark )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, int pageSize, string url, Mark mark )
 		{
 			var dateFilter = includeUpdated ? "filter[updated_at_min]" : "filter[created_at_min]";
-
 			var productFilters = new Dictionary< string, string >
 			{
-				{ dateFilter, productsStartUtc.ToString( "o" ) },
+				{ dateFilter, startDateUtc.ToString( "o" ) },
 			};
 
 			return await CollectProductsFromAllPagesAsync( productFilters, pageSize, url, mark );

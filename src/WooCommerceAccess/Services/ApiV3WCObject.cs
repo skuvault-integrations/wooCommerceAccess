@@ -8,10 +8,12 @@ using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Shared;
 using WooCommerceNET;
+using WooCommerceNET.WooCommerce.v3.Extension;
 using WApiV3 = WooCommerceNET.WooCommerce.v3;
 
 namespace WooCommerceAccess.Services
 {
+	/// <inheritdoc />
 	public sealed class ApiV3WCObject : WCObjectBase, IWCObject
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
@@ -31,6 +33,8 @@ namespace WooCommerceAccess.Services
 
 		public string SystemStatusApiUrl => this._wcObjectApiV3.SystemStatus.API.Url + this._wcObjectApiV3.SystemStatus.APIEndpoint;
 
+		public string SettingsApiUrl => this._wcObjectApiV3.Setting.API.Url + this._wcObjectApiV3.Setting.APIEndpoint;
+
 		public async Task< string > GetStoreVersionAsync( string url, Mark mark )
 		{
 			var storeInfo = await this._wcObjectApiV3.SystemStatus.Get().ConfigureAwait( false );
@@ -38,6 +42,20 @@ namespace WooCommerceAccess.Services
 			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Store Info: {0}" , storeInfo.ToJson() ) ) );
 
 			return storeInfo.environment?.version;
+		}
+
+		public async Task< WooCommerceSettings > GetSettingsAsync( string url, Mark mark )
+		{
+			// get the Weight_unit setting from the SettingsApi but the Currency from the SystemStatusApi
+			var storeInfo = await this._wcObjectApiV3.SystemStatus.Get().ConfigureAwait( false );
+			var weightUnitSetting = await this._wcObjectApiV3.Setting.GetSettingOption( "products", "woocommerce_weight_unit" ).ConfigureAwait( false );
+			var settings = new WooCommerceSettings
+			{
+				Currency = storeInfo?.settings?.currency,
+				WeightUnit = weightUnitSetting?.value?.ToString(),
+			};
+
+			return settings;
 		}
 
 		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
@@ -63,14 +81,16 @@ namespace WooCommerceAccess.Services
 				FirstOrDefault( product => product.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		public async Task< IEnumerable< WooCommerceProduct > > GetProductsCreatedUpdatedAfterAsync( DateTime productsStartUtc, bool includeUpdated, int pageSize, string url, Mark mark )
+		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, int pageSize, string url, Mark mark )
 		{
-			if ( _fallbackAPI != null )
+			var dateFilter = includeUpdated ? "modified_after" : "after";
+			var productFilters = new Dictionary< string, string >
 			{
-				return await _fallbackAPI.GetProductsCreatedUpdatedAfterAsync( productsStartUtc, includeUpdated, pageSize, url, mark ).ConfigureAwait( true );
-			}
-			
-			throw new WooCommerceException( "ApiV3 products endpoint can't filter records by update date! Use legacy api instead!" );
+				{ dateFilter, startDateUtc.ToString( "o" ) }
+			};
+
+			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize, url, mark );
+			return products;
 		}
 
 		public async Task< IEnumerable< WooCommerceVariation > > CollectVariationsByProductFromAllPagesAsync( int productId, int pageSize, string url, Mark mark )
