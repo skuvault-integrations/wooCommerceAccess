@@ -12,6 +12,7 @@ namespace WooCommerceTests
 	{
 		public OrderTests( string shopCredentialsFileName ) : base( shopCredentialsFileName ) { }
 
+		[ Explicit ]
 		[ Test ]
 		public async Task GetOrders()
 		{
@@ -20,6 +21,7 @@ namespace WooCommerceTests
 			orders.Count().Should().BeGreaterOrEqualTo( 1 );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public async Task GetOrderUsingByPagination()
 		{

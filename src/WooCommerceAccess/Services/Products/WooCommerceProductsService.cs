@@ -23,11 +23,6 @@ namespace WooCommerceAccess.Services.Products
 		{
 			return base.SendRequestAsync< Dictionary< string, int > >( this._serviceUrl, mark, ( url, marker ) =>
 			{
-				if( base.apiVersion == WooCommerceApiVersion.Legacy )
-				{
-					WooCommerceLogger.LogTrace( "Updating variation quantities in legacy is not supported" );
-				}
-
 				return base.WCObject.UpdateSkusQuantityAsync( skusQuantities, base.Config.ProductsPageSize, url, marker );
 			} );
 		}

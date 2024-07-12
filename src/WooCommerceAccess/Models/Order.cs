@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using WooCommerceNET.WooCommerce.Legacy;
 
 namespace WooCommerceAccess.Models
 {
@@ -70,69 +69,6 @@ namespace WooCommerceAccess.Models
 
 	public static class OrderExtensions
 	{
-		public static WooCommerceOrder ToSvOrder( this WooCommerceNET.WooCommerce.Legacy.Order legacyOrder )
-		{
-			var order = new WooCommerceOrder()
-			{
-				Id = legacyOrder.id,
-				Number = legacyOrder.order_number,
-				CreateDateUtc = legacyOrder.created_at,
-				UpdateDateUtc = legacyOrder.updated_at,
-				Status = legacyOrder.status,
-				Currency = legacyOrder.currency,
-				Total = legacyOrder.total.Value,
-				Note = legacyOrder.note,
-				TotalDiscount = legacyOrder.total_discount,
-				Coupons = legacyOrder.coupon_lines?.Select( c => new WooCommerceCouponLine { Code = c.code, Amount = c.amount } ),
-				TotalTax = legacyOrder.total_tax
-			};
-
-			if ( legacyOrder.payment_details != null )
-			{
-				order.WasPaid = legacyOrder.payment_details.paid.Value;
-			}
-
-			order.ShippingInfo = new WooCommerceShippingInfo() { ShippingCost = legacyOrder.total_shipping.Value };
-			if ( legacyOrder.shipping_lines != null )
-				order.ShippingInfo.Common = string.Join( ",", legacyOrder.shipping_lines.Select( line => line.method_title ) );
-
-			if ( legacyOrder.shipping_address != null )
-				order.ShippingAddress = new WooCommerceShippingAddress()
-				{
-					AddressLine = legacyOrder.shipping_address.address_1,
-					AddressLine2 = legacyOrder.shipping_address.address_2,
-					City = legacyOrder.shipping_address.city,
-					CountryCode = legacyOrder.shipping_address.country,
-					PostCode = legacyOrder.shipping_address.postcode,
-					State = legacyOrder.shipping_address.state
-				};
-
-			if ( legacyOrder.billing_address != null )
-				order.BuyerInfo = new WooCommerceBuyerInfo()
-				{
-					Company = legacyOrder.billing_address.company,
-					FirstName = legacyOrder.billing_address.first_name,
-					LastName = legacyOrder.billing_address.last_name,
-					Email = legacyOrder.billing_address.email,
-					Phone = legacyOrder.billing_address.phone
-				};
-
-			var items = new List< WooCommerceOrderItem >();
-			foreach( var lineItem in legacyOrder.line_items )
-				items.Add( new WooCommerceOrderItem()
-				{
-					Id = lineItem.id.Value,
-					Sku = lineItem.sku,
-					Quantity = lineItem.quantity.Value,
-					Price = lineItem.price.Value,
-					TotalTax = lineItem.total_tax
-				} );
-
-			order.Items = items.ToArray();
-
-			return order;
-		}
-
 		public static WooCommerceOrder ToSvOrder( this WooCommerceNET.WooCommerce.v3.Order orderV3 )
 		{
 			var order = new WooCommerceOrder()

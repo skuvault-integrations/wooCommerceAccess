@@ -3,76 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using WooCommerceAccess.Models;
-using WooCommerceNET.WooCommerce.Legacy;
 using WooCommerceNET.WooCommerce.v3;
-using Attribute = WooCommerceNET.WooCommerce.Legacy.Attribute;
 
 namespace WooCommerceTests
 {
 	[ TestFixture ]
 	public class VariationMappersTests
 	{
-		[ Test ]
-		public void MapLegacyV3VariationToSvVariation()
-		{
-			var variation = new WooCommerceNET.WooCommerce.Legacy.Variation
-			{
-				id = 3,
-				sku = "sku2",
-				price = 23.4M,
-				stock_quantity = 2,
-				image = new ImageList
-				{
-					new Image
-					{
-						src = "asdlf"
-					}
-				},
-				weight = "22.3",
-				sale_price = 2.32M,
-				regular_price = 1.38M,
-				attributes = new AttributeList
-				{
-					new Attribute
-					{
-						name = "size",
-						options = new List<string>
-						{
-							"small"
-						}
-					},
-					new Attribute
-					{
-						name = "color",
-						options = new List<string>
-						{
-							"red",
-							"black"
-						}
-					}
-				},
-				updated_at = new DateTime( 2099, 3, 3 ),
-				created_at = new DateTime( 2099, 3, 4 ),
-				managing_stock = true
-			};
-
-			var svVariation = variation.ToSvVariation();
-
-			Assert.AreEqual( variation.id, svVariation.Id );
-			Assert.AreEqual( variation.sku, svVariation.Sku  );
-			Assert.AreEqual( variation.price, svVariation.Price  );
-			Assert.AreEqual( variation.stock_quantity, svVariation.Quantity  );
-			Assert.AreEqual( variation.image.Count, svVariation.Images.Count() );
-			Assert.AreEqual( variation.image[0].src, svVariation.Images.First() );
-			Assert.AreEqual( decimal.Parse( variation.weight ), svVariation.Weight );
-			Assert.AreEqual( 2, svVariation.Attributes.Count );
-			Assert.AreEqual( variation.attributes[0].name, svVariation.Attributes.First().Key );
-			Assert.AreEqual( variation.attributes[0].options.First(), svVariation.Attributes.First().Value );
-			Assert.AreEqual( variation.updated_at, svVariation.UpdatedDateUtc );
-			Assert.AreEqual( variation.created_at, svVariation.CreatedDateUtc );
-			Assert.AreEqual( variation.managing_stock, svVariation.ManagingStock );
-		}
-
 		[ Test ]
 		public void MapApiV3VariationToSvVariation()
 		{

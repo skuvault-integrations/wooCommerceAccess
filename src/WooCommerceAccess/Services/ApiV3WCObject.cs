@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
-using WooCommerceAccess.Exceptions;
+using WooCommerceAccess.ApiClients;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Shared;
@@ -17,14 +17,12 @@ namespace WooCommerceAccess.Services
 	public sealed class ApiV3WCObject : WCObjectBase, IWCObject
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
-		private readonly IWCObject _fallbackAPI;
 		private const int BatchSize = 100;
 
-		public ApiV3WCObject( RestAPI restApi, IWCObject fallbackApi = null )
+		public ApiV3WCObject( RestAPI restApi )
 		{
 			Condition.Requires( restApi, "restApi" ).IsNotNull();
 			this._wcObjectApiV3 = new WApiV3.WCObject( restApi );
-			this._fallbackAPI = fallbackApi;
 		}
 
 		public string ProductApiUrl => this._wcObjectApiV3.Product.API.Url + this._wcObjectApiV3.Product.APIEndpoint;
@@ -58,14 +56,17 @@ namespace WooCommerceAccess.Services
 			return settings;
 		}
 
-		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
+		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
 		{
-			if ( this._fallbackAPI != null )
+			const string dateFilterAfter = "modified_after";
+			const string dateFilterBefore = "modified_before";
+			var orderFilters = new Dictionary< string, string >
 			{
-				return this._fallbackAPI.GetOrdersAsync( startDateUtc, endDateUtc, pageSize, url, mark );
-			}
-			
-			throw new WooCommerceException( "ApiV3 orders endpoint can't filter records by update date! Use legacy api instead!" );
+				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
+				{ dateFilterBefore, endDateUtc.ToString( "o" ) }
+			};
+			var ordersApiClient = new OrdersApiClient( this._wcObjectApiV3 );
+			return await ordersApiClient.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark );
 		}
 
 		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize, string url, Mark mark )

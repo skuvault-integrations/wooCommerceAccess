@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace WooCommerceAccess.Models
 {
@@ -23,26 +22,6 @@ namespace WooCommerceAccess.Models
 
 	public static class VariationExtensions
 	{
-		public static WooCommerceVariation ToSvVariation( this WooCommerceNET.WooCommerce.Legacy.Variation legacyVariation )
-		{
-			return new WooCommerceVariation
-			{
-				Id = legacyVariation.id,
-				Sku = legacyVariation.sku,
-				Description = "",
-				Price = legacyVariation.price,
-				Quantity = legacyVariation.stock_quantity,
-				Images = legacyVariation.image?.Select( i => i.src ),
-				Weight = legacyVariation.weight?.ToDecimal(),
-				SalePrice = legacyVariation.sale_price,
-				RegularPrice = legacyVariation.regular_price,
-				Attributes = legacyVariation.attributes?.ToAttributeDictionary(),
-				UpdatedDateUtc = legacyVariation.updated_at,
-				CreatedDateUtc = legacyVariation.created_at,
-				ManagingStock = legacyVariation.managing_stock
-			};
-		}
-
 		public static WooCommerceVariation ToSvVariation( this WooCommerceNET.WooCommerce.v3.Variation variationV3 )
 		{
 			var images = new List<string>();

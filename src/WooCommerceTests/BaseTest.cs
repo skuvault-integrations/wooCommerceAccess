@@ -38,7 +38,7 @@ namespace WooCommerceTests
 
 		public BaseTest( string shopCredentialsFileName )
 		{
-			var shopCredentials = this.LoadCredentials( @"\..\..\" + shopCredentialsFileName );
+			var shopCredentials = LoadCredentials( @"\..\..\" + shopCredentialsFileName );
 			this.Config = new WooCommerceConfig( shopCredentials.ShopUrl );
 			
 			if ( !string.IsNullOrWhiteSpace( shopCredentials.ConsumerKey ) && !string.IsNullOrWhiteSpace( shopCredentials.ConsumerSecret ) )
@@ -54,7 +54,7 @@ namespace WooCommerceTests
 			}
 		}
 
-		private ShopCredentials LoadCredentials( string filePath )
+		internal static ShopCredentials LoadCredentials( string filePath )
 		{
 			string path = new Uri( Path.GetDirectoryName( Assembly.GetExecutingAssembly().CodeBase ) ).LocalPath;
 

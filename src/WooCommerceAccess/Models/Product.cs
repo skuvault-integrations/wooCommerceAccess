@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CuttingEdge.Conditions;
 using WooCommerceAccess.Shared;
-using WooCommerceNET.WooCommerce.Legacy;
 using WooCommerceNET.WooCommerce.v3;
 
 namespace WooCommerceAccess.Models
@@ -67,42 +66,6 @@ namespace WooCommerceAccess.Models
 				UpdatedDateUtc = productV3.date_modified_gmt,
 				ManagingStock = productV3.manage_stock
 			};
-		}
-
-		public static WooCommerceProduct ToSvProduct( this WooCommerceNET.WooCommerce.Legacy.Product legacyProduct )
-		{
-			return new WooCommerceProduct()
-			{
-				Id = legacyProduct.id,
-				ParentProductId = legacyProduct.parent_id ?? 0,
-				Sku = legacyProduct.sku,
-				Name = legacyProduct.title,
-				Description = legacyProduct.description,
-				ShortDescription = legacyProduct.short_description,
-				Price = legacyProduct.price,
-				Quantity = legacyProduct.stock_quantity,
-				Categories = legacyProduct.categories?.Select( c => c.ToString() ),
-				Images = legacyProduct.images?.Select( i => i.src ),
-				Weight = legacyProduct.weight?.ToDecimal(),
-				SalePrice = legacyProduct.sale_price,
-				RegularPrice = legacyProduct.regular_price,
-				Attributes = legacyProduct.attributes?.ToAttributeDictionary(),
-				Variations = legacyProduct.variations?.Select( v => v.ToSvVariation() ),
-				HasVariations = legacyProduct.variations != null && legacyProduct.variations.Any(),
-				CreatedDateUtc = legacyProduct.created_at,
-				UpdatedDateUtc = legacyProduct.updated_at,
-				ManagingStock = legacyProduct.managing_stock
-			};
-		}
-
-		public static Dictionary< string, string > ToAttributeDictionary( this AttributeList attributeList )
-		{
-			var attributeLines = attributeList.Select( a => new ProductAttributeLine
-			{
-				name = a.name,
-				options = a.options
-			} ).ToList();
-			return attributeLines.ToAttributeDictionary();
 		}
 
 		public static Dictionary< string, string > ToAttributeDictionary( this List< ProductAttributeLine > attributeLines )

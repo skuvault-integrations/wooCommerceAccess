@@ -77,8 +77,6 @@
     <Compile Include="SettingsServiceTests.cs" />
     <Compile Include="WCObjectBaseTests.cs" />
     <Compile Include="JsonSerializerTests.cs" />
-    <Compile Include="Mappers\OrderMapperTests.cs" />
-    <Compile Include="Mappers\ResponseDeserialization\Legacy\OrderListDeserializationTests.cs" />
     <Compile Include="OrderTests.cs" />
     <Compile Include="Mappers\ProductMapperTests.cs" />
     <Compile Include="InventoryTests.cs" />
