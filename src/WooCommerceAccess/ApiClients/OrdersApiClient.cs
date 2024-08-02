@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WooCommerceAccess.Models;
@@ -9,34 +10,46 @@ using WApiV3 = WooCommerceNET.WooCommerce.v3;
 
 namespace WooCommerceAccess.ApiClients
 {
-	public interface IOrdersApiClient
+	public interface IOrdersApiService
 	{
+		string OrdersApiUrl { get; }
+
 		/// <summary>
-		/// Get orders by filter, one page at a time
+		/// Get orders.
 		/// </summary>
-		/// <param name="orderFilters"></param>
+		/// <param name="startDateUtc"></param>
+		/// <param name="endDateUtc"></param>
 		/// <param name="pageSize"></param>
 		/// <param name="url"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		Task<IEnumerable<WooCommerceOrder>> CollectOrdersFromAllPagesAsync(Dictionary<string, string> orderFilters,
-			int pageSize, string url, Mark mark);
+		Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark );
 	}
 
-	//TODO Could potentially make this class more generic (ApiPaginationHelper?)
-	//to also replace CollectVariationsByProductFromAllPagesAsync, which is nearly identical.
-	//Would only have to pass in the this._wcObjectApiV3...Get* delegate, return converter, and a text label for logs. 
-	public class OrdersApiClient : IOrdersApiClient
+	public class OrdersApiService : IOrdersApiService
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
+		public string OrdersApiUrl => this._wcObjectApiV3.Order.API.Url + this._wcObjectApiV3.Order.APIEndpoint;
 		
-		public OrdersApiClient(WApiV3.WCObject wcObjectApiV3)
+		public OrdersApiService(WApiV3.WCObject wcObjectApiV3)
 		{
 			this._wcObjectApiV3 = wcObjectApiV3;
 		}
 		
-		//TODO Add unit tests
-		public async Task<IEnumerable<WooCommerceOrder>> CollectOrdersFromAllPagesAsync(Dictionary<string, string> orderFilters,
+		//TODO GUARD-3571 Add unit tests, if possible to mock this._wcObjectApiV3.Order.GetAll()
+		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
+		{
+			const string dateFilterAfter = "modified_after";
+			const string dateFilterBefore = "modified_before";
+			var orderFilters = new Dictionary< string, string >
+			{
+				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
+				{ dateFilterBefore, endDateUtc.ToString( "o" ) }
+			};
+			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark );
+		}
+
+		private async Task<IEnumerable<WooCommerceOrder>> CollectOrdersFromAllPagesAsync(Dictionary<string, string> orderFilters,
 			int pageSize, string url, Mark mark)
 		{
 			var orders = new List< WooCommerceOrder >();

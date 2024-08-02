@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
-using WooCommerceAccess.ApiClients;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Shared;
@@ -16,26 +15,24 @@ namespace WooCommerceAccess.Services
 	/// <inheritdoc />
 	public sealed class ApiV3WCObject : WCObjectBase, IWCObject
 	{
-		private readonly WApiV3.WCObject _wcObjectApiV3;
+		public WApiV3.WCObject WooCommerceNetObjectV3 { get; private set; }
 		private const int BatchSize = 100;
 
 		public ApiV3WCObject( RestAPI restApi )
 		{
 			Condition.Requires( restApi, "restApi" ).IsNotNull();
-			this._wcObjectApiV3 = new WApiV3.WCObject( restApi );
+			this.WooCommerceNetObjectV3 = new WApiV3.WCObject( restApi );
 		}
 
-		public string ProductApiUrl => this._wcObjectApiV3.Product.API.Url + this._wcObjectApiV3.Product.APIEndpoint;
+		public string ProductApiUrl => this.WooCommerceNetObjectV3.Product.API.Url + this.WooCommerceNetObjectV3.Product.APIEndpoint;
 
-		public string OrdersApiUrl => this._wcObjectApiV3.Order.API.Url + this._wcObjectApiV3.Order.APIEndpoint;
+		public string SystemStatusApiUrl => this.WooCommerceNetObjectV3.SystemStatus.API.Url + this.WooCommerceNetObjectV3.SystemStatus.APIEndpoint;
 
-		public string SystemStatusApiUrl => this._wcObjectApiV3.SystemStatus.API.Url + this._wcObjectApiV3.SystemStatus.APIEndpoint;
-
-		public string SettingsApiUrl => this._wcObjectApiV3.Setting.API.Url + this._wcObjectApiV3.Setting.APIEndpoint;
+		public string SettingsApiUrl => this.WooCommerceNetObjectV3.Setting.API.Url + this.WooCommerceNetObjectV3.Setting.APIEndpoint;
 
 		public async Task< string > GetStoreVersionAsync( string url, Mark mark )
 		{
-			var storeInfo = await this._wcObjectApiV3.SystemStatus.Get().ConfigureAwait( false );
+			var storeInfo = await this.WooCommerceNetObjectV3.SystemStatus.Get().ConfigureAwait( false );
 
 			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Store Info: {0}" , storeInfo.ToJson() ) ) );
 
@@ -45,8 +42,8 @@ namespace WooCommerceAccess.Services
 		public async Task< WooCommerceSettings > GetSettingsAsync( string url, Mark mark )
 		{
 			// get the Weight_unit setting from the SettingsApi but the Currency from the SystemStatusApi
-			var storeInfo = await this._wcObjectApiV3.SystemStatus.Get().ConfigureAwait( false );
-			var weightUnitSetting = await this._wcObjectApiV3.Setting.GetSettingOption( "products", "woocommerce_weight_unit" ).ConfigureAwait( false );
+			var storeInfo = await this.WooCommerceNetObjectV3.SystemStatus.Get().ConfigureAwait( false );
+			var weightUnitSetting = await this.WooCommerceNetObjectV3.Setting.GetSettingOption( "products", "woocommerce_weight_unit" ).ConfigureAwait( false );
 			var settings = new WooCommerceSettings
 			{
 				Currency = storeInfo?.settings?.currency,
@@ -54,19 +51,6 @@ namespace WooCommerceAccess.Services
 			};
 
 			return settings;
-		}
-
-		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
-		{
-			const string dateFilterAfter = "modified_after";
-			const string dateFilterBefore = "modified_before";
-			var orderFilters = new Dictionary< string, string >
-			{
-				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
-				{ dateFilterBefore, endDateUtc.ToString( "o" ) }
-			};
-			var ordersApiClient = new OrdersApiClient( this._wcObjectApiV3 );
-			return await ordersApiClient.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark );
 		}
 
 		public async Task< WooCommerceProduct > GetProductBySkuAsync( string sku, int pageSize, string url, Mark mark )
@@ -102,7 +86,7 @@ namespace WooCommerceAccess.Services
 			{
 				var pageFilter = EndpointsBuilder.CreateGetPageAndLimitFilter( new WooCommerceCommandConfig( page, pageSize ) );
 
-				var wooCommerceVariations = ( await this._wcObjectApiV3.Product.Variations.GetAll( productId, pageFilter ).ConfigureAwait( false ) );
+				var wooCommerceVariations = ( await this.WooCommerceNetObjectV3.Product.Variations.GetAll( productId, pageFilter ).ConfigureAwait( false ) );
 
 				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Variations Received: {0}" , wooCommerceVariations.ToJson() ) ) );
 
@@ -119,7 +103,7 @@ namespace WooCommerceAccess.Services
 
 		public async Task< WooCommerceProduct > UpdateProductQuantityAsync( int productId, int quantity, string url, Mark mark )
 		{
-			var updatedProduct = await this._wcObjectApiV3.Product.Update( productId, new WApiV3.Product { stock_quantity = quantity } );
+			var updatedProduct = await this.WooCommerceNetObjectV3.Product.Update( productId, new WApiV3.Product { stock_quantity = quantity } );
 
 			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Product Updated: {0}" , updatedProduct.ToJson() ) ) );
 
@@ -244,7 +228,7 @@ namespace WooCommerceAccess.Services
 
 		private async Task< List< WooCommerceProduct > > GetNextProductPageAsync( Dictionary< string, string> filter, string url, Mark mark )
 		{
-			var productsWithinPage = await this._wcObjectApiV3.Product.GetAll( filter ).ConfigureAwait( false );
+			var productsWithinPage = await this.WooCommerceNetObjectV3.Product.GetAll( filter ).ConfigureAwait( false );
 
 			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Products Received: {0}" , productsWithinPage.ToJson() ) ) );
 
@@ -277,7 +261,7 @@ namespace WooCommerceAccess.Services
 							id = v.Id, sku = v.Sku, stock_quantity = v.Quantity
 						} ).ToList();
 
-					var batchResult = await this._wcObjectApiV3.Product.Variations.UpdateRange( variationsUpdateRequest.Key.Id, wooCommerceVariationBatch );
+					var batchResult = await this.WooCommerceNetObjectV3.Product.Variations.UpdateRange( variationsUpdateRequest.Key.Id, wooCommerceVariationBatch );
 
 					WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Variations Updated: {0}" , batchResult.ToJson() ) ) );
 
@@ -299,7 +283,7 @@ namespace WooCommerceAccess.Services
 				if( !productsUpdateRequestBatch.Any() )
 					continue;
 				wooCommerceProductBatch.update = productsUpdateRequestBatch;
-				var batchResult = await this._wcObjectApiV3.Product.UpdateRange( wooCommerceProductBatch );
+				var batchResult = await this.WooCommerceNetObjectV3.Product.UpdateRange( wooCommerceProductBatch );
 
 				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Products Updated: {0}" , batchResult.ToJson() ) ) );
 
