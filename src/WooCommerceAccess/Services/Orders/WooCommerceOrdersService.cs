@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WooCommerceAccess.ApiClients;
+using WooCommerceAccess.ApiServices;
 using WooCommerceAccess.Configuration;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Shared;

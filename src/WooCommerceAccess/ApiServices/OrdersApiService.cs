@@ -8,7 +8,7 @@ using WooCommerceAccess.Services;
 using WooCommerceAccess.Shared;
 using WApiV3 = WooCommerceNET.WooCommerce.v3;
 
-namespace WooCommerceAccess.ApiClients
+namespace WooCommerceAccess.ApiServices
 {
 	public interface IOrdersApiService
 	{

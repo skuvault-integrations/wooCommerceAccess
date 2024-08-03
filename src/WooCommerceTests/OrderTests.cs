@@ -30,7 +30,7 @@ namespace WooCommerceTests
 
 		[ Explicit ]
 		[ Test ]
-		public async Task GetOrdersAsync_ReturnsMultiplePages_WhenOrdersSpanMultiplePage()
+		public async Task GetOrdersAsync_ReturnsMultiplePages_WhenOrdersSpanMultiplePages()
 		{
 			base.Config.OrdersPageSize = 1;
 
