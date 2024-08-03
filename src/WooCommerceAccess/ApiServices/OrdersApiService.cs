@@ -36,7 +36,6 @@ namespace WooCommerceAccess.ApiServices
 			this._wcObjectApiV3 = wcObjectApiV3;
 		}
 		
-		//TODO GUARD-3571 Add unit tests, if possible to mock this._wcObjectApiV3.Order.GetAll()
 		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
 		{
 			const string dateFilterAfter = "modified_after";
