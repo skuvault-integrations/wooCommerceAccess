@@ -12,16 +12,18 @@ namespace WooCommerceAccess.Services.Orders
 	public class WooCommerceOrdersService : BaseService, IWooCommerceOrdersService
 	{
 		private readonly IOrdersApiService _ordersApiService;
+		private readonly string _ordersApiUrl;
 
 		public WooCommerceOrdersService( WooCommerceConfig config, Throttler throttler )
 			: base( config, throttler )
 		{
 			this._ordersApiService = new OrdersApiService( base.WCObject.WooCommerceNetObjectV3 );
+			this._ordersApiUrl = base.WCObject.WooCommerceNetObjectV3.Order.API.Url + base.WCObject.WooCommerceNetObjectV3.Order.APIEndpoint;
 		}
 
 		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, Mark mark )
 		{
-			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._ordersApiService.OrdersApiUrl, mark, ( url, marker ) =>
+			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._ordersApiUrl, mark, ( url, marker ) =>
 			{
 				return this._ordersApiService.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize, url, marker );
 			} );

@@ -12,8 +12,6 @@ namespace WooCommerceAccess.ApiServices
 {
 	public interface IOrdersApiService
 	{
-		string OrdersApiUrl { get; }
-
 		/// <summary>
 		/// Get orders.
 		/// </summary>
@@ -29,7 +27,6 @@ namespace WooCommerceAccess.ApiServices
 	public class OrdersApiService : IOrdersApiService
 	{
 		private readonly WApiV3.WCObject _wcObjectApiV3;
-		public string OrdersApiUrl => this._wcObjectApiV3.Order.API.Url + this._wcObjectApiV3.Order.APIEndpoint;
 		
 		public OrdersApiService(WApiV3.WCObject wcObjectApiV3)
 		{
