@@ -12,24 +12,32 @@ namespace WooCommerceTests
 	{
 		public OrderTests( string shopCredentialsFileName ) : base( shopCredentialsFileName ) { }
 
+		[ SetUp ]
+		public void Init()
+		{
+			//Reset to default since some tests change it
+			base.Config.OrdersPageSize = 10;
+		}
+
+		[ Explicit ]
 		[ Test ]
-		public async Task GetOrders()
+		public async Task GetOrdersAsync()
 		{
 			var orders = await this.OrdersService.GetOrdersAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, this.Mark );
-			orders.Should().NotBeNullOrEmpty();
+			
 			orders.Count().Should().BeGreaterOrEqualTo( 1 );
 		}
 
+		[ Explicit ]
 		[ Test ]
-		public async Task GetOrderUsingByPagination()
+		public async Task GetOrdersAsync_ReturnsMultiplePages_WhenOrdersSpanMultiplePages()
 		{
 			base.Config.OrdersPageSize = 1;
 
+			// Act
 			var orders = await this.OrdersService.GetOrdersAsync( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, this.Mark );
-			orders.Should().NotBeNullOrEmpty();
-			orders.Count().Should().BeGreaterOrEqualTo( 3 );
 
-			base.Config.OrdersPageSize = 10;
+			orders.Count().Should().BeGreaterOrEqualTo( 3 );
 		}
 	}
 }

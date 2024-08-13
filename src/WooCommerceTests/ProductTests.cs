@@ -270,24 +270,6 @@ namespace WooCommerceTests
 			Assert.AreEqual( skusQuantities[ Testsku ], product.Quantity );
 		}
 
-		[ Test ]
-		public async Task LegacyV3WCObject_GetProductsToUpdateAsync()
-		{
-			var testsku2 = "testsku2";
-			var skusQuantities = new Dictionary< string, int >
-			{
-				{ Testsku, 21 },
-				{ testsku2, 23 }
-			};
-			const int pageSize = 10;
-
-			var productsToUpdate = await LegacyV3WCObject.GetProductsToUpdateAsync( async filter => await GetNextProductPageAsync( filter, testsku2 ), skusQuantities, pageSize );
-
-			Assert.AreEqual( 1, productsToUpdate.Count );
-			var product = productsToUpdate.First();
-			Assert.AreEqual( skusQuantities[ Testsku ], product.Quantity );
-		}
-
 		private async Task< List< WooCommerceProduct > > GetNextProductPageAsync( Dictionary< string, string > filter, string sku )
 		{
 			if ( filter[ WooCommerceCommandEndpointName.Page.Name ] != "1" ) 

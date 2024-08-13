@@ -15,15 +15,5 @@ namespace WooCommerceAccess.Services
 				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" } // added sorting by id as a temporarily fix for know wooCommerce issue https://github.com/woocommerce/woocommerce/issues/32715
 			};
 		}
-
-		public static Dictionary< string, string > CreateLegacyApiV3GetPageAndLimitFilter( WooCommerceCommandConfig config )
-		{
-			return new Dictionary< string, string >
-			{
-				{ WooCommerceCommandEndpointName.Page.Name, config.Page.ToString() },
-				{ WooCommerceCommandEndpointName.PerPageLegacyApiV3.Name, config.PerPage.ToString() },
-				{ WooCommerceCommandEndpointName.OrderBy.Name, "id" } // added sorting by id as a temporarily fix for know wooCommerce issue https://github.com/woocommerce/woocommerce/issues/32715
-			};
-		}
 	}
 }
