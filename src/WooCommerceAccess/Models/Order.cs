@@ -71,22 +71,29 @@ namespace WooCommerceAccess.Models
 	{
 		public static WooCommerceOrder ToSvOrder( this WooCommerceNET.WooCommerce.v3.Order orderV3 )
 		{
-			var order = new WooCommerceOrder()
+			var order = new WooCommerceOrder
 			{
 				Id = orderV3.id,
-				Number = orderV3.order_key,
+				Number = orderV3.number,
 				CreateDateUtc = orderV3.date_created_gmt,
 				UpdateDateUtc = orderV3.date_modified_gmt,
 				Status = orderV3.status,
 				Currency = orderV3.currency,
-				Total = orderV3.total.Value,
+				Total = orderV3.total ?? default,
 				Note = orderV3.customer_note,
 				WasPaid = orderV3.date_paid_gmt != null,
-				PaidDateUtc = orderV3.date_paid_gmt
+				PaidDateUtc = orderV3.date_paid_gmt,
+				TotalTax = orderV3.total_tax ?? default,
+				TotalDiscount = orderV3.discount_total ?? default,
+				Coupons = orderV3.coupon_lines?.Select(x => new WooCommerceCouponLine
+				{
+					Code = x.code,
+					Amount = x.discount
+				}) ?? new List<WooCommerceCouponLine>()
 			};
 
 			if ( orderV3.shipping != null )
-				order.ShippingAddress = new WooCommerceShippingAddress()
+				order.ShippingAddress = new WooCommerceShippingAddress
 				{
 					AddressLine = orderV3.shipping.address_1,
 					AddressLine2 = orderV3.shipping.address_2,
@@ -96,14 +103,14 @@ namespace WooCommerceAccess.Models
 					State = orderV3.shipping.state
 				};
 			
-			order.ShippingInfo = new WooCommerceShippingInfo() { ShippingCost = orderV3.shipping_total.Value };
+			order.ShippingInfo = new WooCommerceShippingInfo { ShippingCost = orderV3.shipping_total ?? default };
 			if ( orderV3.shipping_lines != null )
 			{
 				order.ShippingInfo.Common = string.Join( ",", orderV3.shipping_lines.Select( line => line.method_title ) );
 			}
 
 			if ( orderV3.billing != null )
-				order.BuyerInfo = new WooCommerceBuyerInfo()
+				order.BuyerInfo = new WooCommerceBuyerInfo
 				{
 					Company = orderV3.billing.company,
 					FirstName = orderV3.billing.first_name,
@@ -114,13 +121,14 @@ namespace WooCommerceAccess.Models
 
 			var items = new List< WooCommerceOrderItem >();
 			foreach( var lineItem in orderV3.line_items )
-				items.Add( new WooCommerceOrderItem()
+				items.Add( new WooCommerceOrderItem
 				{
-					Id = lineItem.id.Value,
-					ProductId = lineItem.product_id.Value,
+					Id = lineItem.id ?? default,
+					ProductId = lineItem.product_id ?? default,
 					Sku = lineItem.sku,
-					Quantity = int.Parse( lineItem.quantity.Value.ToString() ),
-					Price = lineItem.price.Value
+					Quantity = lineItem.quantity.HasValue ? int.Parse( lineItem.quantity.ToString() ) : throw new Exception( $"Quantity is 0 for line item with SKU {lineItem.sku}" ),
+					Price = lineItem.price ?? throw new Exception( $"Price is 0 for line item with SKU {lineItem.sku}" ),
+					TotalTax = lineItem.total_tax ?? default
 				} );
 
 			order.Items = items.ToArray();
