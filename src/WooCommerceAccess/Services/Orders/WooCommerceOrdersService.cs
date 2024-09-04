@@ -25,8 +25,8 @@ namespace WooCommerceAccess.Services.Orders
 		{
 			return await base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._ordersApiUrl, mark, async ( url, marker ) =>
 			{
-				return await  this._ordersApiService.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize, url, marker );
-			} );
+				return await  this._ordersApiService.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize, url, marker ).ConfigureAwait( false );
+			} ).ConfigureAwait( false );
 		}
 	}
 }
