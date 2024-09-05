@@ -42,7 +42,7 @@ namespace WooCommerceAccess.ApiServices
 				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
 				{ dateFilterBefore, endDateUtc.ToString( "o" ) }
 			};
-			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark );
+			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark ).ConfigureAwait( false );
 		}
 
 		private async Task<IEnumerable<WooCommerceOrder>> CollectOrdersFromAllPagesAsync(Dictionary<string, string> orderFilters,

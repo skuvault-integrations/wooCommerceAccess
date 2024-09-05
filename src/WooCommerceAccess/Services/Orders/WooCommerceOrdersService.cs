@@ -21,12 +21,12 @@ namespace WooCommerceAccess.Services.Orders
 			this._ordersApiUrl = base.WCObject.WooCommerceNetObjectV3.Order.API.Url + base.WCObject.WooCommerceNetObjectV3.Order.APIEndpoint;
 		}
 
-		public Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, Mark mark )
+		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, Mark mark )
 		{
-			return base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._ordersApiUrl, mark, ( url, marker ) =>
+			return await base.SendRequestAsync< IEnumerable< WooCommerceOrder > >( this._ordersApiUrl, mark, async ( url, marker ) =>
 			{
-				return this._ordersApiService.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize, url, marker );
-			} );
+				return await  this._ordersApiService.GetOrdersAsync( startDateUtc, endDateUtc, base.Config.OrdersPageSize, url, marker ).ConfigureAwait( false );
+			} ).ConfigureAwait( false );
 		}
 	}
 }
