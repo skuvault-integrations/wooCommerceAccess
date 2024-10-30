@@ -21,7 +21,11 @@ namespace WooCommerceAccess.ApiServices
 		/// <param name="url"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark );
+		Task< IEnumerable< WooCommerceOrder > > GetOrdersByModifiedDatesAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark );
+		
+		Task< IEnumerable< WooCommerceOrder > > GetOrdersByCreatedDatesAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark );
+
+		Task<WooCommerceOrder> GetOrderByNumberAsync(string orderNumber);
 	}
 
 	public class OrdersApiService : IOrdersApiService
@@ -33,10 +37,22 @@ namespace WooCommerceAccess.ApiServices
 			this._wcObjectApiV3 = wcObjectApiV3;
 		}
 		
-		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
+		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersByModifiedDatesAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
 		{
 			const string dateFilterAfter = "modified_after";
 			const string dateFilterBefore = "modified_before";
+			var orderFilters = new Dictionary< string, string >
+			{
+				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
+				{ dateFilterBefore, endDateUtc.ToString( "o" ) }
+			};
+			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark ).ConfigureAwait( false );
+		}
+		
+		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersByCreatedDatesAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
+		{
+			const string dateFilterAfter = "after";
+			const string dateFilterBefore = "before";
 			var orderFilters = new Dictionary< string, string >
 			{
 				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
@@ -67,6 +83,12 @@ namespace WooCommerceAccess.ApiServices
 			}
 
 			return orders;
+		}
+		
+		public async Task<WooCommerceOrder> GetOrderByNumberAsync(string orderNumber)
+		{
+			var order = ( await this._wcObjectApiV3.Order.Get(int.Parse(orderNumber)) );
+			return order.ToSvOrder();
 		}
 	}
 }
