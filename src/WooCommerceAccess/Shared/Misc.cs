@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -8,7 +9,8 @@ namespace WooCommerceAccess.Shared
 {
 	public static class Misc
 	{
-		public static string CreateMethodCallInfo( string url = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string payload = "", [ CallerMemberName ] string memberName = "" )
+		public static string CreateMethodCallInfo( string url = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string payload = "", 
+			Dictionary<string, string> queryStringParams = null, [ CallerMemberName ] string memberName = "" )
 		{
 			string serviceEndPoint = null;
 			string requestParameters = null;
@@ -18,7 +20,7 @@ namespace WooCommerceAccess.Shared
 				Uri uri = new Uri( url );
 
 				serviceEndPoint = uri.AbsoluteUri;
-				requestParameters = uri.Query;
+				requestParameters = !string.IsNullOrWhiteSpace( uri.Query ) ? uri.Query : LoggingHelper.BuildQueryString( queryStringParams );
 			}
 
 			var str = string.Format(

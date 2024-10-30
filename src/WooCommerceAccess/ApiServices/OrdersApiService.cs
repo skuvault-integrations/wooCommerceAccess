@@ -72,8 +72,8 @@ namespace WooCommerceAccess.ApiServices
 				var combinedFilters = orderFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value);
 				var wooCommerceOrders = await this._wcObjectApiV3.Order.GetAll( combinedFilters ).ConfigureAwait( false );
 
-				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Orders Received on page {0}: {1}",
-					page, wooCommerceOrders.ToJson() ) ) );
+				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, additionalInfo:
+					$"Orders Received on page {page}: {wooCommerceOrders.ToJson()}", queryStringParams: combinedFilters ) );
 
 				var ordersWithinPage = wooCommerceOrders.Select( v => v.ToSvOrder() ).ToList();
 				if( !ordersWithinPage.Any() )
