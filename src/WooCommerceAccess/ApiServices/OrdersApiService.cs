@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WooCommerceAccess.Helpers;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Services;
@@ -39,8 +40,8 @@ namespace WooCommerceAccess.ApiServices
 			const string dateFilterBefore = "modified_before";
 			var orderFilters = new Dictionary< string, string >
 			{
-				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
-				{ dateFilterBefore, endDateUtc.ToString( "o" ) }
+				{ dateFilterAfter, startDateUtc.RoundDateDownToTopOfMinute().ToString( "o" ) },
+				{ dateFilterBefore, endDateUtc.RoundDateUpToTopOfMinute().ToString( "o" ) }
 			};
 			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark ).ConfigureAwait( false );
 		}

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using System.Web;
 
-namespace WooCommerceAccess.Shared
+namespace WooCommerceAccess.Helpers
 {
-    public static class UrlExtensions
+    internal static class UrlExtensions
     {
         /// <summary>
         /// Build query string from dictionary
@@ -14,7 +13,7 @@ namespace WooCommerceAccess.Shared
         {
             var paramsBuilder = new StringBuilder();
 
-            foreach (var kv in requestParameters)
+            foreach (var kv in requestParameters ?? new Dictionary<string, string>())
             {
                 if (paramsBuilder.Length > 0)
                 {

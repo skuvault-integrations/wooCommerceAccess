@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace WooCommerceAccess.Shared
+namespace WooCommerceAccess.Helpers
 {
-    public static class LoggingHelper
+    internal static class LoggingHelper
     {
         private const string Mask = "***";
         private static readonly string[] CredentialsFields = { "consumer_key", "consumer_secret" };
@@ -28,7 +28,7 @@ namespace WooCommerceAccess.Shared
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        internal static string MaskSensitiveData(string key, string value)
+        private static string MaskSensitiveData(string key, string value)
         {
             if (key.StartsWith("oauth") || CredentialsFields.Contains(key))
             {
