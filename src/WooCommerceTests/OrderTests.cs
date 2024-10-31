@@ -25,7 +25,8 @@ namespace WooCommerceTests
 		[ Test ]
 		public async Task GetOrdersAsync_Created()
 		{
-			var startDateUtc = new DateTime(2024, 10, 10, 12, 34, 0, DateTimeKind.Utc);
+			//307660: created/updated 2024-10-31T12:59:55
+			var startDateUtc = new DateTime(2024, 10, 31, 12, 58, 35, DateTimeKind.Utc);
 			//"Number": "64092"
 			// "CreateDateUtc": "2024-09-12T14:20:06",
 			// "UpdateDateUtc": "2024-09-13T14:32:15",
@@ -43,11 +44,11 @@ namespace WooCommerceTests
 			//2024-09-12T10:21:15, 2024-09-12T10:22:15: Fails (outside the range)
 			// var startDateUtc = DateTime.Parse("2024-09-12T10:18:15"); //DateTime.UtcNow.AddDays( -1 );
 			// var endDateUtc = DateTime.Parse("2024-09-12T10:22:15"); //DateTime.UtcNow;
-			var endDateUtc = new DateTime(2024, 10, 16, 12, 47, 0, DateTimeKind.Utc);
+			var endDateUtc = new DateTime(2024, 10, 31, 13, 00, 30, DateTimeKind.Utc);
 			var orders = await this.OrdersService.GetOrdersByCreatedDatesAsync( startDateUtc, endDateUtc, this.Mark );
 			
 			orders.Count().Should().BeGreaterOrEqualTo( 1 );
-			var order = orders.Where(x => x.Number == "306796").SingleOrDefault();
+			var order = orders.Where(x => x.Number == "307660").SingleOrDefault();
 		}
 
 		[ Explicit ]
@@ -56,24 +57,27 @@ namespace WooCommerceTests
 		public async Task GetOrdersAsync_Modified()
 		{
 			//"Number": "66061"
-			var startDateUtc = new DateTime(2024, 10, 10, 12, 34, 0, DateTimeKind.Utc);
+			//307660: created/updated 2024-10-31T12:59:55
+			var startDateUtc = new DateTime(2024, 10, 31, 12, 58, 45, DateTimeKind.Utc);
+			
 			//var startDateUtc = DateTime.Parse("2024-10-14T12:22:00");
 			//306796 //10/11/2024 16:16:51' to '10/11/2024 16:29:03
 			//var endDateUtc = DateTime.Parse("2024-10-11T16:29:03");
 			
-			var endDateUtc = new DateTime(2024, 10, 12, 12, 47, 0, DateTimeKind.Utc);
+			// var endDateUtc = new DateTime(2024, 10, 12, 12, 47, 0, DateTimeKind.Utc);
+			var endDateUtc = new DateTime(2024, 10, 31, 13, 01, 08, DateTimeKind.Utc);
 			//var endDateUtc = DateTime.Parse("2024-10-14T16:23:00");
 			var orders = await this.OrdersService.GetOrdersByModifiedDatesAsync( startDateUtc, endDateUtc, this.Mark );
 			
 			orders.Count().Should().BeGreaterOrEqualTo( 1 );
-			var order = orders.Where(x => x.Number == "306796").SingleOrDefault();
+			var order = orders.Where(x => x.Number == "307660").SingleOrDefault();
 		}
 
 		[Explicit]
 		[Test]
 		public async Task GetOrderByNumberAsync()
 		{
-			var order = await this.OrdersService.GetOrderByNumberAsync("307022", this.Mark);
+			var order = await this.OrdersService.GetOrderByNumberAsync("307660", this.Mark);
 		}
 		
 		[ Explicit ]
