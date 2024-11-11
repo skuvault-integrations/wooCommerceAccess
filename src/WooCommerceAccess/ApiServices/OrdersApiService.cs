@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WooCommerceAccess.Helpers;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Services;
@@ -39,8 +40,8 @@ namespace WooCommerceAccess.ApiServices
 			const string dateFilterBefore = "modified_before";
 			var orderFilters = new Dictionary< string, string >
 			{
-				{ dateFilterAfter, startDateUtc.ToString( "o" ) },
-				{ dateFilterBefore, endDateUtc.ToString( "o" ) }
+				{ dateFilterAfter, startDateUtc.RoundDateDownToTopOfMinute().ToString( "o" ) },
+				{ dateFilterBefore, endDateUtc.RoundDateUpToTopOfMinute().ToString( "o" ) }
 			};
 			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark ).ConfigureAwait( false );
 		}
@@ -56,8 +57,8 @@ namespace WooCommerceAccess.ApiServices
 				var combinedFilters = orderFilters.Concat( pageFilter ).ToDictionary( f => f.Key, f => f.Value);
 				var wooCommerceOrders = await this._wcObjectApiV3.Order.GetAll( combinedFilters ).ConfigureAwait( false );
 
-				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Orders Received on page {0}: {1}",
-					page, wooCommerceOrders.ToJson() ) ) );
+				WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, additionalInfo:
+					$"Orders Received on page {page}: {wooCommerceOrders.ToJson()}", queryStringParams: combinedFilters ) );
 
 				var ordersWithinPage = wooCommerceOrders.Select( v => v.ToSvOrder() ).ToList();
 				if( !ordersWithinPage.Any() )
