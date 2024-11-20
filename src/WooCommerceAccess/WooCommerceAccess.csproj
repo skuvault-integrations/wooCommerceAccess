@@ -15,7 +15,7 @@
     <FileVersion>1.11.6.0</FileVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RepositoryType>git</RepositoryType>
-    <PackageVersion>1.11.6-alpha.1</PackageVersion>
+    <PackageVersion>1.11.6</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
