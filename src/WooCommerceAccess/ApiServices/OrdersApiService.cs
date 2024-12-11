@@ -40,9 +40,14 @@ namespace WooCommerceAccess.ApiServices
 			const string dateFilterBefore = "modified_before";
 			var orderFilters = new Dictionary< string, string >
 			{
-				{ dateFilterAfter, startDateUtc.RoundDateDownToTopOfMinute().ToString( "o" ) },
-				{ dateFilterBefore, endDateUtc.RoundDateUpToTopOfMinute().ToString( "o" ) }
+				//Sortable "s" format: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#the-sortable-s-format-specifier
+				{ dateFilterAfter, startDateUtc.RoundDateDownToTopOfMinute().ToString( "s" ) },
+				{ dateFilterBefore, endDateUtc.RoundDateUpToTopOfMinute().ToString( "s" ) }
 			};
+			if ( startDateUtc.Kind == DateTimeKind.Utc && endDateUtc.Kind == DateTimeKind.Utc )
+			{
+				orderFilters.Add( "dates_are_gmt", "1" );
+			}
 			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark ).ConfigureAwait( false );
 		}
 
