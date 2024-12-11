@@ -44,6 +44,7 @@ namespace WooCommerceAccess.ApiServices
 				{ dateFilterAfter, startDateUtc.RoundDateDownToTopOfMinute().ToString( "s" ) },
 				{ dateFilterBefore, endDateUtc.RoundDateUpToTopOfMinute().ToString( "s" ) }
 			};
+			//TODO PBL-9276 Unit test this new logic. Prob. makes sense to extract the entire orderFilters building logic into a helper method somewhere, so that it's testable and modular.
 			if ( startDateUtc.Kind == DateTimeKind.Utc && endDateUtc.Kind == DateTimeKind.Utc )
 			{
 				orderFilters.Add( "dates_are_gmt", "1" );
