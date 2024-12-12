@@ -76,6 +76,7 @@
     <Compile Include="BatchListTests.cs" />
     <Compile Include="Helpers\DateTimeHelpersTests.cs" />
     <Compile Include="Helpers\LoggingHelperTests.cs" />
+    <Compile Include="Helpers\OrdersFiltersBuilderTests.cs" />
     <Compile Include="Helpers\UrlExtensionsTests.cs" />
     <Compile Include="Mappers\OrderMapperTests.cs" />
     <Compile Include="SettingsServiceTests.cs" />

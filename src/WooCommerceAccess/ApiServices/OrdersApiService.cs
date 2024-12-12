@@ -36,13 +36,7 @@ namespace WooCommerceAccess.ApiServices
 		
 		public async Task< IEnumerable< WooCommerceOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, int pageSize, string url, Mark mark )
 		{
-			const string dateFilterAfter = "modified_after";
-			const string dateFilterBefore = "modified_before";
-			var orderFilters = new Dictionary< string, string >
-			{
-				{ dateFilterAfter, startDateUtc.RoundDateDownToTopOfMinute().ToString( "o" ) },
-				{ dateFilterBefore, endDateUtc.RoundDateUpToTopOfMinute().ToString( "o" ) }
-			};
+			var orderFilters = OrdersFiltersBuilder.CreateModifiedDateRangeFilters(startDateUtc, endDateUtc);
 			return await this.CollectOrdersFromAllPagesAsync( orderFilters, pageSize, url, mark ).ConfigureAwait( false );
 		}
 
