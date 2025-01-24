@@ -71,6 +71,12 @@ namespace WooCommerceAccess.Services
 			var dateFilter = includeUpdated ? "modified_after" : "after";
 			var productFilters = new Dictionary< string, string >
 			{
+				//TODO PBL-9291 In this ticket's v1 PR, will now always send startDateTime as UTC. When we did this earlier for orders, it cased an issue for at least one tenant (PBL-9276).
+				//	Test if the v1 change didn't now introduce the same issue for Products (possibly on the PBL-9276 tenant).
+				//	If yes, then implement for products the same fix we did for Orders - https://github.com/skuvault-integrations/wooCommerceAccess/pull/66
+				//	Below, we'd the date to "sortable" format (no Z) and then add "dates_are_gmt" if UTC. 
+				//		Might be good to extract both fixes into common extensions methods - ToDateTimeStartFilterValue (format as “s” and round down to nearest minute) and ToDateTimeEndFilterValue (format as “s” and round up to nearest minute)
+				//		{ dateFilter, startDate.RoundDateDownToTopOfMinute().ToString( "s" ) },
 				{ dateFilter, startDateUtc.ToString( "o" ) }
 			};
 
@@ -230,6 +236,9 @@ namespace WooCommerceAccess.Services
 		{
 			var productsWithinPage = await this.WooCommerceNetObjectV3.Product.GetAll( filter ).ConfigureAwait( false );
 
+			//TODO PBL-9291 Log filter as well (see Orders sync for examples)
+			//See WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, additionalInfo:
+			//$"Orders Received on page {page}: {wooCommerceOrders.ToJson()}", queryStringParams: combinedFilters ) );
 			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Products Received: {0}" , productsWithinPage.ToJson() ) ) );
 
 			var svProductsWithinPage = productsWithinPage.Select( p => p.ToSvProduct() ).ToList();
