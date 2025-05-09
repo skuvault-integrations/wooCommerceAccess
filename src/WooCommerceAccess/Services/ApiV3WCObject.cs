@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
+using WooCommerceAccess.Helpers;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Shared;
@@ -68,18 +69,7 @@ namespace WooCommerceAccess.Services
 
 		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, int pageSize, string url, Mark mark )
 		{
-			var dateFilter = includeUpdated ? "modified_after" : "after";
-			var productFilters = new Dictionary< string, string >
-			{
-				//TODO PBL-9291 In this ticket's v1 PR, will now always send startDateTime as UTC. When we did this earlier for orders, it cased an issue for at least one tenant (PBL-9276).
-				//	Test if the v1 change didn't now introduce the same issue for Products (possibly on the PBL-9276 tenant).
-				//	If yes, then implement for products the same fix we did for Orders - https://github.com/skuvault-integrations/wooCommerceAccess/pull/66
-				//	Below, we'd the date to "sortable" format (no Z) and then add "dates_are_gmt" if UTC. 
-				//		Might be good to extract both fixes into common extensions methods - ToDateTimeStartFilterValue (format as “s” and round down to nearest minute) and ToDateTimeEndFilterValue (format as “s” and round up to nearest minute)
-				//		{ dateFilter, startDate.RoundDateDownToTopOfMinute().ToString( "s" ) },
-				{ dateFilter, startDateUtc.ToString( "o" ) }
-			};
-
+			var productFilters = ProductsFiltersBuilder.CreateProductStartDateTimeFilters( startDateUtc, includeUpdated );
 			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize, url, mark );
 			return products;
 		}

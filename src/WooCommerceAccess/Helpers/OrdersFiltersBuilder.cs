@@ -13,9 +13,8 @@ namespace WooCommerceAccess.Helpers
             const string dateFilterBefore = "modified_before";
             var orderFilters = new Dictionary< string, string >
             {
-                //Sortable "s" format: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#the-sortable-s-format-specifier
-                { dateFilterAfter, startDate.RoundDateDownToTopOfMinute().ToString( "s" ) },
-                { dateFilterBefore, endDate.RoundDateUpToTopOfMinute().ToString( "s" ) }
+                { dateFilterAfter, startDate.ToWooCommerceStartDateTime() },
+                { dateFilterBefore, endDate.ToWooCommerceEndDateTime() }
             };
             if ( startDate.Kind == DateTimeKind.Utc && endDate.Kind == DateTimeKind.Utc )
             {
