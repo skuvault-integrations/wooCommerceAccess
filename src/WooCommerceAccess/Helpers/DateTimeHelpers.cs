@@ -4,7 +4,6 @@ namespace WooCommerceAccess.Helpers
 {
 	internal static class DateTimeHelpers
 	{
-		//TODO PBL-9291 Add tests
 		/// <summary>
 		/// Convert the start date to "sortable" date/time and round down to nearest minute (Linnworks reported issues otherwise).
 		/// See tickets PBL-9276, PBL-9291
@@ -16,7 +15,6 @@ namespace WooCommerceAccess.Helpers
 			return startDate.RoundDateDownToTopOfMinute().ToSortableDate();
 		}
 
-		//TODO PBL-9291 Add tests
 		/// <summary>
 		/// Convert the end date to "sortable" date/time and round up to the nearest minute (Linnworks reported issues otherwise).
 		/// </summary>

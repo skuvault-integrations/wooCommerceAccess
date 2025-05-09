@@ -5,9 +5,14 @@ namespace WooCommerceAccess.Helpers
 {
 	public static class ProductsFiltersBuilder
 	{
-		private const string DatesAreGmt = "dates_are_gmt";
+		internal const string DatesAreGmt = "dates_are_gmt";
 
-		//TODO PBL-9291 Add unit tests
+		/// <summary>
+		/// Create the filter to query for products by modified/created start date/time
+		/// </summary>
+		/// <param name="startDateUtc"></param>
+		/// <param name="includeUpdated">If true, filter by both the created and updated dates. Otherwise, only created date</param>
+		/// <returns></returns>
 		internal static Dictionary<string, string> CreateProductStartDateTimeFilters(DateTime startDateUtc,
 			bool includeUpdated)
 		{
