@@ -226,10 +226,8 @@ namespace WooCommerceAccess.Services
 		{
 			var productsWithinPage = await this.WooCommerceNetObjectV3.Product.GetAll( filter ).ConfigureAwait( false );
 
-			//TODO PBL-9291 Log filter as well (see Orders sync for examples)
-			//See WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, additionalInfo:
-			//$"Orders Received on page {page}: {wooCommerceOrders.ToJson()}", queryStringParams: combinedFilters ) );
-			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Products Received: {0}" , productsWithinPage.ToJson() ) ) );
+			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark,
+				additionalInfo: $"Page of Products Received: {productsWithinPage.ToJson()}", queryStringParams: filter ) );
 
 			var svProductsWithinPage = productsWithinPage.Select( p => p.ToSvProduct() ).ToList();
 
