@@ -8,6 +8,12 @@ namespace WooCommerceAccess.Helpers
 		/// Convert the start date to "sortable" date/time and round down to nearest minute (Linnworks reported issues otherwise).
 		/// See tickets PBL-9276, PBL-9291
 		/// </summary>
+		/// <example>
+		/// <code>
+		/// (new DateTime(2023, 10, 25, 14, 30, 45, 123, DateTimeKind.Utc)).ToWooCommerceStartDateTime();
+		/// // Result: "2023-10-25T14:30:00"
+		/// </code>
+		/// </example>
 		/// <param name="startDate"></param>
 		/// <returns></returns>
 		internal static string ToWooCommerceStartDateTime(this DateTime startDate)
@@ -18,6 +24,12 @@ namespace WooCommerceAccess.Helpers
 		/// <summary>
 		/// Convert the end date to "sortable" date/time and round up to the nearest minute (Linnworks reported issues otherwise).
 		/// </summary>
+		/// <example>
+		/// <code>
+		/// (new DateTime(2023, 10, 25, 14, 30, 45, 123, DateTimeKind.Utc)).ToWooCommerceEndDateTime();
+		/// // Result: "2023-10-25T14:31:00"
+		/// </code>
+		/// </example>
 		/// <param name="endDateTime"></param>
 		/// <returns></returns>
 		internal static string ToWooCommerceEndDateTime(this DateTime endDateTime)
@@ -40,6 +52,12 @@ namespace WooCommerceAccess.Helpers
 		/// <summary>
 		/// Round the date down to the nearest top of minute
 		/// </summary>
+		/// <example>
+		/// <code>
+		/// (new DateTime(2023, 10, 25, 14, 30, 45, 123, DateTimeKind.Utc)).RoundDateDownToTopOfMinute();
+		/// // Result: 10/25/2023 14:30:00
+		/// </code>
+		/// </example>
 		/// <remarks>Per Linnworks, for some clients orders aren't returned when query by date/times with non-zero seconds/ms</remarks>
 		/// <param name="dateTime"></param>
 		/// <returns></returns>
@@ -51,6 +69,12 @@ namespace WooCommerceAccess.Helpers
 		/// <summary>
 		/// Round the date up to the nearest top of minute
 		/// </summary>
+		/// <example>
+		/// <code>
+		/// (new DateTime(2023, 10, 25, 14, 30, 45, 123, DateTimeKind.Utc)).RoundDateUpToTopOfMinute();
+		/// // Result: 10/25/2023 14:31:00
+		/// </code>
+		/// </example>
 		/// <remarks>Per Linnworks, for some clients orders aren't returned when query by date/times with non-zero seconds/ms</remarks>
 		/// <param name="dateTime"></param>
 		/// <returns></returns>
