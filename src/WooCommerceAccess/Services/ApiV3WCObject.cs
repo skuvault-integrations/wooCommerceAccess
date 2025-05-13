@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
+using WooCommerceAccess.Helpers;
 using WooCommerceAccess.Models;
 using WooCommerceAccess.Models.Configuration;
 using WooCommerceAccess.Shared;
@@ -68,12 +69,7 @@ namespace WooCommerceAccess.Services
 
 		public async Task< IEnumerable< WooCommerceProduct > > GetProductsAsync( DateTime startDateUtc, bool includeUpdated, int pageSize, string url, Mark mark )
 		{
-			var dateFilter = includeUpdated ? "modified_after" : "after";
-			var productFilters = new Dictionary< string, string >
-			{
-				{ dateFilter, startDateUtc.ToString( "o" ) }
-			};
-
+			var productFilters = ProductsFiltersBuilder.CreateProductStartDateTimeFilters( startDateUtc, includeUpdated );
 			var products = await CollectProductsFromAllPagesAsync( productFilters, pageSize, url, mark );
 			return products;
 		}
@@ -230,7 +226,8 @@ namespace WooCommerceAccess.Services
 		{
 			var productsWithinPage = await this.WooCommerceNetObjectV3.Product.GetAll( filter ).ConfigureAwait( false );
 
-			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark, payload: string.Format( "Products Received: {0}" , productsWithinPage.ToJson() ) ) );
+			WooCommerceLogger.LogTrace( Misc.CreateMethodCallInfo( url, mark,
+				additionalInfo: $"Page of Products Received: {productsWithinPage.ToJson()}", queryStringParams: filter ) );
 
 			var svProductsWithinPage = productsWithinPage.Select( p => p.ToSvProduct() ).ToList();
 
