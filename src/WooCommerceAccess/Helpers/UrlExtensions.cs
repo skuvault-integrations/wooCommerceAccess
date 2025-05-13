@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace WooCommerceAccess.Helpers
@@ -24,6 +25,33 @@ namespace WooCommerceAccess.Helpers
             }
 
             return paramsBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Normalizes a URL by ensuring www. prefix is present when needed
+        /// </summary>
+        /// <param name="url">The URL to normalize</param>
+        /// <returns>The normalized URL</returns>
+        internal static string NormalizeUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return url;
+
+            // Create a URI from the URL
+            var uri = new Uri(url);
+
+            // Only add www. if it's not already present
+            if (!uri.Host.StartsWith("www."))
+            {
+                // Create a new URI with www. prefix
+                var builder = new UriBuilder(uri)
+                {
+                    Host = "www." + uri.Host
+                };
+                return builder.Uri.ToString();
+            }
+
+            return url;
         }
     }
 }

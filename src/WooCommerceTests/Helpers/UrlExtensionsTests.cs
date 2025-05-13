@@ -40,5 +40,25 @@ namespace WooCommerceTests.Helpers
             
             Assert.That(result, Is.Empty);
         }
+
+        [Test]
+        public void NormalizeUrl_AddsWwwPrefix()
+        {
+            var url = "https://example.com/path";
+
+            var result = UrlExtensions.NormalizeUrl(url);
+
+            Assert.That(result, Is.EqualTo("https://www.example.com/path"));
+        }
+
+        [Test]
+        public void NormalizeUrl_PreservesExistingWww()
+        {
+            var url = "https://www.example.com/path";
+
+            var result = UrlExtensions.NormalizeUrl(url);
+
+            Assert.That(result, Is.EqualTo(url));
+        }
     }
 }

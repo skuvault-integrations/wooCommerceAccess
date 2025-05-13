@@ -25,7 +25,8 @@ namespace WooCommerceAccess.Services
 			this.WooCommerceNetObjectV3 = new WApiV3.WCObject( restApi );
 		}
 
-		public string ProductApiUrl => this.WooCommerceNetObjectV3.Product.API.Url + this.WooCommerceNetObjectV3.Product.APIEndpoint;
+		public string ProductApiUrl => UrlExtensions.NormalizeUrl(this.WooCommerceNetObjectV3.Product.API.Url +
+		                                                          this.WooCommerceNetObjectV3.Product.APIEndpoint);
 
 		public string SystemStatusApiUrl => this.WooCommerceNetObjectV3.SystemStatus.API.Url + this.WooCommerceNetObjectV3.SystemStatus.APIEndpoint;
 
